@@ -1,3 +1,5 @@
+import { Spinner } from "@chakra-ui/react";
+
 const Pozdrav = () => {
   return <h1>Hello</h1>;
 };
@@ -11,6 +13,8 @@ export default function Home() {
       <Pozdrav />
       <Pozdrav />
       <Pozdrav />
+
+      <Spinner />
     </div>
   );
 }

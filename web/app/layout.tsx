@@ -1,5 +1,6 @@
 "use client";
 
+import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const client = new QueryClient();
@@ -11,9 +12,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <QueryClientProvider client={client}>
-        <body>{children}</body>
-      </QueryClientProvider>
+      <ChakraProvider value={defaultSystem}>
+        <QueryClientProvider client={client}>
+          <body>{children}</body>
+        </QueryClientProvider>
+      </ChakraProvider>
     </html>
   );
 }
