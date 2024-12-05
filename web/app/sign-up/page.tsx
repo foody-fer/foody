@@ -173,7 +173,7 @@ function SignUpPage(){
     return (
         <div className="create-acc-container bg-backgroundGreen min-h-screen min-w-screen pb-4">
             <div className='logopic w-[12rem]'>
-                <img src="/logo.png" className='pt-[1.5rem] pl-[1.5rem]'/>
+                <img src="/images/logo.png" className='pt-[1.5rem] pl-[1.5rem]'/>
             </div>
             <div className='create-card bg-gray-100 rounded-[1rem] p-[1.4rem] pb-5 mt-[2rem] sm:mt-[0rem] sm:w-[40%] w-[60%] h-[auto] text-textColor relative top-[10%] left-[23%] sm:left-[31%]'>
                 <h3 className='h3 ml-2'>
@@ -244,7 +244,7 @@ function SignUpPage(){
                 </div>
             </div>
             <div className='picture absolute top-[4%] right-[2.5%]'>
-                <img src="./quote.jpg" alt="motivatePicture" className='hidden rounded-[1rem] md:w-[11rem] sm:w-[9rem] sm:block'/>
+                <img src="/images/quote.jpg" alt="motivatePicture" className='hidden rounded-[1rem] md:w-[11rem] sm:w-[9rem] sm:block'/>
             </div>
 
         </div>
