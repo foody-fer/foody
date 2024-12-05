@@ -1,4 +1,5 @@
 import { Spinner } from "@chakra-ui/react";
+import Link from "next/link";
 
 const Pozdrav = () => {
   return <h1>Hello</h1>;
@@ -12,7 +13,10 @@ export default function Home() {
       <Pozdrav />
       <Pozdrav />
       <Pozdrav />
-      <Pozdrav />
+
+      <Link href={"/sign-up"}>
+        <button className="text-white bg-purple-800">Sign up</button>
+      </Link>
 
       <Spinner />
     </div>

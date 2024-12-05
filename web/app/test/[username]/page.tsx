@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-export default function Home({ params }) {
+export default function Home({ params }:any) {
   const query = useQuery({
     queryKey: ["test", params.username],
     queryFn: async () => {

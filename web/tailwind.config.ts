@@ -9,6 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        backgroundGreen: '#cfe1b9',
+        resedaGreen: '#718355',
+        ebony: '#575a4b',
+        textColor: '#373737',
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
@@ -16,4 +20,4 @@ const config: Config = {
   },
   plugins: [],
 };
-export default config;
+export default config;

@@ -5,7 +5,9 @@ import { createSpinner } from '@gluestack-ui/spinner';
 import { tva } from '@gluestack-ui/nativewind-utils/tva';
 import { cssInterop } from 'nativewind';
 
-const UISpinner = createSpinner({ Root: ActivityIndicator });
+const UISpinner = createSpinner({ 
+  Root: ActivityIndicator,
+});
 
 cssInterop(UISpinner, {
   className: { target: 'style', nativeStyleToProp: { color: true } },
