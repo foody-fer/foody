@@ -1,18 +1,25 @@
-import { Spinner } from "@/components/ui/spinner";
+import { Button, ButtonText } from "@/components/ui/button";
 import { Text, View } from "react-native";
+import { useFonts, Quicksand_400Regular } from "@expo-google-fonts/quicksand";
+import { useRouter } from "expo-router";
 
 export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+  let fonts = useFonts({
+    Quicksand_400Regular,
+  });
 
-      <Spinner className="mt-10" size="large" />
+  const router = useRouter();
+
+  return (
+    <View className="flex-1 justify-center items-center bg-teagreen">
+      <Button size="md" variant="solid" className="bg-jet">
+        <ButtonText
+          className="font-quicksand"
+          onPress={() => router.push("/profile")}
+        >
+          Go to Profile
+        </ButtonText>
+      </Button>
     </View>
   );
 }
