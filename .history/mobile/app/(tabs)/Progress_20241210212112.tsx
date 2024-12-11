@@ -74,8 +74,11 @@ const ProgressScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={styles.timelineContainer}>
+      <ScrollView style={styles.timelineContainer}>
         {[
+          { value: "24 cm", date: "15.3.2025" },
+          { value: "30 cm", date: "20.5.2025" },
+          { value: "31 cm", date: "21.7.2025" },
           { value: "24 cm", date: "15.3.2025" },
           { value: "30 cm", date: "20.5.2025" },
           { value: "31 cm", date: "21.7.2025" },
@@ -88,7 +91,7 @@ const ProgressScreen: React.FC = () => {
             </View>
           </View>
         ))}
-      </View>
+      </ScrollView>
 
       <TouchableOpacity style={styles.logButton}>
         <Text style={styles.logButtonText}>Log Progress</Text>
@@ -148,12 +151,13 @@ const styles = StyleSheet.create({
   },
   timelineContainer: {
     marginTop: 16,
-    alignItems: "center",
-    backgroundColor: "#FFFFFF", // White background for the timeline
-    width: 130,
-    alignSelf: "center",
+    alignSelf: "center", // Keep it centered horizontally
+    backgroundColor: "#FFFFFF", // White background
+    width: "90%", // Use a percentage to adapt to the screen size
     paddingVertical: 16,
-    borderRadius: 16, // Rounded edges for the timeline container
+    paddingHorizontal: 8, // Added for better horizontal spacing
+    borderRadius: 16, // Rounded edges
+    flexGrow: 0, // Prevent ScrollView from expanding
   },
   timelineItem: {
     flexDirection: "row",
@@ -164,7 +168,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#718355",
+    backgroundColor: "#718355", // Reseda Green for dots
     marginRight: 8,
   },
   timelineValue: {

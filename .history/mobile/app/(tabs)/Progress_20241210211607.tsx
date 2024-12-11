@@ -153,7 +153,6 @@ const styles = StyleSheet.create({
     width: 130,
     alignSelf: "center",
     paddingVertical: 16,
-    borderRadius: 16, // Rounded edges for the timeline container
   },
   timelineItem: {
     flexDirection: "row",

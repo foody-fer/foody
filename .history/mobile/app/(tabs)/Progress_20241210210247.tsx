@@ -74,18 +74,19 @@ const ProgressScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={styles.timelineContainer}>
+      <View style={styles.tableContainer}>
+        <View style={styles.tableHeader}>
+          <Text style={styles.tableHeaderText}>Value</Text>
+          <Text style={styles.tableHeaderText}>Date</Text>
+        </View>
         {[
           { value: "24 cm", date: "15.3.2025" },
           { value: "30 cm", date: "20.5.2025" },
           { value: "31 cm", date: "21.7.2025" },
         ].map((entry, index) => (
-          <View key={index} style={styles.timelineItem}>
-            <View style={styles.timelineDot} />
-            <View>
-              <Text style={styles.timelineValue}>{entry.value}</Text>
-              <Text style={styles.timelineDate}>{entry.date}</Text>
-            </View>
+          <View key={index} style={styles.tableRow}>
+            <Text style={styles.tableCell}>{entry.value}</Text>
+            <Text style={styles.tableCell}>{entry.date}</Text>
           </View>
         ))}
       </View>
@@ -146,35 +147,35 @@ const styles = StyleSheet.create({
   chart: {
     borderRadius: 16,
   },
-  timelineContainer: {
+  tableContainer: {
     marginTop: 16,
-    alignItems: "center",
-    backgroundColor: "#FFFFFF", // White background for the timeline
-    width: 130,
-    alignSelf: "center",
-    paddingVertical: 16,
-    borderRadius: 16, // Rounded edges for the timeline container
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    padding: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    width: 300,
   },
-  timelineItem: {
+  tableHeader: {
     flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
-  timelineDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#718355",
-    marginRight: 8,
-  },
-  timelineValue: {
-    fontSize: 18,
+  tableHeaderText: {
+    fontSize: 16,
     fontWeight: "bold",
-    color: "#373737",
-  },
-  timelineDate: {
-    fontSize: 12,
     color: "#575A4B",
+  },
+  tableRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  tableCell: {
+    fontSize: 14,
+    color: "#373737",
   },
 
   loggedText: {

@@ -27,10 +27,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "none",
     color: "#fff",
     backgroundColor: "#718355",
-    paddingLeft: 40,
-    paddingRight: 40,
-    paddingTop: 20,
-    paddingBottom: 20,
-    borderRadius: 50,
+    padding: 20,
+    borderCurve: "circular",
   },
 });

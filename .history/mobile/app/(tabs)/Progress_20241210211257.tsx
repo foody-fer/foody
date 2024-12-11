@@ -150,10 +150,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     alignItems: "center",
     backgroundColor: "#FFFFFF", // White background for the timeline
-    width: 130,
+    width: 150,
     alignSelf: "center",
-    paddingVertical: 16,
-    borderRadius: 16, // Rounded edges for the timeline container
   },
   timelineItem: {
     flexDirection: "row",
@@ -173,7 +171,7 @@ const styles = StyleSheet.create({
     color: "#373737",
   },
   timelineDate: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#575A4B",
   },
 

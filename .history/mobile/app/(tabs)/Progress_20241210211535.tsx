@@ -152,8 +152,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF", // White background for the timeline
     width: 130,
     alignSelf: "center",
-    paddingVertical: 16,
-    borderRadius: 16, // Rounded edges for the timeline container
   },
   timelineItem: {
     flexDirection: "row",

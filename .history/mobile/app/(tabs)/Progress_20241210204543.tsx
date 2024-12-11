@@ -55,7 +55,7 @@ const ProgressScreen: React.FC = () => {
               labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
               datasets: [
                 {
-                  data: [30, 37, 40, 69, 70, 45, 90],
+                  data: [30, 40, 50, 60, 70, 80, 90],
                 },
               ],
             }}
@@ -66,7 +66,7 @@ const ProgressScreen: React.FC = () => {
               backgroundGradientFrom: "#FFFFFF", // White background
               backgroundGradientTo: "#FFFFFF", // White background
               decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(113, 131, 85, ${opacity})`, // Jet for chart lines
+              color: (opacity = 1) => `rgba(55, 55, 55, ${opacity})`, // Jet for chart lines
               labelColor: (opacity = 1) => `rgba(55, 55, 55, ${opacity})`, // Jet for labels
             }}
             style={styles.chart}
@@ -74,20 +74,10 @@ const ProgressScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={styles.timelineContainer}>
-        {[
-          { value: "24 cm", date: "15.3.2025" },
-          { value: "30 cm", date: "20.5.2025" },
-          { value: "31 cm", date: "21.7.2025" },
-        ].map((entry, index) => (
-          <View key={index} style={styles.timelineItem}>
-            <View style={styles.timelineDot} />
-            <View>
-              <Text style={styles.timelineValue}>{entry.value}</Text>
-              <Text style={styles.timelineDate}>{entry.date}</Text>
-            </View>
-          </View>
-        ))}
+      <View style={styles.loggedProgressContainer}>
+        <Text style={styles.loggedText}>24 cm - 15.3.2025</Text>
+        <Text style={styles.loggedText}>30 cm - 20.5.2025</Text>
+        <Text style={styles.loggedText}>31 cm - 21.7.2025</Text>
       </View>
 
       <TouchableOpacity style={styles.logButton}>
@@ -146,37 +136,11 @@ const styles = StyleSheet.create({
   chart: {
     borderRadius: 16,
   },
-  timelineContainer: {
+  loggedProgressContainer: {
     marginTop: 16,
+    paddingHorizontal: 24,
     alignItems: "center",
-    backgroundColor: "#FFFFFF", // White background for the timeline
-    width: 130,
-    alignSelf: "center",
-    paddingVertical: 16,
-    borderRadius: 16, // Rounded edges for the timeline container
   },
-  timelineItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  timelineDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#718355",
-    marginRight: 8,
-  },
-  timelineValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#373737",
-  },
-  timelineDate: {
-    fontSize: 12,
-    color: "#575A4B",
-  },
-
   loggedText: {
     color: "#373737", // Jet for text
     fontSize: 16,

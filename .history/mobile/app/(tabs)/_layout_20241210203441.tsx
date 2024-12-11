@@ -13,7 +13,7 @@ export default function Layout() {
           shadowColor: "#000", // Boja sjene
           shadowOffset: { width: 0, height: 3 }, // Pomak sjene
           shadowOpacity: 0.5, // Prozirnost sjene
-          shadowRadius: 5, // Radijus sjene
+          shadowRadius: 10, // Radijus sjene
         },
         tabBarActiveTintColor: "#718355", // Reseda Green for active icons and text
         tabBarInactiveTintColor: "#FFFFFF", // White for inactive icons and text

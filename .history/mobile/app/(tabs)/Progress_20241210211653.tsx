@@ -79,6 +79,9 @@ const ProgressScreen: React.FC = () => {
           { value: "24 cm", date: "15.3.2025" },
           { value: "30 cm", date: "20.5.2025" },
           { value: "31 cm", date: "21.7.2025" },
+          { value: "24 cm", date: "15.3.2025" },
+          { value: "30 cm", date: "20.5.2025" },
+          { value: "31 cm", date: "21.7.2025" },
         ].map((entry, index) => (
           <View key={index} style={styles.timelineItem}>
             <View style={styles.timelineDot} />
