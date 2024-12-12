@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { Text } from "../../components/ui/CustomText";
-import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
+import LogProgress from "../LogProgress";
 
 type Category = "weight" | "waist" | "thighs" | "hips" | "arms" | "neck";
 
 const ProgressScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category>("arms");
-  const router = useRouter();
+  const navigation = useNavigation();
   const categories: Category[] = [
     "weight",
     "waist",
@@ -88,12 +89,7 @@ const ProgressScreen: React.FC = () => {
 
       <TouchableOpacity
         style={styles.logButton}
-        onPress={() =>
-          router.push({
-            pathname: "/LogProgress",
-            params: { category: "arms" },
-          })
-        }
+        onPress={() => navigation.navigate("LogProgress")}
       >
         <Text style={styles.logButtonText}>Log Progress</Text>
       </TouchableOpacity>

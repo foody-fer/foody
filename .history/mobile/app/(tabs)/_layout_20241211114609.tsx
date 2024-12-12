@@ -16,7 +16,7 @@ export default function Layout() {
         tabBarActiveTintColor: "#718355", // Reseda Green for active icons and text
         tabBarInactiveTintColor: "#FFFFFF", // White for inactive icons and text
         headerStyle: {
-          backgroundColor: "#CFE1B9",
+          backgroundColor: "#CFE1B9", // Tea Green for the header background
         },
         headerTintColor: "#FFFFFF", // White for the header text
         headerTitleStyle: {
@@ -24,8 +24,8 @@ export default function Layout() {
           fontSize: 20,
         },
         tabBarLabelStyle: {
-          fontFamily: "Quicksand_600Regular", // Font for tab labels
-          fontSize: 13,
+          fontFamily: "Quicksand_400Regular", // Font for tab labels
+          fontSize: 14,
         },
       }}
     >

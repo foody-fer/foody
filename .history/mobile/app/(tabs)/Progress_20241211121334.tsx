@@ -88,12 +88,7 @@ const ProgressScreen: React.FC = () => {
 
       <TouchableOpacity
         style={styles.logButton}
-        onPress={() =>
-          router.push({
-            pathname: "/LogProgress",
-            params: { category: "arms" },
-          })
-        }
+        onPress={() => router.push("/LogProgress")}
       >
         <Text style={styles.logButtonText}>Log Progress</Text>
       </TouchableOpacity>

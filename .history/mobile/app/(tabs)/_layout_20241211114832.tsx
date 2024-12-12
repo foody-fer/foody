@@ -17,6 +17,7 @@ export default function Layout() {
         tabBarInactiveTintColor: "#FFFFFF", // White for inactive icons and text
         headerStyle: {
           backgroundColor: "#CFE1B9",
+          borderBottomColor: "#CFE1B9", // Tea Green for the header background
         },
         headerTintColor: "#FFFFFF", // White for the header text
         headerTitleStyle: {
