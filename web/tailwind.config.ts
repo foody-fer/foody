@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         backgroundGreen: '#cfe1b9',
         resedaGreen: '#718355',
+        midGreen: '#b7d18a',
         ebony: '#575a4b',
         textColor: '#373737',
         background: "var(--background)",

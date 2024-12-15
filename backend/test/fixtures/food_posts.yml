@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  post_date_time: 2024-12-11 20:36:27
+  post_text: MyString
+  recipe: one
+  planned_meal: one
+  image: one
+
+two:
+  user: two
+  post_date_time: 2024-12-11 20:36:27
+  post_text: MyString
+  recipe: two
+  planned_meal: two
+  image: two

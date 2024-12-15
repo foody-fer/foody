@@ -14,6 +14,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        teagreen: '#cfe1b9',
+        jet: '#373737',
+        resedagreen: '#718355',
+        ebony: '#575a4b',
         primary: {
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
           50: 'rgb(var(--color-primary-50)/<alpha-value>)',
@@ -174,6 +178,7 @@ module.exports = {
         body: undefined,
         mono: undefined,
         roboto: ['Roboto', 'sans-serif'],
+        quicksand: ['Quicksand_400Regular', 'sans-serif'],
       },
       fontWeight: {
         extrablack: '950',

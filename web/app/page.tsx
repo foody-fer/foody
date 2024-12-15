@@ -1,24 +1,23 @@
-import { Spinner } from "@chakra-ui/react";
-import Link from "next/link";
+"use client";
 
-const Pozdrav = () => {
-  return <h1>Hello</h1>;
-};
+import Logo from "./components/Logo";
+import Login from "./components/Login";
 
 export default function Home() {
-  const count = 1 + 2;
-
   return (
-    <div>
-      <Pozdrav />
-      <Pozdrav />
-      <Pozdrav />
+    <>
+        <div className="bg-backgroundGreen min-h-screen">
+          <div className="flex">
+            <div className=" w-[50%] mt-[10rem] flex items-center justify-center">
+              <Logo/>
+            </div>
 
-      <Link href={"/sign-up"}>
-        <button className="text-white bg-purple-800">Sign up</button>
-      </Link>
-
-      <Spinner />
-    </div>
+            <div className="w-[50%] mt-[11.5rem] flex flex-col items-center justify-center">
+              <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl text-textColor mb-2">Join our community!</h1>
+              <Login disabled = {false}/>
+            </div>
+          </div>
+        </div>
+    </>
   );
 }
