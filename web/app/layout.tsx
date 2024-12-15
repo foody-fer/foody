@@ -2,7 +2,6 @@
 
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import 'bootstrap/dist/css/bootstrap.css'
 import "./globals.css"
 
 const client = new QueryClient();

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import 'bootstrap/dist/css/bootstrap.css'
 
 function SignUpPage(){
     //kontrola formata imena
