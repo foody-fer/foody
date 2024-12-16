@@ -170,12 +170,31 @@ function SignUpPage(){
         });
     }
 
+    const giveOpacity = () => {
+        let tmp = document.getElementsByClassName('arrow');
+        console.log(tmp)
+        for (let i = 0; i < tmp.length; i++) {
+            (tmp[i] as HTMLElement).style.opacity = "50";
+            (tmp[i] as HTMLElement).style.transition = "0.4s"
+        }
+    }
+
+    const removeOpacity = () => {
+        let tmp = document.getElementsByClassName('arrow');
+    
+        for (let i = 0; i < tmp.length; i++) {
+            (tmp[i] as HTMLElement).style.opacity = "0";
+        }
+    }
+
+
+
     return (
         <div className="create-acc-container bg-backgroundGreen min-h-screen min-w-screen pb-4">
             <div className='logopic w-[12rem]'>
                 <img src="/images/logo.png" className='pt-[1.5rem] pl-[1.5rem]'/>
             </div>
-            <div className='create-card bg-gray-100 rounded-[1rem] p-[1.4rem] pb-5 mt-[2rem] sm:mt-[0rem] sm:w-[40%] w-[60%] h-[auto] text-textColor relative top-[10%] left-[23%] sm:left-[31%]'>
+            <div className='create-card bg-gray-100 rounded-[1rem] p-[1.4rem] pb-5 mt-[2rem] sm:mt-[1.5rem] sm:w-[40%] w-[60%] h-[auto] text-textColor relative top-[10%] left-[23%] sm:left-[31%]'>
                 <h3 className='h3 ml-2'>
                     Create an account
                 </h3>
@@ -223,7 +242,7 @@ function SignUpPage(){
                         </div>
                     </div>                                                       
                     
-                    <div className='buttons ml-2 mt-[1rem] mb-[1rem] flex justify-center items-center'>
+                    <div className='buttons ml-2 mt-[3rem] flex justify-center items-center'>
                         <button type="submit" className="btn1 rounded-[0.5rem] mr-3 py-[0.4rem] px-[0.6rem] bg-resedaGreen text-gray-100 hover:bg-green-800 transition duration-300 md:py-2 md:px-[1.8rem]">
                             Continue
                         </button>
@@ -233,18 +252,14 @@ function SignUpPage(){
                             </button>
                         </Link>
                     </div>
-
-                </form>
-                <br />
-                <div className='link ml-[0.3rem] absolute top-[94%] left-[5%]'>
-                    <span className='message'>Already have an account? </span>
-                    <Link href={'/sign-in'} className='no-underline'>
-                        <button className='signUp text-blue-500'> Sign in</button>
-                    </Link>                
-                </div>
+                </form>                
             </div>
-            <div className='picture absolute top-[4%] right-[2.5%]'>
-                <img src="/images/quote.jpg" alt="motivatePicture" className='hidden rounded-[1rem] md:w-[11rem] sm:w-[9rem] sm:block'/>
+            <div className='picture absolute top-[4%] right-[2.5%] bg-gray-100 text-textColor p-[0.8rem] md:p-[1rem] text-xs md:text-sm rounded-[0.7rem] hover:bg-gray-300 transition duration-300 hover:text-white' onMouseEnter={giveOpacity} onMouseLeave={removeOpacity}>
+                <span className='message'>Already have an account? </span>
+                <Link href={'/sign-in'} className='no-underline'>
+                    <button className='signUp text-blue-500'> Sign in</button> 
+                    <span className='arrow text-white' style={{opacity:0}}> ➜</span>
+                </Link>
             </div>
 
         </div>
@@ -252,3 +267,16 @@ function SignUpPage(){
 }
   
 export default SignUpPage;
+
+/* 
+<div className='link ml-[0.3rem] absolute top-[94%] left-[5%]'>
+    <span className='message'>Already have an account? </span>
+    <Link href={'/sign-in'} className='no-underline'>
+        <button className='signUp text-blue-500'> Sign in</button>
+    </Link>                
+</div>
+
+<div className='picture absolute top-[4%] right-[2.5%]'>
+    <img src="/images/quote.jpg" alt="motivatePicture" className='hidden rounded-[1rem] md:w-[11rem] sm:w-[9rem] sm:block'/>
+</div>
+*/
