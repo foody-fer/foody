@@ -46,10 +46,10 @@ function Login({ disabled }: { disabled: boolean }) {
                 Create an account
             </button>
 
-            <div className='mt-3 font-semibold'>Already have an account?</div>
+            <div className='mt-3 font-semibold text-resedaGreen'>Already have an account?</div>
 
             <button onClick={() => window.location.href = '/sign-in'}
-                className={`login-buttons bg-ebony text-white mt-3 mb-2 rounded-full box-border text-base sm:text-lg md:text-xl font-semibold px-[5.5rem] sm:px-28 md:px-36 py-3
+                className={`login-buttons bg-ebony text-white mt-2 mb-2 rounded-full box-border text-base sm:text-lg md:text-xl font-semibold px-[5.5rem] sm:px-28 md:px-36 py-3
                 ${disabled ? "" : "duration-200 hover:bg-[#414339] hover:shadow-2xl  hover:scale-105"}`} disabled={disabled} role="button">
                 Sign in
             </button>
