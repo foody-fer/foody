@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         backgroundGreen: '#cfe1b9',
+        navbarColor: "#b1ca92",
         resedaGreen: '#718355',
         midGreen: '#b7d18a',
         ebony: '#575a4b',
