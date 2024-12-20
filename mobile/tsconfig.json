@@ -10,7 +10,8 @@
       "tailwind.config": [
         "./tailwind.config.js"
       ]
-    }
+    },
+    "types": ["react-native"]
   },
   "include": [
     "**/*.ts",

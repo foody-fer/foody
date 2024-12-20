@@ -11,6 +11,8 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "types": ["react", "react-dom"],
+    "typeRoots": ["node_modules/@types"],
     "jsx": "preserve",
     "incremental": true,
     "plugins": [

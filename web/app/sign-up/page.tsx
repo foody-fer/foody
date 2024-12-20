@@ -254,14 +254,13 @@ function SignUpPage(){
                     </div>
                 </form>                
             </div>
-            <div className='picture absolute top-[4%] right-[2.5%] bg-gray-100 text-textColor p-[0.8rem] md:p-[1rem] text-xs md:text-sm rounded-[0.7rem] hover:bg-gray-300 transition duration-300 hover:text-white' onMouseEnter={giveOpacity} onMouseLeave={removeOpacity}>
-                <span className='message'>Already have an account? </span>
-                <Link href={'/sign-in'} className='no-underline'>
+            <Link href={'/sign-in'} className='no-underline'>
+                <div className='picture cursor-pointer absolute top-[4%] right-[2.5%] bg-gray-100 text-textColor p-[0.8rem] md:p-[1rem] text-xs md:text-sm rounded-[0.7rem] hover:bg-gray-300 transition duration-300 hover:text-white' onMouseEnter={giveOpacity} onMouseLeave={removeOpacity}>
+                    <span className='message'>Already have an account? </span>
                     <button className='signUp text-blue-500'> Sign in</button> 
                     <span className='arrow text-white' style={{opacity:0}}> ➜</span>
-                </Link>
-            </div>
-
+                </div>
+            </Link>
         </div>
     )  
 }
