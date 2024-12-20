@@ -1,7 +1,6 @@
-/*@tailwind base;
+@tailwind base;
 @tailwind components;
-@tailwind utilities;*/
+@tailwind utilities;
 * {
-    font-family: "Quicksand_400Regular";
-  }
-  
+  font-family: "Quicksand_400Regular";
+}
