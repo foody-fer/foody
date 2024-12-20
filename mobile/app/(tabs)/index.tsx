@@ -5,11 +5,11 @@ import { Image } from 'react-native';
 
 
 export default function Index() {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false); 
   //modal koristimo za otvaranje novog prozora
   const [heartColor, setHeartColor] = useState('#575A4B');
   const [commentColor, setCommentColor] = useState('#575A4B');
-  //potrebno za promjenu boje srca i komentara pri kliku
+  //potrebno za promjenu boje srca i komentara pri kliku 
 
   return (
     <View style={styles.container}>
