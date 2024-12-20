@@ -5,6 +5,9 @@ export default function Feed(){
         ['Vedran Oblakovic', 'https://images.pexels.com/photos/793785/pexels-photo-793785.jpeg?auto=compress&cs=tinysrgb&w=800', 1008, 236],
         ['Ivica Ivic', 'https://images.pexels.com/photos/1640776/pexels-photo-1640776.jpeg?auto=compress&cs=tinysrgb&w=800', 22, 8],
         ['Vid Vidic', 'https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=800', 78, 25],
+        ['Peeero Vidic', 'https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=800', 78, 25],
+        ['Darko Vidic', 'https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=800', 78, 25],
+        ['Ivan Vidic', 'https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=800', 78, 25],
     ];
 
     return (
