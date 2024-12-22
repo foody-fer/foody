@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function Comments({ bool }: any) {
   const [list, setList] = useState([""]);
@@ -16,12 +17,10 @@ export default function Comments({ bool }: any) {
     <div className="flex flex-col gap-2">
       {/* WRITING */}
       <div className="flex flex-row gap-2">
-        <img
-          src="./images/user_icon.jpg"
-          alt="user pic"
-          width={28}
-          height={28}
-          className="rounded-full"
+        <FaUserCircle
+          width={30}
+          height={30}
+          className="rounded-full mt-[0.3rem]"
         />
         <form className="w-full" onSubmit={handleSubmit}>
           <input

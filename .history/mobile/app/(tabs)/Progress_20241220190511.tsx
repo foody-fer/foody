@@ -18,17 +18,24 @@ const ProgressScreen: React.FC = () => {
     "neck",
   ];
 
+  // Prevent state updates before component mounts
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
+
   const handleCategoryChange = (category: Category) => {
-    setSelectedCategory(category);
+    if (isMounted) {
+      setSelectedCategory(category);
+    }
   };
 
   return (
-    <ScrollView
-      className="flex-grow bg-[#CFE1B9] p-4"
-      contentContainerStyle={{
-        justifyContent: "space-between", // Moved layout styles here
-      }}
-    >
+    <ScrollView className="flex-grow bg-[#CFE1B9] p-4 justify-between">
       {/* Categories */}
       <View className="flex-row flex-wrap justify-center mt-4 gap-2">
         {categories.map((category) => (

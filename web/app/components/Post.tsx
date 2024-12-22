@@ -3,6 +3,7 @@ import Comments from "./Comments";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { BsSave, BsSaveFill } from "react-icons/bs";
 import { TfiCommentAlt } from "react-icons/tfi";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function Post({ name, pic, like, com }: any) {
   const [likes, setLikes] = useState(false);
@@ -27,12 +28,10 @@ export default function Post({ name, pic, like, com }: any) {
       {/* USER */}
       <div className="flex flex-row justify-between">
         <div className="flex flex-row gap-2">
-          <img
-            src="./images/user_icon.jpg"
-            alt="user pic"
-            height={40}
-            width={40}
-            className="rounded-full flex-1"
+          <FaUserCircle
+            height={500}
+            width={500}
+            className="rounded-full flex-1 w-50 h-50"
           />
           <span className="text-textColor mt-2">{name}</span>
         </div>

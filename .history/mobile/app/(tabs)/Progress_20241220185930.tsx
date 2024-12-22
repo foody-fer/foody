@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, ScrollView } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { Text } from "../../components/ui/CustomText";
@@ -18,23 +18,14 @@ const ProgressScreen: React.FC = () => {
     "neck",
   ];
 
-  const handleCategoryChange = (category: Category) => {
-    setSelectedCategory(category);
-  };
-
   return (
-    <ScrollView
-      className="flex-grow bg-[#CFE1B9] p-4"
-      contentContainerStyle={{
-        justifyContent: "space-between", // Moved layout styles here
-      }}
-    >
+    <ScrollView className="flex-grow bg-[#CFE1B9] p-4 justify-between">
       {/* Categories */}
       <View className="flex-row flex-wrap justify-center mt-4 gap-2">
         {categories.map((category) => (
           <TouchableOpacity
             key={category}
-            onPress={() => handleCategoryChange(category)}
+            onPress={() => setSelectedCategory(category)}
             className={`py-2 px-[25px] mx-0.5 my-0.5 rounded-full ${
               selectedCategory === category ? "bg-[#575A4B]" : "bg-[#718355]"
             }`}
