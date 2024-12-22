@@ -1,3 +1,3 @@
-export default function addPost(){
-    
+export default function AddPost() {
+  return <div></div>;
 }

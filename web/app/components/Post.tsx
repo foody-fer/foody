@@ -29,9 +29,9 @@ export default function Post({ name, pic, like, com }: any) {
       <div className="flex flex-row justify-between">
         <div className="flex flex-row gap-2">
           <FaUserCircle
-            height={500}
-            width={500}
-            className="rounded-full flex-1 w-50 h-50"
+            height={24}
+            width={24}
+            className="rounded-full flex-1 w-[1.5rem] h-[1.5rem] mt-2 text-gray-700"
           />
           <span className="text-textColor mt-2">{name}</span>
         </div>
@@ -68,25 +68,25 @@ export default function Post({ name, pic, like, com }: any) {
               />
             )}
             <span
-              className="mr-1 ml-1 cursor-pointer mt-[0.1rem]"
+              className="mr-1 ml-1 cursor-pointer mt-[0.1rem] hidden md:block"
               onClick={handleClick1}
             >
-              Like |
+              Like
             </span>
-            <span className="pr-2 mt-[0.1rem]">{likeNum}</span>
+            <span className="pr-2 mt-[0.1rem] ml-1 cursor-pointer">| {likeNum}</span>
           </div>
           <div className="text-textColor flex flex-row  bg-white rounded-full p-1">
             <TfiCommentAlt
               onClick={() => setComm(!comm)}
-              className="cursor-pointer text-resedaGreen h-5 w-5 mr-2 mt-[0rem] pl-1 ml-1"
+              className="cursor-pointer text-resedaGreen h-5 w-5 mr-1 mt-[0rem] pl-1 ml-1 md:mr-2"
             />
             <span
-              className="mr-1 cursor-pointer"
+              className="mr-1 cursor-pointer hidden md:block"
               onClick={() => setComm(!comm)}
             >
-              Comment |
+              Comment
             </span>
-            <span className="pr-2">{commNum}</span>
+            <span className="pr-2 ml-1 cursor-pointer">| {commNum}</span>
           </div>
         </div>
         <div
@@ -98,16 +98,16 @@ export default function Post({ name, pic, like, com }: any) {
           {!saves ? (
             <BsSave
               onClick={() => setSaves(!saves)}
-              className="cursor-pointer text-resedaGreen h-3 w-4 mr-1 mt-[0.2rem] pl-1 ml-1"
+              className="cursor-pointer text-resedaGreen h-3 w-4 mr-2 mt-[0.2rem] pl-1 ml-1 md:mr-1"
             />
           ) : (
             <BsSaveFill
               onClick={() => setSaves(!saves)}
-              className="cursor-pointer h-3 w-4 mr-1 mt-[0.2rem] pl-1 ml-1"
+              className="cursor-pointer h-3 w-4 mr-2 mt-[0.2rem] pl-1 ml-1 md:mr-1"
             />
           )}
           <span
-            className="pr-2 pl-1 cursor-pointer"
+            className="pr-2 pl-1 cursor-pointer hidden md:block"
             onClick={() => setSaves(!saves)}
           >
             Save

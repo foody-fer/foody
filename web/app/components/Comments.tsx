@@ -14,13 +14,13 @@ export default function Comments({ bool }: any) {
     if (typeof tmp2 === "string" && tmp2 != "") setList([...tmp3, tmp2]);
   };
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 text-gray-700">
       {/* WRITING */}
       <div className="flex flex-row gap-2">
         <FaUserCircle
-          width={30}
-          height={30}
-          className="rounded-full mt-[0.3rem]"
+          width={20}
+          height={20}
+          className="rounded-full mt-[0.15rem] text-gray-700 w-5 h-5"
         />
         <form className="w-full" onSubmit={handleSubmit}>
           <input
@@ -38,19 +38,17 @@ export default function Comments({ bool }: any) {
       {bool && br < 1 && (
         <div className="flex flex-col gap-1 w-full text-xs">
           {list.map((item, ind) => (
-            <div className="flex flex-row gap-3 w-full" key={ind}>
+            <div className="flex flex-row gap-3  w-full" key={ind}>
               <div>
-                <img
-                  src="./images/user_icon.jpg"
-                  alt="avatar"
-                  width={36}
-                  height={36}
-                  className="rounded-full w-9 h-9"
+                <FaUserCircle
+                  width={16}
+                  height={16}
+                  className="rounded-full mt-[0.1rem] text-gray-700 w-4 h-4"
                 />
               </div>
-              <div className="w-[80%]">
-                <span className="font-semibold w-[60%]">Anonimus</span>
-                <p>{item}</p>
+              <div className="w-[90%]">
+                <span className="font-semibold">Anonimus</span>
+                <p className="break-all">{item}</p>
               </div>
               <div>
                 <img
