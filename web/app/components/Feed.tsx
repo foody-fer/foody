@@ -1,7 +1,7 @@
 import Post from "./Post";
 
 export default function Feed(){
-    const list = [['Pero Peric', 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800', 121, 58],
+    const list = [['Pero Peric', '', 121, 58],
         ['Vedran Oblakovic', 'https://images.pexels.com/photos/793785/pexels-photo-793785.jpeg?auto=compress&cs=tinysrgb&w=800', 1008, 236],
         ['Ivica Ivic', 'https://images.pexels.com/photos/1640776/pexels-photo-1640776.jpeg?auto=compress&cs=tinysrgb&w=800', 22, 8],
         ['Vid Vidic', 'https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=800', 78, 25],
