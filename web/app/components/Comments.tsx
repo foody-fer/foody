@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function Comments({ bool }: any) {
+export default function Comments({ bool, addComm }: any) {
   const [list, setList] = useState([""]);
 
   let br = list.filter((str) => str.trim() === "").length;
@@ -12,6 +12,7 @@ export default function Comments({ bool }: any) {
     let tmp2 = tmp.get("comment") || "";
     const tmp3 = list.filter((str) => str.trim() !== "");
     if (typeof tmp2 === "string" && tmp2 != "") setList([...tmp3, tmp2]);
+    addComm()    
   };
   return (
     <div className="flex flex-col gap-2 text-gray-700">

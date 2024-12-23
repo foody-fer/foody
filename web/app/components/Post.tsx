@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Comments from "./Comments";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { BsSave, BsSaveFill } from "react-icons/bs";
 import { TfiCommentAlt } from "react-icons/tfi";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function Post({ name, pic, like, com }: any) {
+export default function Post({ name, pic, message, like, com }: any) {
   const [likes, setLikes] = useState(false);
   const [comm, setComm] = useState(true);
   const [saves, setSaves] = useState(false);
@@ -14,13 +14,18 @@ export default function Post({ name, pic, like, com }: any) {
 
   const handleClick1 = () => {
     if (likes) {
-      let tmp = likeNum - 1;
+      let tmp = like;
       setLikeNum(tmp);
     } else {
-      let tmp = likeNum + 1;
+      let tmp = like + 1;
       setLikeNum(tmp);
     }
     setLikes(!likes);
+  };
+
+  const handleComments = () => {
+    let tmp = commNum + 1;
+    setCommNum(tmp);
   };
 
   return (
@@ -40,10 +45,7 @@ export default function Post({ name, pic, like, com }: any) {
       {/* CONTENT */}
       <div className="flex flex-col gap-2">
         {pic && <img src={pic} alt="food" className="w-full rounded-md" />}
-        <span className="text-textColor">
-          Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asf
-          asf sf as fasfsafs
-        </span>
+        <span className="text-textColor">{message}</span>
       </div>
       {/* INTERACTION */}
       <div className="flex flex-row justify-between text-xs">
@@ -73,7 +75,9 @@ export default function Post({ name, pic, like, com }: any) {
             >
               Like
             </span>
-            <span className="pr-2 mt-[0.1rem] ml-1 cursor-pointer">| {likeNum}</span>
+            <span className="pr-2 mt-[0.1rem] ml-1 cursor-pointer">
+              | {likeNum}
+            </span>
           </div>
           <div className="text-textColor flex flex-row  bg-white rounded-full p-1">
             <TfiCommentAlt
@@ -115,7 +119,7 @@ export default function Post({ name, pic, like, com }: any) {
         </div>
       </div>
       {/* COMMENTS */}
-      {com && <Comments bool={comm} />}
+      <Comments bool={comm} addComm={handleComments} />
     </div>
   );
 }
