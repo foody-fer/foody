@@ -2,9 +2,22 @@ import { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import { IoCloseCircleOutline, IoCloseCircle } from "react-icons/io5";
+import {
+  IoIosCheckmarkCircleOutline,
+  IoIosCheckmarkCircle,
+} from "react-icons/io";
+
+import Post from "../../app/components/Post";
 
 export default function AddPost({ name, onNewPost }: any) {
   const [open, setOpen] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const [data, setData] = useState<any>({
+    name: "",
+    pic: "",
+    message: "",
+    description: "",
+  });
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -16,17 +29,23 @@ export default function AddPost({ name, onNewPost }: any) {
       name: name,
       pic: "https://images.pexels.com/photos/238480/pexels-photo-238480.jpeg?auto=compress&cs=tinysrgb&w=800",
       message: formVaules.message,
-      like: 0,
-      comm: 0,
-      description: formVaules.description
+      description: formVaules.description,
     };
-    onNewPost(obj);
+    setData(obj);
 
+    setConfirm(!confirm);
     setOpen(!open);
+  };
+
+  const handleConfirm = () => {
+    // send data from data to backend and publish post
+    onNewPost(data);
+    setConfirm(!confirm);
   };
 
   return (
     <div className="h-auto w-[94%] sm:w-[70%] md:w-[62%] lg:w-[46%] bg-navbarColor rounded-lg flex gap-2 justify-start items-center">
+      {/* addPost definiton */}
       <FaUserCircle
         height={37}
         width={40}
@@ -44,15 +63,15 @@ export default function AddPost({ name, onNewPost }: any) {
           onClick={() => setOpen(!open)}
         />
       </div>
-
+      {/* interactive addPost modal */}
       <form
         className={
-          "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 " +
+          "fixed inset-0 bg-black/50 backdrop-blur-sm z-30 " +
           (open ? "flex justify-center items-center" : "hidden")
         }
         onSubmit={handleSubmit}
       >
-        <div className="flex flex-col justify-around items-center gap-2 bg-resedaGreen h-[40%] w-[80%] sm:w-[60%] md:w-[48%] lg:w-[35%] rounded-lg">
+        <div className="flex flex-col justify-around items-center gap-2 bg-resedaGreen h-[320px] w-[80%] sm:w-[60%] md:w-[48%] lg:w-[35%] rounded-lg">
           <div className="flex flex-row justify-around items-center gap-20 mt-2 w-full text-white">
             <div className="opacity-0">e</div>
             <span className="font-semibold">Create new post</span>
@@ -125,6 +144,62 @@ export default function AddPost({ name, onNewPost }: any) {
           </button>
         </div>
       </form>
+      {/* interactive confirm modal */}
+      <div
+        className={
+          "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 " +
+          (confirm ? "flex justify-center items-center" : "hidden")
+        }
+      >
+        <div className="bg-resedaGreen rounded-lg py-3 m-4 flex flex-col justify-center items-center h-[auto] w-[24rem]">
+          <div className="flex flex-row justify-around items-center gap-20 w-full text-white">
+            <div className="opacity-0">e</div>
+            <span className="font-semibold">Post preview</span>
+            <div className="group">
+              <IoCloseCircleOutline className="cursor-pointer group-hover:hidden h-6 w-6" />
+              <IoCloseCircle
+                onClick={() => {
+                  setConfirm(!confirm);
+                  setOpen(!open);
+                }}
+                className="cursor-pointer h-6 w-6 hidden text-red-700 group-hover:block"
+              />
+            </div>
+          </div>
+          <div className="w-full border-s-white bg-white h-[0.01rem] mt-[0.5rem] mb-4" />
+          <div className="flex justify-center items-center w-full px-4">
+            <Post
+              name={data.name}
+              pic={data.pic}
+              message={data.message}
+              like={0}
+              com={0}
+              preview={true}
+            />
+          </div>
+          <div className="flex gap-10">
+            <button
+              onClick={handleConfirm}
+              className="group flex bg-gray-100 rounded-full px-2 py-1 hover:text-white hover:bg-green-400 transition duration-300"
+            >
+              <IoIosCheckmarkCircleOutline className="cursor-pointer mr-1 group-hover:hidden h-6 w-6" />
+              <IoIosCheckmarkCircle className="cursor-pointer h-6 w-6 hidden mr-1 text-white group-hover:block" />
+              <span className="cursor-pointer">Confirm</span>
+            </button>
+            <button
+              onClick={() => {
+                setConfirm(!confirm);
+                setOpen(!open);
+              }}
+              className="group flex bg-gray-100 rounded-full px-2 py-1 hover:text-white hover:bg-red-500 transition duration-300"
+            >
+              <IoCloseCircleOutline className="cursor-pointer mr-1 group-hover:hidden h-6 w-6" />
+              <IoCloseCircle className="cursor-pointer h-6 w-6 mr-1 hidden text-white group-hover:block" />
+              <span className="cursor-pointer">Discard</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
