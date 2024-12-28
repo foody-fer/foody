@@ -3,7 +3,7 @@ module Api::V1
     skip_before_action :authenticate_user!, only: [:create]
 
     def index
-      render json: { message: "Hello World", email: Current.user.email }, status: :ok
+      render json: UserSerializer.new(Current.user), status: :ok
     end
 
     def create
