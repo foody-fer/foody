@@ -13,7 +13,10 @@ Rails.application.routes.draw do
       resources :registrations, only: [:create]
       resources :auth, only: [:index, :create]
 
-      resources :posts, only: [:index, :create, :update, :destroy]
+      resources :posts, only: [:index, :create, :update, :destroy] do
+        resource :likes, controller: :posts_likes, only: [:create, :destroy]
+      end
     end
   end
 end
+

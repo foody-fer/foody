@@ -10,7 +10,7 @@ module Api::V1
       token = raw_token.split(" ")[1]
 
       decoded_token = JWT.decode(token, Rails.application.credentials.secret_key_base, "HS256").first
-      Current.user = User.find(decoded_token["user_id"])
+      Current.user = User.find_by(id: decoded_token["user_id"])
 
       return if Current.user.present?
 
