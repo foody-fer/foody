@@ -99,7 +99,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <div className="flex-1 mt-2 mx-10 mb-10 border border-black rounded bg-navbarColor">
+      <div className="flex-1 mt-2 mx-10 mb-10">
         {renderContent()}
       </div>
     </div>
