@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Comments from "./Comments";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { BsSave, BsSaveFill } from "react-icons/bs";
 import { TfiCommentAlt } from "react-icons/tfi";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function Post({ name, pic, like, com }: any) {
+export default function Post({ name, pic, message, like, com, preview }: any) {
   const [likes, setLikes] = useState(false);
   const [comm, setComm] = useState(true);
   const [saves, setSaves] = useState(false);
@@ -13,14 +13,21 @@ export default function Post({ name, pic, like, com }: any) {
   const [commNum, setCommNum] = useState(com);
 
   const handleClick1 = () => {
-    if (likes) {
-      let tmp = likeNum - 1;
-      setLikeNum(tmp);
-    } else {
-      let tmp = likeNum + 1;
-      setLikeNum(tmp);
+    if (!preview) {
+      if (likes) {
+        let tmp = like;
+        setLikeNum(tmp);
+      } else {
+        let tmp = like + 1;
+        setLikeNum(tmp);
+      }
+      setLikes(!likes);
     }
-    setLikes(!likes);
+  };
+
+  const handleComments = () => {
+    let tmp = commNum + 1;
+    setCommNum(tmp);
   };
 
   return (
@@ -40,10 +47,7 @@ export default function Post({ name, pic, like, com }: any) {
       {/* CONTENT */}
       <div className="flex flex-col gap-2">
         {pic && <img src={pic} alt="food" className="w-full rounded-md" />}
-        <span className="text-textColor">
-          Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asf
-          asf sf as fasfsafs
-        </span>
+        <span className="text-textColor">{message}</span>
       </div>
       {/* INTERACTION */}
       <div className="flex flex-row justify-between text-xs">
@@ -73,16 +77,22 @@ export default function Post({ name, pic, like, com }: any) {
             >
               Like
             </span>
-            <span className="pr-2 mt-[0.1rem] ml-1 cursor-pointer">| {likeNum}</span>
+            <span className="pr-2 mt-[0.1rem] ml-1 cursor-pointer">
+              | {likeNum}
+            </span>
           </div>
           <div className="text-textColor flex flex-row  bg-white rounded-full p-1">
             <TfiCommentAlt
-              onClick={() => setComm(!comm)}
+              onClick={() => {
+                !preview && setComm(!comm);
+              }}
               className="cursor-pointer text-resedaGreen h-5 w-5 mr-1 mt-[0rem] pl-1 ml-1 md:mr-2"
             />
             <span
               className="mr-1 cursor-pointer hidden md:block"
-              onClick={() => setComm(!comm)}
+              onClick={() => {
+                !preview && setComm(!comm);
+              }}
             >
               Comment
             </span>
@@ -97,25 +107,31 @@ export default function Post({ name, pic, like, com }: any) {
         >
           {!saves ? (
             <BsSave
-              onClick={() => setSaves(!saves)}
+              onClick={() => {
+                !preview && setSaves(!saves);
+              }}
               className="cursor-pointer text-resedaGreen h-3 w-4 mr-2 mt-[0.2rem] pl-1 ml-1 md:mr-1"
             />
           ) : (
             <BsSaveFill
-              onClick={() => setSaves(!saves)}
+              onClick={() => {
+                !preview && setSaves(!saves);
+              }}
               className="cursor-pointer h-3 w-4 mr-2 mt-[0.2rem] pl-1 ml-1 md:mr-1"
             />
           )}
           <span
             className="pr-2 pl-1 cursor-pointer hidden md:block"
-            onClick={() => setSaves(!saves)}
+            onClick={() => {
+              !preview && setSaves(!saves);
+            }}
           >
             Save
           </span>
         </div>
       </div>
       {/* COMMENTS */}
-      {com && <Comments bool={comm} />}
+      <Comments bool={comm} addComm={handleComments} preview={preview} />
     </div>
   );
 }
