@@ -1,7 +1,7 @@
 "use client";
 
 import Feed from "../../components/Feed";
-import AddPost from "../../components/AddPost";
+import AddPost from "../../components/addPost";
 import { useState } from "react";
 
 export default function Homepage() {

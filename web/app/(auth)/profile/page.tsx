@@ -3,12 +3,15 @@ import { Input } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Avatar from "react-avatar";
 import Feed from "../../components/Feed";
+import { useGetUser } from "~/queries/getUser";
 
 export default function ProfilePage() {
   const [name, setName] = useState("Name Surname");
   const [bio, setBio] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [selectedTab, setSelectedTab] = useState("Posts");
+
+  const userQuery = useGetUser();
 
   const toggleEdit = () => setIsEditing((prev) => !prev);
 
@@ -33,6 +36,10 @@ export default function ProfilePage() {
     }
   };
 
+  if (userQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="flex flex-col h-screen">
       <div className="p-10 mt-4">
@@ -40,8 +47,12 @@ export default function ProfilePage() {
           <Avatar
             name={name}
             round={true}
+            src={userQuery.data.avatar.replace(
+              "example.com",
+              "foody-backend.zeko.run"
+            )}
             size="55"
-            style={{ fontSize: "18px" }}
+            style={{ fontSize: "18px", objectFit: "cover" }}
           />
           <h1 className="text-3xl text-textColor">{name}</h1>
         </div>
@@ -99,9 +110,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <div className="flex-1 mt-2 mx-10 mb-10">
-        {renderContent()}
-      </div>
+      <div className="flex-1 mt-2 mx-10 mb-10">{renderContent()}</div>
     </div>
   );
 }
