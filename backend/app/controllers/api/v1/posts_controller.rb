@@ -11,7 +11,7 @@ module Api::V1
     end
 
     def create
-      post = Post.where(user: Current.user).create(post_params)
+      post = Post.where(user: Current.user).create(create_post_params)
 
       if post.save
         render json: PostSerializer.new(post), status: :created
@@ -20,10 +20,26 @@ module Api::V1
       end
     end
 
+    def show
+      post = Post.find(params[:id])
+
+      render json: PostSerializer.new(post), status: :ok
+    end
+
     def update
       post = Post.find(params[:id])
 
-      if post.update(post_params)
+      if update_post_images_params[:add_images].present?
+        post.images.attach(update_post_images_params[:add_images])
+      end
+
+      if update_post_images_params[:remove_images].present?
+        update_post_images_params[:remove_images].each do |image_id|
+          post.images.find(image_id).purge
+        end
+      end
+
+      if post.update(update_post_params)
         render json: PostSerializer.new(post), status: :ok
       else
         render json: { errors: post.errors.full_messages }, status: :unprocessable_entity
@@ -42,8 +58,16 @@ module Api::V1
 
     private
 
-    def post_params
+    def create_post_params
+      params.require(:post).permit(:content, :title, images: [])
+    end
+
+    def update_post_params
       params.require(:post).permit(:content, :title)
+    end
+
+    def update_post_images_params
+      params.require(:post).permit(add_images: [], remove_images: [])
     end
 
     def set_post

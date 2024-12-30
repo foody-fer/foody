@@ -22,18 +22,24 @@
 #
 class PostSerializer
   include Alba::Resource
+  include ImageHelper
 
   attributes :id, :title, :content, :likes_count, :comments_count, :user_saved_posts_count, :created_at, :updated_at
 
   attribute :images do |post|
-    post.images.map(&:url)
+    post.images.map do |image|
+      {
+        id: image.id,
+        url: image_url_for(image)
+      }
+    end
   end
 
   attribute :user do |post|
     {
       id: post.user.id,
       username: post.user.username,
-      avatar: post.user.avatar&.url,
+      avatar: image_url_for(post.user.avatar)
     }
   end
 end
