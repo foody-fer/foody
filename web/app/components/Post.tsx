@@ -4,6 +4,7 @@ import { BiLike, BiSolidLike } from "react-icons/bi";
 import { BsSave, BsSaveFill } from "react-icons/bs";
 import { TfiCommentAlt } from "react-icons/tfi";
 import { FaUserCircle } from "react-icons/fa";
+import ReadMore from "./ReadMore";
 
 export default function Post({ name, pic, message, like, com, preview }: any) {
   const [likes, setLikes] = useState(false);
@@ -47,7 +48,7 @@ export default function Post({ name, pic, message, like, com, preview }: any) {
       {/* CONTENT */}
       <div className="flex flex-col gap-2">
         {pic && <img src={pic} alt="food" className="w-full rounded-md" />}
-        <span className="text-textColor">{message}</span>
+        <ReadMore message={message} />
       </div>
       {/* INTERACTION */}
       <div className="flex flex-row justify-between text-xs">

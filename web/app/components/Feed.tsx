@@ -4,7 +4,7 @@ import list from "../../public/posts.json";
 
 export default function Feed({ newData }: any) {
   return (
-    <div className="w-[94%] sm:w-[70%] md:w-[62%] lg:w-[46%] h-auto bg-navbarColor rounded-lg flex flex-col justify-center items-center pt-3">
+    <div className="w-[94%] sm:w-[70%] md:w-[62%] lg:w-[46%] h-auto bg-navbarColor rounded-lg flex flex-col justify-center items-center pt-3 mb-3">
       {list.map((item, ind) => (
         <Post
           name={item[0]}

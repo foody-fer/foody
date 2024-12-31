@@ -13,7 +13,7 @@ export default function Homepage() {
 
   return (
     <div className="text-textColor bg-backgroundGreen">
-      <div className="flex flex-col gap-2 ml-60 pt-3 w-full">
+      <div className="flex flex-col gap-2 ml-[7%] sm:ml-[15%] pt-3 w-full">
         <AddPost name={"Account owner"} onNewPost={handleNewPost} />
         <Feed newData={data} />
       </div>

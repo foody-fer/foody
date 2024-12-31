@@ -94,10 +94,10 @@ export default function AddPost({ name, onNewPost }: any) {
               <span className="text-gray-300 mt-1">{name}</span>
             </div>
             <div className="flex gap-1 text-gray-700 w-[11.5rem]">
-              <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100  bg-[#ffff] border-1 border-gray-300 rounded-md w-[5rem] h-9 flex justify-center items-center">
+              <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100  bg-[#ffff] border-1 border-gray-300 rounded-md w-[5rem] h-9 flex justify-center items-center cursor-pointer">
                 <input
                   type="radio"
-                  className="opacity-0 absolute"
+                  className="opacity-0 absolute cursor-pointer"
                   name="description"
                   value="Post"
                   required
@@ -105,10 +105,10 @@ export default function AddPost({ name, onNewPost }: any) {
                 Post
               </label>
 
-              <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100 bg-[#ffff] border-1 border-gray-300 rounded-md  w-[5rem] h-9 flex justify-center items-center">
+              <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100 bg-[#ffff] border-1 border-gray-300 rounded-md  w-[5rem] h-9 flex justify-center items-center cursor-pointer">
                 <input
                   type="radio"
-                  className="opacity-0 absolute"
+                  className="opacity-0 absolute cursor-pointer"
                   name="description"
                   value="Recipes"
                   required
@@ -121,6 +121,7 @@ export default function AddPost({ name, onNewPost }: any) {
             name="message"
             placeholder="Share what's new..."
             className="bg-resedaGreen p-2 mt-[-1rem] rounded-m outline-none h-[6rem] w-full text-white break-all placeholder-white"
+            required
           />
           <label
             htmlFor="imageUpload"
@@ -148,10 +149,12 @@ export default function AddPost({ name, onNewPost }: any) {
       <div
         className={
           "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 " +
-          (confirm ? "flex justify-center items-center" : "hidden")
+          (confirm
+            ? "flex justify-center items-start overflow-y-auto scrollbar-hide"
+            : "hidden")
         }
       >
-        <div className="bg-resedaGreen rounded-lg py-3 m-4 flex flex-col justify-center items-center h-[auto] w-[24rem]">
+        <div className=" bg-resedaGreen rounded-lg py-3 m-4 flex flex-col justify-center items-center h-auto overflow-y-auto w-[24rem]">
           <div className="flex flex-row justify-around items-center gap-20 w-full text-white">
             <div className="opacity-0">e</div>
             <span className="font-semibold">Post preview</span>

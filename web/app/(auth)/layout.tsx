@@ -5,7 +5,7 @@ import { IoHomeOutline, IoBarChartOutline, IoPersonOutline, IoHome, IoBarChart, 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-backgroundGreen">
-      <aside className="w-[13%] bg-navbarColor p-2 fixed h-full ml-8 mt-3 rounded-lg">
+      <aside className="w-[13%] bg-navbarColor p-2 fixed h-full ml-3 sm:ml-8 mt-3 rounded-lg">
         <nav>
             <img src="/images/logo.png" alt="Logo" className='mt-10 mb-28'/>
 
@@ -35,7 +35,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </nav>
       </aside>
 
-      <main className='w-full ml-[23%] overflow-y-auto'>
+      <main className='w-full ml-[23%] overflow-hidden'>
         {children}
       </main>
     </div>
