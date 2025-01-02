@@ -4,7 +4,15 @@ import { BiLike, BiSolidLike } from "react-icons/bi";
 import { BsSave, BsSaveFill } from "react-icons/bs";
 import { TfiCommentAlt } from "react-icons/tfi";
 import { FaUserCircle } from "react-icons/fa";
+import { IoIosMore } from "react-icons/io";
 import ReadMore from "./ReadMore";
+import {
+  MenuRoot,
+  MenuTrigger,
+  MenuContent,
+  MenuItem,
+  Button,
+} from "@chakra-ui/react";
 
 export default function Post({ name, pic, message, like, com, preview }: any) {
   const [likes, setLikes] = useState(false);
@@ -31,6 +39,10 @@ export default function Post({ name, pic, message, like, com, preview }: any) {
     setCommNum(tmp);
   };
 
+  const handleDelete = () => {
+    // delete post
+  };
+
   return (
     <div className="h-auto w-[93%] bg-gray-100 flex flex-col gap-3 mb-4 p-2 rounded-lg">
       {/* USER */}
@@ -43,7 +55,35 @@ export default function Post({ name, pic, message, like, com, preview }: any) {
           />
           <span className="text-textColor mt-2">{name}</span>
         </div>
-        <img src="./images/more.svg" alt="" height={16} width={16} />
+
+        {preview ? (
+          <IoIosMore
+            id="dropdownMenuButton"
+            data-bs-toggle="dropdown"
+            height={16}
+            width={16}
+            className="h-6 w-6 mt-1 p-1 rounded-xl transition duration-300"
+          />
+        ) : (
+          <MenuRoot positioning={{ placement: "bottom-start" }}>
+            <MenuTrigger asChild>
+              <Button className="outline-none" size="sm">
+                <IoIosMore
+                  id="dropdownMenuButton"
+                  data-bs-toggle="dropdown"
+                  height={16}
+                  width={16}
+                  className="h-6 w-6 mt-1 p-1 rounded-xl hover:bg-gray-300 transition duration-300"
+                />
+              </Button>
+            </MenuTrigger>
+            <MenuContent className="cursor-pointer absolute right-[3%] sm:right-[14%] md:right-[20%] lg:right-[32%] z-50 mt-[2rem]">
+              <MenuItem value="new-txt" onClick={handleDelete}>
+                Delete
+              </MenuItem>
+            </MenuContent>
+          </MenuRoot>
+        )}
       </div>
       {/* CONTENT */}
       <div className="flex flex-col gap-2">

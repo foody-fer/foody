@@ -12,12 +12,19 @@ import Post from "../../app/components/Post";
 export default function AddPost({ name, onNewPost }: any) {
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [image, setImage] = useState("");
   const [data, setData] = useState<any>({
     name: "",
     pic: "",
     message: "",
     description: "",
   });
+
+  const imgUpload = (e: any) => {
+    const file = e.target.files?.[0];
+    if (file) setImage(URL.createObjectURL(file)); // stvara privremeni URL sa kojeg se ce prikazivati slika
+    console.log(file);
+  };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -128,7 +135,14 @@ export default function AddPost({ name, onNewPost }: any) {
             className="mt-[-1rem] cursor-pointer bg-navbarColor hover:bg-[#c3dfa1] transition duration-300 border-s-slate-100 w-[95%] rounded-lg py-[0.35rem] flex justify-center items-center gap-2"
           >
             <span>Add image</span>
-            <MdAddPhotoAlternate />
+            {image ? (
+              <img
+                src={image}
+                className="h-3 w-3 border-1 border-yellow-500 rounded-sm"
+              />
+            ) : (
+              <MdAddPhotoAlternate />
+            )}
           </label>
           <input
             type="file"
@@ -136,6 +150,7 @@ export default function AddPost({ name, onNewPost }: any) {
             name="image"
             accept="image/*"
             className="hidden"
+            onChange={imgUpload}
           />
           <button
             type="submit"
@@ -173,7 +188,7 @@ export default function AddPost({ name, onNewPost }: any) {
           <div className="flex justify-center items-center w-full px-4">
             <Post
               name={data.name}
-              pic={data.pic}
+              pic={image ? image : data.pic}
               message={data.message}
               like={0}
               com={0}
