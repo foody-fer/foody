@@ -20,16 +20,18 @@ export default function AuthLayout({
   const userQuery = useGetUser();
   if (userQuery.isLoading) {
     return (
-      <div className="flex min-h-screen bg-backgroundGreen">
-        <h1>Loading..</h1>
+      <div className="flex flex-col gap-1 justify-center items-center bg-backgroundGreen min-h-screen text-gray-600">
+        <div className="spinner-border border-2" role="status" />
+        <h1>Loading...</h1>
       </div>
     );
   }
 
   if (userQuery.isError || !userQuery.data) {
     return (
-      <div className="flex min-h-screen bg-backgroundGreen">
-        <h1>Erorr..</h1>
+      <div className="flex flex-col gap-1 justify-center items-center bg-backgroundGreen min-h-screen text-gray-600">
+        <div className="spinner-border border-2" role="status" />
+        <h1>Error...</h1>
       </div>
     );
   }
