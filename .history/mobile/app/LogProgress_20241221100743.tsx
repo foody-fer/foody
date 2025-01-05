@@ -34,7 +34,7 @@ export default function LogProgress() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center p-5 bg-[#CFE1B9]">
+    <View className="flex-1 justify-start items-center p-5 bg-[#CFE1B9]">
       <Text className="text-2xl mb-4 font-bold text-white text-center">
         Log Progress for {category}
       </Text>

@@ -34,21 +34,27 @@ export default function LogProgress() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center p-5 bg-[#CFE1B9]">
-      <Text className="text-2xl mb-4 font-bold text-white text-center">
+    <View className="flex-1 justify-start items-center p-6 bg-[#CFE1B9]">
+      {/* Header */}
+      <Text className="text-2xl font-bold text-[#373737] mb-8 text-center">
         Log Progress for {category}
       </Text>
+
+      {/* Value Input */}
       <TextInput
-        className="h-10 border border-[#718355] rounded-full px-4 w-72 mb-4 bg-white"
+        className="h-12 border border-[#718355] rounded-full px-4 w-[85%] mb-6 bg-white text-[#373737]"
         placeholder="Enter value"
+        placeholderTextColor="#A9A9A9"
         keyboardType="numeric"
         value={value}
         onChangeText={setValue}
       />
-      <View className="w-72 border border-[#718355] rounded-full h-20 overflow-hidden mb-4 bg-white justify-center">
+
+      {/* Unit Picker */}
+      <View className="w-[85%] border border-[#718355] rounded-full overflow-hidden bg-white mb-6">
         <Picker
           selectedValue={unit}
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: 48 }}
           onValueChange={(itemValue) => setUnit(itemValue)}
         >
           <Picker.Item label="cm" value="cm" />
@@ -58,28 +64,31 @@ export default function LogProgress() {
           <Picker.Item label="lbs" value="lbs" />
         </Picker>
       </View>
-      <View className="items-center mb-4 w-[90%]">
-        <Text className="text-sm text-[#718355] mb-2 bg-white py-1 px-4 rounded-full">
-          {date.toLocaleDateString()}
-        </Text>
+
+      {/* Date Picker */}
+      <View className="items-center w-[85%] mb-6">
         <TouchableOpacity
-          className="bg-[#718355] py-2 px-5 rounded-full"
+          className="bg-white py-3 px-4 rounded-full mb-2 w-full"
           onPress={() => setShowDatePicker(true)}
         >
-          <Text className="text-white font-bold">Change Date</Text>
+          <Text className="text-[#718355] font-bold text-center">
+            {date.toLocaleDateString()}
+          </Text>
         </TouchableOpacity>
+        {showDatePicker && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display={Platform.OS === "ios" ? "inline" : "default"}
+            onChange={handleDateChange}
+          />
+        )}
       </View>
-      {showDatePicker && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          display={Platform.OS === "ios" ? "inline" : "default"}
-          onChange={handleDateChange}
-        />
-      )}
-      <View className="mt-4 w-[70%]">
+
+      {/* Submit Button */}
+      <View className="w-[85%]">
         <TouchableOpacity
-          className="bg-[#718355] py-2 px-4 rounded-full items-center"
+          className="bg-[#718355] py-3 px-4 rounded-full items-center"
           onPress={handleSubmit}
         >
           <Text className="text-white text-lg font-bold">Submit Progress</Text>

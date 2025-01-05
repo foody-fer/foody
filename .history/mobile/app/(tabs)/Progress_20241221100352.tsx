@@ -26,7 +26,7 @@ const ProgressScreen: React.FC = () => {
     <SafeAreaView className="flex-1 bg-[#CFE1B9]">
       <View className="flex-1 flex-col">
         {/* Spacer for Header */}
-        <View className="h-[3%]" />
+        <View className="h-[2%]" />
 
         {/* Categories Section */}
         <View className="flex items-center">
@@ -65,7 +65,7 @@ const ProgressScreen: React.FC = () => {
         </View>
 
         {/* Spacer between Categories and Graph */}
-        <View className="h-[1%]" />
+        <View className="h-[2%]" />
 
         {/* Graph Section */}
         <View className="h-[40%] items-center justify-center">

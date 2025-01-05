@@ -25,11 +25,8 @@ const ProgressScreen: React.FC = () => {
   return (
     <SafeAreaView className="flex-1 bg-[#CFE1B9]">
       <View className="flex-1 flex-col">
-        {/* Spacer for Header */}
-        <View className="h-[3%]" />
-
         {/* Categories Section */}
-        <View className="flex items-center">
+        <View className="h-[20%]">
           <ScrollView
             contentContainerStyle={{
               justifyContent: "center",
@@ -63,9 +60,6 @@ const ProgressScreen: React.FC = () => {
             </View>
           </ScrollView>
         </View>
-
-        {/* Spacer between Categories and Graph */}
-        <View className="h-[1%]" />
 
         {/* Graph Section */}
         <View className="h-[40%] items-center justify-center">
@@ -106,12 +100,6 @@ const ProgressScreen: React.FC = () => {
           >
             <View className="bg-white w-[130px] py-4 rounded-lg items-center">
               {[
-                { value: "24 cm", date: "15.3.2025" },
-                { value: "30 cm", date: "20.5.2025" },
-                { value: "24 cm", date: "15.3.2025" },
-                { value: "30 cm", date: "20.5.2025" },
-                { value: "24 cm", date: "15.3.2025" },
-                { value: "30 cm", date: "20.5.2025" },
                 { value: "24 cm", date: "15.3.2025" },
                 { value: "30 cm", date: "20.5.2025" },
               ].map((entry, index) => (
