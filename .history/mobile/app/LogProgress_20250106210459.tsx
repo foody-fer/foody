@@ -46,7 +46,7 @@ export default function LogProgress() {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View className="flex-1 justify-center items-center p-5 bg-[#CFE1B9] h-[60%] w-auto">
+      <View className="flex-1 justify-center items-center p-5 bg-[#CFE1B9]">
         <Text className="text-2xl mb-4 font-bold text-[#575a4b] text-center">
           {category}
         </Text>
@@ -56,10 +56,7 @@ export default function LogProgress() {
           keyboardType="numeric"
           value={value}
           onChangeText={setValue}
-          onBlur={() => {
-            Keyboard.dismiss();
-            console.log("Blur triggered");
-          }} // Ensures keyboard dismisses on blur
+          onBlur={() => console.log("Blur triggered")}
         />
 
         <View className="items-center mb-4 w-72 h-10">

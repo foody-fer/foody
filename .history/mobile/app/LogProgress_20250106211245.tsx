@@ -46,7 +46,7 @@ export default function LogProgress() {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View className="flex-1 justify-center items-center p-5 bg-[#CFE1B9] h-[60%] w-auto">
+      <View className="flex-1 justify-center items-center p-5 bg-[#CFE1B9]">
         <Text className="text-2xl mb-4 font-bold text-[#575a4b] text-center">
           {category}
         </Text>
