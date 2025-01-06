@@ -1,4 +1,5 @@
 import { Text } from "@/components/ui/CustomText";
+import Logo from "@/components/ui/Logo";
 import React from "react";
 import { View, TouchableOpacity, Image } from "react-native";
 
@@ -6,16 +7,8 @@ const api = ""; // backend
 
 function Login({ disabled }: { disabled: boolean }) {
   return (
-    <View className="flex-1 justify-center items-center bg-[#cfe1b9] p-5">
-      <View className="items-center">
-        <Image
-          source={require("../images/logo.png")}
-          style={{ width: 150, height: 150 }} // Precizne dimenzije za logo
-          resizeMode="contain"
-          alt="Logo"
-        />
-      </View>
-
+    <View className="flex-1 items-center justify-center bg-[#cfe1b9] p-5">
+      <Logo></Logo>
       <TouchableOpacity
         onPress={() => {
           if (!disabled)

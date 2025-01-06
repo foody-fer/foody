@@ -6,16 +6,15 @@ const api = ""; // backend
 
 function Login({ disabled }: { disabled: boolean }) {
   return (
-    <View className="flex-1 justify-center items-center bg-[#cfe1b9] p-5">
-      <View className="items-center">
+    <View className="flex-1 items-center justify-center bg-[#cfe1b9] p-5">
+      <View className="items-center mb-8">
         <Image
           source={require("../images/logo.png")}
-          style={{ width: 150, height: 150 }} // Precizne dimenzije za logo
+          style={{ width: 100, height: 100 }} // Precizne dimenzije za logo
           resizeMode="contain"
           alt="Logo"
         />
       </View>
-
       <TouchableOpacity
         onPress={() => {
           if (!disabled)

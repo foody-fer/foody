@@ -93,17 +93,20 @@ export default function Index() {
               style={styles.icon}
             />
           </TouchableOpacity>
+
+          <TouchableOpacity
+            className="py-3 px-14 rounded-full bg-[#718355]"
+            onPress={() =>
+              router.push({
+                pathname: "/Login",
+              })
+            }
+          >
+            <Text className="text-white text-[16px] font-bold">
+              Log Progress
+            </Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          className="py-3 px-14 rounded-full bg-[#718355]"
-          onPress={() =>
-            router.push({
-              pathname: "/Login",
-            })
-          }
-        >
-          <Text className="text-white text-[16px] font-bold">Login Page</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );

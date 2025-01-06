@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Modal, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "react-native";
-import { useRouter } from "expo-router";
 
 export default function Index() {
-  const router = useRouter();
-
   const [modalVisible, setModalVisible] = useState(false);
   //modal koristimo za otvaranje novog prozora
   const [heartColor, setHeartColor] = useState("#575A4B");
@@ -59,7 +56,7 @@ export default function Index() {
 
         <View style={styles.middleSection}>
           <Image
-            source={require("../../images/objava1.jpg")}
+            source={{ uri: "../../images/objava1.jpg" }}
             style={styles.image}
           />
         </View>
@@ -94,16 +91,6 @@ export default function Index() {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          className="py-3 px-14 rounded-full bg-[#718355]"
-          onPress={() =>
-            router.push({
-              pathname: "/Login",
-            })
-          }
-        >
-          <Text className="text-white text-[16px] font-bold">Login Page</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );

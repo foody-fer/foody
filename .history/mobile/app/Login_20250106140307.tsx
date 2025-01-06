@@ -6,7 +6,7 @@ const api = ""; // backend
 
 function Login({ disabled }: { disabled: boolean }) {
   return (
-    <View className="flex-1 justify-center items-center bg-[#cfe1b9] p-5">
+    <View className="flex-1 items-center justify-center bg-[#cfe1b9] p-5">
       <View className="items-center">
         <Image
           source={require("../images/logo.png")}
