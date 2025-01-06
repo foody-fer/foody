@@ -6,13 +6,13 @@ import {
   IoIosCheckmarkCircleOutline,
   IoIosCheckmarkCircle,
 } from "react-icons/io";
-
 import Post from "../../app/components/Post";
+
 
 export default function AddPost({ name, onNewPost }: any) {
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const [image, setImage] = useState("");
+  const [images, setImages] = useState<any>("");
   const [data, setData] = useState<any>({
     name: "",
     pic: "",
@@ -20,25 +20,37 @@ export default function AddPost({ name, onNewPost }: any) {
     description: "",
   });
 
+  const maxFiles = 5;
+
   const imgUpload = (e: any) => {
-    const file = e.target.files?.[0];
-    if (file) setImage(URL.createObjectURL(file)); // stvara privremeni URL sa kojeg se ce prikazivati slika
-    console.log(file);
+    const selectedFiles = e.target.files;
+    
+    if (selectedFiles.length > maxFiles) {
+      alert(`You can select maximum of ${maxFiles} images.`);
+      e.target.value = null; // Resetiraj input
+    } else {
+      let img = "";
+      for(let i = 0; i < selectedFiles.length; i++){
+        let file = e.target.files[i]
+        img += URL.createObjectURL(file) + "$$$$"     
+      }
+      
+      setImages(img)
+    }    
   };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
+    
     const form = new FormData(e.target);
     const formVaules = Object.fromEntries(form.entries());
-
-    const obj = {
+    
+    setData({
       name: name,
-      pic: "https://images.pexels.com/photos/238480/pexels-photo-238480.jpeg?auto=compress&cs=tinysrgb&w=800",
+      pic: images ? images : "$$$$",
       message: formVaules.message,
       description: formVaules.description,
-    };
-    setData(obj);
+    });
 
     setConfirm(!confirm);
     setOpen(!open);
@@ -51,7 +63,7 @@ export default function AddPost({ name, onNewPost }: any) {
   };
 
   return (
-    <div className="h-auto w-[94%] sm:w-[70%] md:w-[62%] lg:w-[46%] bg-navbarColor rounded-lg flex gap-2 justify-start items-center">
+    <div className="h-auto w-[94%] sm:w-[70%] md:w-[62%] lg:w-[46%] bg-navbarColor rounded-lg flex gap-2 justify-start items-center py-2">
       {/* addPost definiton */}
       <FaUserCircle
         height={37}
@@ -135,9 +147,9 @@ export default function AddPost({ name, onNewPost }: any) {
             className="mt-[-1rem] cursor-pointer bg-navbarColor hover:bg-[#c3dfa1] transition duration-300 border-s-slate-100 w-[95%] rounded-lg py-[0.35rem] flex justify-center items-center gap-2"
           >
             <span>Add image</span>
-            {image ? (
+            {images.length != 0 ? (
               <img
-                src={image}
+                src={images.split("$$$$")[0]}
                 className="h-3 w-3 border-1 border-yellow-500 rounded-sm"
               />
             ) : (
@@ -151,6 +163,7 @@ export default function AddPost({ name, onNewPost }: any) {
             accept="image/*"
             className="hidden"
             onChange={imgUpload}
+            multiple
           />
           <button
             type="submit"
@@ -179,6 +192,7 @@ export default function AddPost({ name, onNewPost }: any) {
                 onClick={() => {
                   setConfirm(!confirm);
                   setOpen(!open);
+                  setImages("")
                 }}
                 className="cursor-pointer h-6 w-6 hidden text-red-700 group-hover:block"
               />
@@ -188,7 +202,7 @@ export default function AddPost({ name, onNewPost }: any) {
           <div className="flex justify-center items-center w-full px-4">
             <Post
               name={data.name}
-              pic={image ? image : data.pic}
+              pic={data.pic}
               message={data.message}
               like={0}
               com={0}
@@ -208,6 +222,7 @@ export default function AddPost({ name, onNewPost }: any) {
               onClick={() => {
                 setConfirm(!confirm);
                 setOpen(!open);
+                setImages("")
               }}
               className="group flex bg-gray-100 rounded-full px-2 py-1 hover:text-white hover:bg-red-500 transition duration-300"
             >

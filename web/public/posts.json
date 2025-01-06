@@ -2,7 +2,7 @@
     ["Pero Peric", "", "Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asfasf sf as fasfsafs", 121, 58],
     [
       "Vedran Oblakovic",
-      "https://images.pexels.com/photos/793785/pexels-photo-793785.jpeg?auto=compress&cs=tinysrgb&w=800",
+      ["https://images.pexels.com/photos/793785/pexels-photo-793785.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1196516/pexels-photo-1196516.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1630588/pexels-photo-1630588.jpeg?auto=compress&cs=tinysrgb&w=800"],
       "Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asfasf sf as fasfsafs",
       1008,
       236
@@ -23,21 +23,21 @@
     ],
     [
       "Peeero Vidic",
-      "https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/361184/asparagus-steak-veal-steak-veal-361184.jpeg?auto=compress&cs=tinysrgb&w=800",
       "Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asfasf sf as fasfsafs Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asfasf sf as fasfsafs Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asfasf sf as fasfsafs",
       78,
       25
     ],
     [
       "Darko Vidic",
-      "https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/3679973/pexels-photo-3679973.jpeg?auto=compress&cs=tinysrgb&w=800",
       "Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asfasf sf as fasfsafs",
       78,
       25
     ],
     [
       "Ivan Vidic",
-      "https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/842571/pexels-photo-842571.jpeg?auto=compress&cs=tinysrgb&w=800",
       "Ovdje ide tekst post-a sdass sd as da s ss ssssadfas fasasfasfa asfasf sf as fasfsafs",
       78,
       25

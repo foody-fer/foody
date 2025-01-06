@@ -82,7 +82,7 @@ export default function AuthLayout({
         </nav>
       </aside>
 
-      <main className="w-full ml-[23%] overflow-hidden">{children}</main>
+      <main className="w-full ml-[23%] overflow-x-hidden">{children}</main>
     </div>
   );
 }
