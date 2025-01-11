@@ -35,7 +35,6 @@ const ProgressScreen: React.FC = () => {
 
   const handleCategoryChange = (category: Category) => {
     setSelectedCategory(category);
-    setValue("");
   };
 
   const dismissKeyboard = () => {
@@ -161,24 +160,19 @@ const ProgressScreen: React.FC = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View className="flex-1 justify-center items-center p-5 bg-black/50 bg-opacity-50 text-center">
-            <View className="bg-white rounded-3xl p-6 w-4/5">
+          <View className="flex-1 justify-center items-center p-5 bg-black/50 bg-opacity-50">
+            <View className="bg-white rounded-xl p-6 w-4/5">
               <Text className="text-2xl mb-4 font-bold text-[#575a4b] text-center">
                 {selectedCategory}
               </Text>
-              <View className="flex-row items-center h-10 border border-[#718355] rounded-full px-4 bg-white mb-4">
-                <TextInput
-                  className="flex-1 h-full pr-2"
-                  placeholder="Enter value"
-                  keyboardType="numeric"
-                  value={value}
-                  onChangeText={setValue}
-                />
-                <Text className="text-[#718355] text-lg">
-                  {selectedCategory === "weight" ? "kg" : "cm"}
-                </Text>
-              </View>
-              <View className="items-center mb-4 w-full h-10">
+              <TextInput
+                className="h-10 border border-[#718355] rounded-full px-4 w-full mb-4 bg-white"
+                placeholder="Enter value"
+                keyboardType="numeric"
+                value={value}
+                onChangeText={setValue}
+              />
+              <View className="items-center mb-4 w-72 h-10">
                 <TouchableOpacity
                   onPress={() => setShowDatePicker(true)}
                   className="w-full"
@@ -200,7 +194,7 @@ const ProgressScreen: React.FC = () => {
                 />
               )}
               <TouchableOpacity
-                className="bg-[#718355] py-2 px-4 rounded-full items-center w-3/4 self-center"
+                className="bg-[#718355] py-2 px-4 rounded-full items-center w-50"
                 onPress={() => setModalVisible(false)}
               >
                 <Text className="text-white font-bold text-lg">

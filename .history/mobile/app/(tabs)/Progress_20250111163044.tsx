@@ -35,7 +35,6 @@ const ProgressScreen: React.FC = () => {
 
   const handleCategoryChange = (category: Category) => {
     setSelectedCategory(category);
-    setValue("");
   };
 
   const dismissKeyboard = () => {
@@ -162,7 +161,7 @@ const ProgressScreen: React.FC = () => {
       >
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <View className="flex-1 justify-center items-center p-5 bg-black/50 bg-opacity-50 text-center">
-            <View className="bg-white rounded-3xl p-6 w-4/5">
+            <View className="bg-white rounded-xl p-6 w-4/5">
               <Text className="text-2xl mb-4 font-bold text-[#575a4b] text-center">
                 {selectedCategory}
               </Text>

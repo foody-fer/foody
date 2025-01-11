@@ -8,13 +8,10 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
-  Platform,
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { Text } from "../../components/ui/CustomText";
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+
 type Category = "weight" | "waist" | "thighs" | "hips" | "arms" | "neck";
 
 const ProgressScreen: React.FC = () => {
@@ -22,7 +19,6 @@ const ProgressScreen: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false); // For modal visibility
   const [value, setValue] = useState("");
   const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const categories: Category[] = [
     "weight",
@@ -35,21 +31,10 @@ const ProgressScreen: React.FC = () => {
 
   const handleCategoryChange = (category: Category) => {
     setSelectedCategory(category);
-    setValue("");
   };
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
-  };
-
-  const handleDateChange = (
-    event: DateTimePickerEvent,
-    selectedDate?: Date
-  ) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
   };
 
   return (
@@ -161,46 +146,28 @@ const ProgressScreen: React.FC = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View className="flex-1 justify-center items-center p-5 bg-black/50 bg-opacity-50 text-center">
-            <View className="bg-white rounded-3xl p-6 w-4/5">
+          <View className="flex-1 justify-center items-center p-5 bg-black bg-opacity-50">
+            <View className="bg-white rounded-xl p-6 w-4/5">
               <Text className="text-2xl mb-4 font-bold text-[#575a4b] text-center">
                 {selectedCategory}
               </Text>
-              <View className="flex-row items-center h-10 border border-[#718355] rounded-full px-4 bg-white mb-4">
-                <TextInput
-                  className="flex-1 h-full pr-2"
-                  placeholder="Enter value"
-                  keyboardType="numeric"
-                  value={value}
-                  onChangeText={setValue}
-                />
-                <Text className="text-[#718355] text-lg">
-                  {selectedCategory === "weight" ? "kg" : "cm"}
-                </Text>
-              </View>
-              <View className="items-center mb-4 w-full h-10">
-                <TouchableOpacity
-                  onPress={() => setShowDatePicker(true)}
-                  className="w-full"
-                >
-                  <Text className="text-center text-lg text-[#718355] mb-2 bg-white py-1 px-4 rounded-full h-10 border border-[#718355]">
-                    {date.toLocaleDateString()}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {showDatePicker && (
-                <DateTimePicker
-                  key={
-                    Platform.OS === "android" ? date.toISOString() : undefined
-                  }
-                  value={date}
-                  mode="date"
-                  display={Platform.OS === "ios" ? "inline" : "default"}
-                  onChange={handleDateChange}
-                />
-              )}
+              <TextInput
+                className="h-10 border border-[#718355] rounded-full px-4 w-full mb-4 bg-white"
+                placeholder="Enter value"
+                keyboardType="numeric"
+                value={value}
+                onChangeText={setValue}
+              />
               <TouchableOpacity
-                className="bg-[#718355] py-2 px-4 rounded-full items-center w-3/4 self-center"
+                className="mb-4"
+                onPress={() => setDate(new Date())}
+              >
+                <Text className="text-lg text-center">
+                  {date.toDateString()}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="bg-[#718355] py-2 px-4 rounded-full items-center w-full"
                 onPress={() => setModalVisible(false)}
               >
                 <Text className="text-white font-bold text-lg">

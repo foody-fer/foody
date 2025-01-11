@@ -35,7 +35,6 @@ const ProgressScreen: React.FC = () => {
 
   const handleCategoryChange = (category: Category) => {
     setSelectedCategory(category);
-    setValue("");
   };
 
   const dismissKeyboard = () => {
@@ -162,22 +161,17 @@ const ProgressScreen: React.FC = () => {
       >
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <View className="flex-1 justify-center items-center p-5 bg-black/50 bg-opacity-50 text-center">
-            <View className="bg-white rounded-3xl p-6 w-4/5">
+            <View className="bg-white rounded-xl p-6 w-4/5">
               <Text className="text-2xl mb-4 font-bold text-[#575a4b] text-center">
                 {selectedCategory}
               </Text>
-              <View className="flex-row items-center h-10 border border-[#718355] rounded-full px-4 bg-white mb-4">
-                <TextInput
-                  className="flex-1 h-full pr-2"
-                  placeholder="Enter value"
-                  keyboardType="numeric"
-                  value={value}
-                  onChangeText={setValue}
-                />
-                <Text className="text-[#718355] text-lg">
-                  {selectedCategory === "weight" ? "kg" : "cm"}
-                </Text>
-              </View>
+              <TextInput
+                className="h-10 border border-[#718355] rounded-full px-4 w-full mb-4 bg-white"
+                placeholder="Enter value"
+                keyboardType="numeric"
+                value={value}
+                onChangeText={setValue}
+              />
               <View className="items-center mb-4 w-full h-10">
                 <TouchableOpacity
                   onPress={() => setShowDatePicker(true)}
