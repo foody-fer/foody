@@ -12,6 +12,16 @@ import { Button, ButtonText } from "@/components/ui/button";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "@/components/ui/CustomText";
+import { apiCall } from ".";
+import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "@/components/ui/spinner";
+
+const useUser = () => {
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: () => apiCall("/auth"),
+  });
+};
 
 export default function ProfileScreen() {
   let fonts = useFonts({
@@ -24,6 +34,8 @@ export default function ProfileScreen() {
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+
+  const { data, isLoading, error } = useUser();
 
   const [posts, setPosts] = useState([
     { name: "Post 1", id: "1" },
@@ -97,19 +109,27 @@ export default function ProfileScreen() {
     }
   };
 
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return <Text>Error</Text>;
+  }
+
   return (
     <View className="flex-1 bg-teagreen">
       <View className="p-10">
         <HStack space="xl" className="items-center">
           <Avatar className="bg-resedagreen">
-            {profilePicture ? (
+            {data.avatar ? (
               <AvatarImage
-                source={{ uri: profilePicture }}
+                source={{ uri: data.avatar }}
                 className="w-full h-full"
               />
             ) : (
               <AvatarFallbackText className="font-quicksand">
-                {name}
+                {data.name}
               </AvatarFallbackText>
             )}
           </Avatar>
@@ -137,6 +157,10 @@ export default function ProfileScreen() {
             className="text-jet"
           />
         </HStack>
+
+        <Text className="text-jet text-2xl font-quicksand">
+          {data.first_name}
+        </Text>
 
         <View className="flex-row mt-10 items-center">
           {isEditingBio ? (
