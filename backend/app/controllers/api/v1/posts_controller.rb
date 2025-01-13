@@ -16,7 +16,7 @@ module Api::V1
       if post.save
         render json: PostSerializer.new(post), status: :created
       else
-        render json: { errors: post.errors.full_messages }, status: :unprocessable_entity
+        render json: { errors: format_errors(post) }, status: :unprocessable_entity
       end
     end
 
@@ -42,7 +42,7 @@ module Api::V1
       if post.update(update_post_params)
         render json: PostSerializer.new(post), status: :ok
       else
-        render json: { errors: post.errors.full_messages }, status: :unprocessable_entity
+        render json: { errors: format_errors(post) }, status: :unprocessable_entity
       end
     end
 
@@ -52,7 +52,7 @@ module Api::V1
       if post.destroy
         render json: { message: "Post deleted" }, status: :ok
       else
-        render json: { errors: post.errors.full_messages }, status: :unprocessable_entity
+        render json: { errors: format_errors(post) }, status: :unprocessable_entity
       end
     end
 

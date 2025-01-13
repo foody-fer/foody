@@ -2,6 +2,16 @@ module Api::V1
   class ApiController < ApplicationController
     before_action :authenticate_user!
 
+    private
+
+    def format_errors(model)
+      model.errors.to_a.reduce({}) do |acc, (attribute, message)|
+        acc[attribute] ||= []
+        acc[attribute] << message
+        acc
+      end
+    end
+
     def authenticate_user!
       raw_token = request.headers["Authorization"]
       return render json: { error: "Unauthorized", message: "Token is missing" }, status: :unauthorized if raw_token.blank?
