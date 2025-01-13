@@ -31,4 +31,14 @@ class Post < ApplicationRecord
 
   validates :title, presence: true
   validates :content, presence: true
+
+  def liked_by_current_user
+    return @liked_by_current_user unless @liked_by_current_user.nil?
+
+    @liked_by_current_user = likes.where(user: Current.user).exists?
+  end
+
+  def liked_by_current_user=(value)
+    @liked_by_current_user = value
+  end
 end

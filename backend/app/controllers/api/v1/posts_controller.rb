@@ -4,8 +4,10 @@ module Api::V1
     before_action :authorize_user, only: [:update, :destroy]
 
     def index
-      posts = Post.includes(:user)
-                  .order(created_at: :desc)
+      posts = Post.includes(:user, images_attachments: :blob).order(created_at: :desc).load_async
+      user_likes = Current.user.likes.pluck(:post_id)
+
+      posts.each { |post| post.liked_by_current_user = user_likes.include?(post.id) }
 
       render json: PostSerializer.new(posts), status: :ok
     end

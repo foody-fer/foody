@@ -5,9 +5,9 @@ module Api::V1
     private
 
     def format_errors(model)
-      model.errors.to_a.reduce({}) do |acc, (attribute, message)|
-        acc[attribute] ||= []
-        acc[attribute] << message
+      model.errors.reduce({}) do |acc, error|
+        acc[error.attribute] ||= []
+        acc[error.attribute] << error.message
         acc
       end
     end

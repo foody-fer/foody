@@ -24,7 +24,7 @@ class PostSerializer
   include Alba::Resource
   include ImageHelper
 
-  attributes :id, :title, :content, :likes_count, :comments_count, :user_saved_posts_count, :created_at, :updated_at
+  attributes :id, :title, :content, :likes_count, :comments_count, :user_saved_posts_count, :liked_by_current_user, :created_at, :updated_at
 
   attribute :images do |post|
     post.images.map do |image|
