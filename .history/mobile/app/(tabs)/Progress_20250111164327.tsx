@@ -189,18 +189,28 @@ const ProgressScreen: React.FC = () => {
                 </TouchableOpacity>
               </View>
               {showDatePicker && (
-                <DateTimePicker
-                  key={
-                    Platform.OS === "android" ? date.toISOString() : undefined
-                  }
-                  value={date}
-                  mode="date"
-                  display="default" // Default display to show as a modal
-                  onChange={(event, selectedDate) => {
-                    setShowDatePicker(false); // Hide picker after selection
-                    if (selectedDate) setDate(selectedDate); // Set the selected date
+                <View
+                  style={{
+                    width: "70%", // Adjust the width as needed
+                    alignSelf: "center", // Center it horizontally
+                    backgroundColor: "white", // Optional background for better visibility
+                    borderRadius: 10, // Rounded corners
+                    padding: 10, // Add padding for spacing
                   }}
-                />
+                >
+                  <DateTimePicker
+                    key={
+                      Platform.OS === "android" ? date.toISOString() : undefined
+                    }
+                    value={date}
+                    mode="date"
+                    display={Platform.OS === "ios" ? "compact" : "default"} // Use 'compact' on iOS for a smaller picker
+                    onChange={handleDateChange}
+                    style={{
+                      alignSelf: "center", // Center the picker itself
+                    }}
+                  />
+                </View>
               )}
 
               <TouchableOpacity
