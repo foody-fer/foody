@@ -12,7 +12,23 @@ import { Text } from "@/components/ui/CustomText";
 const api = process.env.BACKEND_URL || "https://foody-backend.zeko.run/api/v1"; // Dynamically fetch backend URL
 
 function Login() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
+  const { login } = useAuth(); // Use login function from Auth Context
+
+  const handleOAuthLogin = async (provider: string) => {
+    if (loading) return;
+
+    try {
+      setLoading(true);
+      const authUrl = `${api}/auth`;
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error("Login error:", error);
+      Alert.alert("Error", "Failed to initiate login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = () => {
     console.log("google login");

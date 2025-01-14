@@ -12,14 +12,23 @@ import { Text } from "@/components/ui/CustomText";
 const api = process.env.BACKEND_URL || "https://foody-backend.zeko.run/api/v1"; // Dynamically fetch backend URL
 
 function Login() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
+  const { login } = useAuth(); // Use login function from Auth Context
 
-  const handleGoogleLogin = () => {
-    console.log("google login");
-  };
+  const handleOAuthLogin = async (provider: string) => {
+    if (loading) return;
 
-  const handleGithubLogin = () => {
-    console.log("github login");
+    try {
+      setLoading(true);
+      const authUrl = `${api}/oauth2/authorization/${provider}`;
+      // Redirect user to the authentication URL
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error("Login error:", error);
+      Alert.alert("Error", "Failed to initiate login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,7 +48,7 @@ function Login() {
         <>
           {/* Google Login */}
           <TouchableOpacity
-            onPress={() => handleGoogleLogin()}
+            onPress={() => handleOAuthLogin("google")}
             className="flex-row items-center justify-center rounded-full py-4 px-8 my-2 opacity-100 bg-[#718355] border-[#718355] border-2"
           >
             <View className="flex-row items-center">
@@ -55,7 +64,7 @@ function Login() {
 
           {/* GitHub Login */}
           <TouchableOpacity
-            onPress={() => handleGithubLogin()}
+            onPress={() => handleOAuthLogin("github")}
             className="flex-row items-center justify-center rounded-full py-4 px-8 my-2 opacity-100 bg-[#718355] border-[#718355] border-2"
           >
             <View className="flex-row items-center">

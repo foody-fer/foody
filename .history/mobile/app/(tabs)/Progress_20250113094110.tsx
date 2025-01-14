@@ -158,6 +158,18 @@ const ProgressScreen: React.FC = () => {
             </View>
           </ScrollView>
         </View>
+        <View className="absolute left-0 right-0 items-center">
+          <TouchableOpacity
+            className="py-3 px-14 rounded-full bg-[#718355]"
+            onPress={() =>
+              router.push({
+                pathname: "/Login",
+              })
+            }
+          >
+            <Text className="text-white text-[16px] font-bold">Login Page</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Modal for Log Progress */}
@@ -223,30 +235,8 @@ const ProgressScreen: React.FC = () => {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Fixed Log Progress Button 
+      {/* Fixed Log Progress Button */}
       <View className="absolute bottom-5 left-0 right-0 items-center">
-        <TouchableOpacity
-          className="py-3 px-14 rounded-full bg-[#718355]"
-          onPress={() => setModalVisible(true)}
-        >
-          <Text className="text-white text-[16px] font-bold">Log Progress</Text>
-        </TouchableOpacity>
-      </View>*/}
-      {/* Buttons Section */}
-      <View className="absolute bottom-5 left-0 right-0 items-center">
-        {/* Login Button */}
-        <TouchableOpacity
-          className="py-3 px-14 rounded-full bg-[#718355] mb-4"
-          onPress={() =>
-            router.push({
-              pathname: "/Login",
-            })
-          }
-        >
-          <Text className="text-white text-[16px] font-bold">Login Page</Text>
-        </TouchableOpacity>
-
-        {/* Log Progress Button */}
         <TouchableOpacity
           className="py-3 px-14 rounded-full bg-[#718355]"
           onPress={() => setModalVisible(true)}
