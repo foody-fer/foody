@@ -1,9 +1,110 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "@/components/ui/CustomText";
+import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "@/components/ui/spinner";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Button } from "@/components/ui/button";
+
+export const apiCall = async (url: string, options: RequestInit = {}) => {
+  const token = await AsyncStorage.getItem("token");
+  const res = await fetch(`https://foody-backend.zeko.run/api/v1${url}`, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (res.status === 401) {
+    await AsyncStorage.removeItem("token");
+  }
+
+  if (res.ok) {
+    return res.json();
+  }
+
+  throw await res.text();
+};
+
+const Post = ({
+  user,
+  content,
+  images,
+  likes,
+  likedByCurrentUser,
+  likePost,
+}: {
+  user: { username: string; avatar: string | null };
+  content: string;
+  images: { id: number; url: string }[];
+  likes: number;
+  likedByCurrentUser: boolean;
+  likePost: () => void;
+}) => {
+  return (
+    <View style={styles.postView}>
+      <View style={styles.topSection}>
+        {user.avatar ? (
+          <Image
+            source={{ uri: user.avatar }}
+            style={{ width: 30, height: 30, borderRadius: 15 }}
+          />
+        ) : (
+          <Ionicons
+            name="person-circle"
+            size={30}
+            color="#575A4B"
+            style={styles.iconLeft}
+          />
+        )}
+        <Text style={styles.modalText}>{user.username}</Text>
+      </View>
+
+      <Text>{content}</Text>
+
+      <View style={styles.middleSection}>
+        {images.map((image) => (
+          <Image
+            key={image.id}
+            source={{ uri: image.url }}
+            style={styles.image}
+          />
+        ))}
+      </View>
+
+      <View style={styles.bottomSection}>
+        <Text>{likes}</Text>
+        <TouchableOpacity onPress={likePost}>
+          <Ionicons
+            name="heart"
+            size={24}
+            color={likedByCurrentUser ? "red" : "#575A4B"}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Ionicons
+            name="chatbubble"
+            size={24}
+            color="#575A4B"
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 
 export default function Index() {
   const router = useRouter();
@@ -13,6 +114,43 @@ export default function Index() {
   const [heartColor, setHeartColor] = useState("#575A4B");
   const [commentColor, setCommentColor] = useState("#575A4B");
   //potrebno za promjenu boje srca i komentara pri kliku
+
+  const postsQuery = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => apiCall("/posts"),
+    retry: false,
+  });
+
+  if (postsQuery.error) {
+    return (
+      <View>
+        <Text>Error</Text>
+        <Button
+          onPress={() => {
+            apiCall("/auth", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                user: { email: "fran.zekan123@fer.hr", password: "asd" },
+              }),
+            })
+              .then((res) => {
+                console.log(res);
+                AsyncStorage.setItem("token", res.token);
+                postsQuery.refetch();
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }}
+        >
+          <Text style={{ color: "white" }}>Login</Text>
+        </Button>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -25,6 +163,37 @@ export default function Index() {
         </TouchableOpacity>
         <Text>Post your meal! </Text>
       </View>
+
+      <Button
+        onPress={() => {
+          AsyncStorage.removeItem("token");
+          postsQuery.refetch();
+        }}
+      >
+        <Text style={{ color: "white" }}>Logout</Text>
+      </Button>
+
+      <ScrollView>
+        {postsQuery.isLoading && <Spinner />}
+        {postsQuery.data &&
+          postsQuery.data.map((post) => (
+            <Post
+              key={post.id}
+              user={post.user}
+              content={post.content}
+              images={post.images}
+              likes={post.likes_count}
+              likedByCurrentUser={post.liked_by_current_user}
+              likePost={() => {
+                apiCall(`/posts/${post.id}/likes`, {
+                  method: post.liked_by_current_user ? "DELETE" : "POST",
+                }).then(() => {
+                  postsQuery.refetch();
+                });
+              }}
+            />
+          ))}
+      </ScrollView>
 
       <Modal
         animationType="slide"
@@ -46,66 +215,6 @@ export default function Index() {
           </View>
         </View>
       </Modal>
-
-      <View style={styles.postView}>
-        <View style={styles.topSection}>
-          <Ionicons
-            name="person-circle"
-            size={30}
-            color="#575A4B"
-            style={styles.iconLeft}
-          />
-          <Text style={styles.modalText}> Ime i prezime </Text>
-        </View>
-
-        <View style={styles.middleSection}>
-          <Image
-            source={require("../../images/objava1.jpg")}
-            style={styles.image}
-          />
-        </View>
-
-        <View style={styles.bottomSection}>
-          <TouchableOpacity
-            onPress={() =>
-              setHeartColor((prevColor) =>
-                prevColor === "#575A4B" ? "#FF0000" : "#575A4B"
-              )
-            }
-          >
-            <Ionicons
-              name="heart"
-              size={24}
-              color={heartColor}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              setCommentColor((prevColor) =>
-                prevColor === "#575A4B" ? "#FF0000" : "#575A4B"
-              )
-            }
-          >
-            <Ionicons
-              name="chatbubble"
-              size={24}
-              color={commentColor}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity
-          className="py-3 px-14 rounded-full bg-[#718355]"
-          onPress={() =>
-            router.push({
-              pathname: "/Login",
-            })
-          }
-        >
-          <Text className="text-white text-[16px] font-bold">Login Page</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -127,7 +236,6 @@ const styles = StyleSheet.create({
     padding: "5%",
     margin: "5%",
     width: "90%",
-    height: "70%",
     borderRadius: 10,
     //borderColor: '#718355', bilo je za pomoc sve zakomentirano
     //borderWidth: 1,
@@ -158,6 +266,8 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 10,
+    borderColor: "#718355",
+    borderWidth: 1,
   },
   bottomSection: {
     flexDirection: "row",
