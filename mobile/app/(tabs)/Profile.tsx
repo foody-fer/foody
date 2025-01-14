@@ -100,7 +100,7 @@ export default function ProfileScreen() {
   return (
     <View className="flex-1 bg-teagreen">
       <View className="p-10">
-        <HStack space="xl" className="items-center">
+        <HStack space="2xl" className="items-center">
           <Avatar className="bg-resedagreen">
             {profilePicture ? (
               <AvatarImage
@@ -140,19 +140,27 @@ export default function ProfileScreen() {
 
         <View className="flex-row mt-10 items-center">
           {isEditingBio ? (
-            <Input variant="outline" isDisabled={false} className="flex-1">
+            <Input
+              variant="outline"
+              isDisabled={false}
+              className="flex-1 rounded-full"
+            >
               <InputField
                 onChangeText={setBio}
                 placeholder={bio}
-                className="text-jet font-quicksand py-2"
+                className="text-jet font-quicksand py-1"
               />
             </Input>
           ) : (
-            <Input variant="outline" isDisabled={true} className="flex-1">
+            <Input
+              variant="outline"
+              isDisabled={true}
+              className="flex-1 rounded-full"
+            >
               <InputField
                 onChangeText={setBio}
                 placeholder={bio}
-                className="text-jet font-quicksand py-2"
+                className="text-jet font-quicksand py-1"
               />
             </Input>
           )}
@@ -169,7 +177,7 @@ export default function ProfileScreen() {
       <View className="flex-row mt-4 justify-center">
         {selectedTab === "Posts" ? (
           <Button
-            className="bg-jet mr-3"
+            className="bg-jet mr-3 rounded-full"
             onPress={() => setSelectedTab("Posts")}
           >
             <ButtonText className="">Posts</ButtonText>
@@ -177,7 +185,7 @@ export default function ProfileScreen() {
         ) : (
           <Button
             variant="outline"
-            className="mr-3"
+            className="mr-3 rounded-full"
             onPress={() => setSelectedTab("Posts")}
           >
             <ButtonText className="">Posts</ButtonText>
@@ -186,7 +194,7 @@ export default function ProfileScreen() {
 
         {selectedTab === "Recipes" ? (
           <Button
-            className="bg-jet mr-3"
+            className="bg-jet mr-3 rounded-full"
             onPress={() => setSelectedTab("Recipes")}
           >
             <ButtonText className="">Recipes</ButtonText>
@@ -194,7 +202,7 @@ export default function ProfileScreen() {
         ) : (
           <Button
             variant="outline"
-            className="mr-3"
+            className="mr-3 rounded-full"
             onPress={() => setSelectedTab("Recipes")}
           >
             <ButtonText className="">Recipes</ButtonText>
