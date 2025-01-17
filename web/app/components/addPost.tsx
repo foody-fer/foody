@@ -6,12 +6,13 @@ import {
   IoIosCheckmarkCircleOutline,
   IoIosCheckmarkCircle,
 } from "react-icons/io";
-
 import Post from "../../app/components/Post";
+
 
 export default function AddPost({ name, onNewPost }: any) {
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [images, setImages] = useState<any>("");
   const [data, setData] = useState<any>({
     name: "",
     pic: "",
@@ -19,19 +20,37 @@ export default function AddPost({ name, onNewPost }: any) {
     description: "",
   });
 
+  const maxFiles = 5;
+
+  const imgUpload = (e: any) => {
+    const selectedFiles = e.target.files;
+    
+    if (selectedFiles.length > maxFiles) {
+      alert(`You can select maximum of ${maxFiles} images.`);
+      e.target.value = null; // Resetiraj input
+    } else {
+      let img = "";
+      for(let i = 0; i < selectedFiles.length; i++){
+        let file = e.target.files[i]
+        img += URL.createObjectURL(file) + "$$$$"     
+      }
+      
+      setImages(img)
+    }    
+  };
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
+    
     const form = new FormData(e.target);
     const formVaules = Object.fromEntries(form.entries());
-
-    const obj = {
+    
+    setData({
       name: name,
-      pic: "https://images.pexels.com/photos/238480/pexels-photo-238480.jpeg?auto=compress&cs=tinysrgb&w=800",
+      pic: images ? images : "$$$$",
       message: formVaules.message,
       description: formVaules.description,
-    };
-    setData(obj);
+    });
 
     setConfirm(!confirm);
     setOpen(!open);
@@ -44,7 +63,7 @@ export default function AddPost({ name, onNewPost }: any) {
   };
 
   return (
-    <div className="h-auto w-[94%] sm:w-[70%] md:w-[62%] lg:w-[46%] bg-navbarColor rounded-lg flex gap-2 justify-start items-center">
+    <div className="h-auto w-[94%] sm:w-[70%] md:w-[62%] lg:w-[46%] bg-navbarColor rounded-lg flex gap-2 justify-start items-center py-2">
       {/* addPost definiton */}
       <FaUserCircle
         height={37}
@@ -94,10 +113,10 @@ export default function AddPost({ name, onNewPost }: any) {
               <span className="text-gray-300 mt-1">{name}</span>
             </div>
             <div className="flex gap-1 text-gray-700 w-[11.5rem]">
-              <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100  bg-[#ffff] border-1 border-gray-300 rounded-md w-[5rem] h-9 flex justify-center items-center">
+              <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100  bg-[#ffff] border-1 border-gray-300 rounded-md w-[5rem] h-9 flex justify-center items-center cursor-pointer">
                 <input
                   type="radio"
-                  className="opacity-0 absolute"
+                  className="opacity-0 absolute cursor-pointer"
                   name="description"
                   value="Post"
                   required
@@ -105,10 +124,10 @@ export default function AddPost({ name, onNewPost }: any) {
                 Post
               </label>
 
-              <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100 bg-[#ffff] border-1 border-gray-300 rounded-md  w-[5rem] h-9 flex justify-center items-center">
+              <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100 bg-[#ffff] border-1 border-gray-300 rounded-md  w-[5rem] h-9 flex justify-center items-center cursor-pointer">
                 <input
                   type="radio"
-                  className="opacity-0 absolute"
+                  className="opacity-0 absolute cursor-pointer"
                   name="description"
                   value="Recipes"
                   required
@@ -121,13 +140,21 @@ export default function AddPost({ name, onNewPost }: any) {
             name="message"
             placeholder="Share what's new..."
             className="bg-resedaGreen p-2 mt-[-1rem] rounded-m outline-none h-[6rem] w-full text-white break-all placeholder-white"
+            required
           />
           <label
             htmlFor="imageUpload"
             className="mt-[-1rem] cursor-pointer bg-navbarColor hover:bg-[#c3dfa1] transition duration-300 border-s-slate-100 w-[95%] rounded-lg py-[0.35rem] flex justify-center items-center gap-2"
           >
             <span>Add image</span>
-            <MdAddPhotoAlternate />
+            {images.length != 0 ? (
+              <img
+                src={images.split("$$$$")[0]}
+                className="h-3 w-3 border-1 border-yellow-500 rounded-sm"
+              />
+            ) : (
+              <MdAddPhotoAlternate />
+            )}
           </label>
           <input
             type="file"
@@ -135,6 +162,8 @@ export default function AddPost({ name, onNewPost }: any) {
             name="image"
             accept="image/*"
             className="hidden"
+            onChange={imgUpload}
+            multiple
           />
           <button
             type="submit"
@@ -148,10 +177,12 @@ export default function AddPost({ name, onNewPost }: any) {
       <div
         className={
           "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 " +
-          (confirm ? "flex justify-center items-center" : "hidden")
+          (confirm
+            ? "flex justify-center items-start overflow-y-auto scrollbar-hide"
+            : "hidden")
         }
       >
-        <div className="bg-resedaGreen rounded-lg py-3 m-4 flex flex-col justify-center items-center h-[auto] w-[24rem]">
+        <div className=" bg-resedaGreen rounded-lg py-3 m-4 flex flex-col justify-center items-center h-auto overflow-y-auto w-[24rem]">
           <div className="flex flex-row justify-around items-center gap-20 w-full text-white">
             <div className="opacity-0">e</div>
             <span className="font-semibold">Post preview</span>
@@ -161,6 +192,7 @@ export default function AddPost({ name, onNewPost }: any) {
                 onClick={() => {
                   setConfirm(!confirm);
                   setOpen(!open);
+                  setImages("")
                 }}
                 className="cursor-pointer h-6 w-6 hidden text-red-700 group-hover:block"
               />
@@ -190,6 +222,7 @@ export default function AddPost({ name, onNewPost }: any) {
               onClick={() => {
                 setConfirm(!confirm);
                 setOpen(!open);
+                setImages("")
               }}
               className="group flex bg-gray-100 rounded-full px-2 py-1 hover:text-white hover:bg-red-500 transition duration-300"
             >

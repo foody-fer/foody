@@ -1,5 +1,13 @@
 import { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { IoIosMore } from "react-icons/io";
+import {
+  MenuRoot,
+  MenuTrigger,
+  MenuContent,
+  MenuItem,
+  Button,
+} from "@chakra-ui/react";
 
 export default function Comments({ bool, addComm, preview }: any) {
   const [list, setList] = useState([""]);
@@ -17,6 +25,11 @@ export default function Comments({ bool, addComm, preview }: any) {
       addComm();
     }
   };
+
+  const handleDeleteCom = () => {
+    // delete comment
+  };
+
   return (
     <div className="flex flex-col gap-2 text-gray-700">
       {/* WRITING */}
@@ -56,12 +69,24 @@ export default function Comments({ bool, addComm, preview }: any) {
                 <p className="break-all">{item}</p>
               </div>
               <div>
-                <img
-                  src="./images/more.svg"
-                  alt="options"
-                  height={16}
-                  width={16}
-                />
+                <MenuRoot positioning={{ placement: "bottom-start" }}>
+                  <MenuTrigger asChild>
+                    <Button className="outline-none" size="sm">
+                      <IoIosMore
+                        id="dropdownMenuButton"
+                        data-bs-toggle="dropdown"
+                        height={16}
+                        width={16}
+                        className="h-5 w-5 mt-[-15px] p-1 rounded-xl hover:bg-gray-300 transition duration-300"
+                      />
+                    </Button>
+                  </MenuTrigger>
+                  <MenuContent className="cursor-pointer absolute right-[3%] sm:right-[14%] md:right-[20%] lg:right-[32%] z-50 mt-[-1rem]">
+                    <MenuItem value="new-txt" onClick={handleDeleteCom} className="text-xs">
+                      Delete
+                    </MenuItem>
+                  </MenuContent>
+                </MenuRoot>
               </div>
             </div>
           ))}

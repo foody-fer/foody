@@ -46,6 +46,7 @@ function SignUpPage(){
             signUpSchema.parse(formData); 
             setErrors({});
 
+            
             //router.push("/homepage");
 
         } catch (error) {
