@@ -8,7 +8,6 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useRouter } from "expo-router";
 
 const SignIn = () => {
   const [input, setInput] = useState("");
@@ -20,7 +19,7 @@ const SignIn = () => {
   const [bool2, setBool2] = useState(true);
 
   const [serverErrorMessage, setServerErrorMessage] = useState("");
-  const router = useRouter();
+  const navigation = useNavigation();
 
   const inputOnChange = (text: string) => {
     setInput(text);
@@ -104,39 +103,17 @@ const SignIn = () => {
 
       <View style={styles.buttons}>
         <TouchableOpacity onPress={handleSubmit} style={styles.signInButton}>
-          <Text
-            onPress={() =>
-              router.push({
-                pathname: "/sign-in",
-              })
-            }
-            style={styles.buttonText}
-          >
-            Sign in
-          </Text>
+          <Text style={styles.buttonText}>Sign in</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() =>
-            router.push({
-              pathname: "/Login",
-            })
-          }
-        >
+        <TouchableOpacity style={styles.closeButton}>
           <Text style={styles.buttonText}>Close</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.footer}>
         <Text>Don't have an account?</Text>
-        <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: "/sign-up",
-            })
-          }
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("sign-up")}>
           <Text style={styles.signUpText}>Sign up</Text>
         </TouchableOpacity>
       </View>

@@ -8,13 +8,11 @@ import {
 } from "react-native";
 import { useAuth } from "@/authContext"; // Use your Auth Context
 import { Text } from "@/components/ui/CustomText";
-import { useRouter } from "expo-router";
 
 const api = process.env.BACKEND_URL || "https://foody-backend.zeko.run/api/v1"; // Dynamically fetch backend URL
 
 function Login() {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleGoogleLogin = () => {
     console.log("google login");
@@ -80,11 +78,7 @@ function Login() {
 
           {/* Create Account */}
           <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: "/sign-up",
-              })
-            }
+            onPress={() => (window.location.href = "/sign-up")}
             className="rounded-full py-4 px-8 my-2 bg-[#575a4b]"
           >
             <Text className="text-lg font-bold text-white">
@@ -99,7 +93,7 @@ function Login() {
           <TouchableOpacity
             onPress={() =>
               router.push({
-                pathname: "/sign-in",
+                pathname: "/sign-up",
               })
             }
             className="rounded-full py-4 px-8 my-2 bg-[#575a4b]"

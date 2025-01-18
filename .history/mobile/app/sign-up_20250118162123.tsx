@@ -7,9 +7,10 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  Linking,
 } from "react-native";
 import { z } from "zod";
-import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
 const signUpSchema = z.object({
   name: z
@@ -57,7 +58,7 @@ const SignUpPage = () => {
       signUpSchema.parse(formData);
       setErrors({});
       Alert.alert("Success", "Account created successfully!");
-      router.push("/Login");
+      navigation.navigate("Home"); // Update "Home" to your target route
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors = error.errors.reduce((acc: any, curr) => {
@@ -146,11 +147,11 @@ const SignUpPage = () => {
 
           {/* Terms and Conditions */}
           <View style={styles.termsContainer}>
-            <Text>
-              I agree to Foody's{" "}
-              <Text style={styles.linkText}>Terms of Service</Text> and{" "}
-              <Text style={styles.linkText}>Privacy Policy</Text>
-            </Text>
+            <TouchableOpacity>
+              <Text>
+                I agree to Foody's Terms of Service and Privacy Policy
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* Buttons */}
@@ -163,7 +164,11 @@ const SignUpPage = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.closeButton}
-              onPress={() => router.push("/Login")}
+              onPress={() =>
+                router.push({
+                  pathname: "/Login",
+                })
+              }
             >
               <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
@@ -174,7 +179,13 @@ const SignUpPage = () => {
       {/* Already Have Account */}
       <View style={styles.footer}>
         <Text>Already have an account?</Text>
-        <TouchableOpacity onPress={() => router.push("/sign-in")}>
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/sign-in",
+            })
+          }
+        >
           <Text style={styles.signInText}> Sign in</Text>
         </TouchableOpacity>
       </View>
@@ -185,103 +196,103 @@ const SignUpPage = () => {
 export default SignUpPage;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#E3F4D7", padding: 16 },
-  logoContainer: { alignItems: "center", marginVertical: 32 },
+  container: {
+    flex: 1,
+    backgroundColor: "#E8F5E9",
+    padding: 16,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginVertical: 16,
+  },
   logoText: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "bold",
-    color: "#4F5B46",
-    textAlign: "center",
+    color: "#4CAF50",
   },
   card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
-    padding: 20,
+    padding: 16,
     marginVertical: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
   },
   header: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
-    color: "#4F5B46",
+    marginBottom: 8,
   },
   subHeader: {
     fontSize: 14,
-    color: "#6B6F5E",
-    marginBottom: 20,
-    textAlign: "center",
+    color: "#555",
+    marginBottom: 16,
   },
-  formContainer: { marginBottom: 20 },
+  formContainer: {
+    marginBottom: 16,
+  },
   genderContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
+    justifyContent: "space-around",
+    marginBottom: 16,
   },
   genderOption: {
     borderWidth: 1,
-    borderColor: "#AEB5A1",
-    borderRadius: 50,
-    padding: 10,
-    width: "45%",
+    borderColor: "#CCC",
+    borderRadius: 8,
+    padding: 8,
+    width: "40%",
     alignItems: "center",
   },
   genderSelected: {
     backgroundColor: "#4CAF50",
-    borderColor: "#4CAF50",
   },
   genderText: {
-    color: "#4F5B46",
-    fontWeight: "600",
+    color: "#000",
   },
-  inputWrapper: { marginBottom: 16 },
+  inputWrapper: {
+    marginBottom: 12,
+  },
   input: {
     borderWidth: 1,
-    borderColor: "#AEB5A1",
-    borderRadius: 50,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: "#F8FBEF",
-    fontSize: 14,
-    color: "#4F5B46",
+    borderColor: "#CCC",
+    borderRadius: 8,
+    padding: 8,
   },
-  errorText: { color: "red", fontSize: 12, marginTop: 4 },
-  termsContainer: { marginVertical: 16, alignItems: "center" },
-  linkText: {
-    color: "#4CAF50",
-    textDecorationLine: "underline",
-    fontWeight: "600",
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 4,
+  },
+  termsContainer: {
+    marginVertical: 16,
   },
   buttonContainer: {
-    marginTop: 24,
-    flexDirection: "column",
-    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 16,
   },
   submitButton: {
     backgroundColor: "#4CAF50",
-    borderRadius: 50,
-    paddingVertical: 12,
-    paddingHorizontal: 40,
+    borderRadius: 8,
+    padding: 12,
+    width: "40%",
     alignItems: "center",
-    marginBottom: 12,
-    width: "80%",
   },
   closeButton: {
-    backgroundColor: "#AEB5A1",
-    borderRadius: 50,
-    paddingVertical: 12,
-    paddingHorizontal: 40,
+    backgroundColor: "#CCC",
+    borderRadius: 8,
+    padding: 12,
+    width: "40%",
     alignItems: "center",
-    width: "80%",
   },
-  buttonText: { color: "#FFFFFF", fontWeight: "600", fontSize: 16 },
-  footer: { alignItems: "center", marginTop: 24 },
+  buttonText: {
+    color: "#FFF",
+  },
+  footer: {
+    alignItems: "center",
+    marginTop: 16,
+  },
   signInText: {
     color: "#4CAF50",
     fontWeight: "bold",
-    textDecorationLine: "underline",
   },
 });

@@ -107,7 +107,7 @@ const SignIn = () => {
           <Text
             onPress={() =>
               router.push({
-                pathname: "/sign-in",
+                pathname: "/Login",
               })
             }
             style={styles.buttonText}
@@ -116,14 +116,7 @@ const SignIn = () => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() =>
-            router.push({
-              pathname: "/Login",
-            })
-          }
-        >
+        <TouchableOpacity style={styles.closeButton}>
           <Text style={styles.buttonText}>Close</Text>
         </TouchableOpacity>
       </View>
@@ -133,9 +126,10 @@ const SignIn = () => {
         <TouchableOpacity
           onPress={() =>
             router.push({
-              pathname: "/sign-up",
+              pathname: "/Login",
             })
           }
+          y
         >
           <Text style={styles.signUpText}>Sign up</Text>
         </TouchableOpacity>

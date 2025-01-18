@@ -9,6 +9,7 @@ export default function RootLayout() {
     <AuthProvider>
       <GluestackUIProvider mode="light">
         <StatusBar style="light" />
+        {/* Ensure Slot is rendered */}
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="LogProgress" options={{ headerShown: false }} />

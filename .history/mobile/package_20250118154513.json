@@ -64,8 +64,7 @@
     "react-native-web": "^0.19.13",
     "readable-stream": "^4.5.2",
     "tailwindcss": "^3.3.2",
-    "tailwindcss-react-native": "1.7.10",
-    "zod": "^3.24.1"
+    "tailwindcss-react-native": "1.7.10"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

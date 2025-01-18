@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { useAuth } from "@/authContext"; // Use your Auth Context
 import { Text } from "@/components/ui/CustomText";
-import { useRouter } from "expo-router";
 
 const api = process.env.BACKEND_URL || "https://foody-backend.zeko.run/api/v1"; // Dynamically fetch backend URL
 

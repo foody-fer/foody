@@ -38,6 +38,10 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "expo": "~52.0.20",
     "expo-app-loading": "^2.1.1",
+<<<<<<< HEAD
+    "expo-auth-session": "^6.0.2",
+=======
+>>>>>>> e36b6a55c768c70f75884254be67a3ee314aaf75
     "expo-blur": "~14.0.1",
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.2",
@@ -64,8 +68,7 @@
     "react-native-web": "^0.19.13",
     "readable-stream": "^4.5.2",
     "tailwindcss": "^3.3.2",
-    "tailwindcss-react-native": "1.7.10",
-    "zod": "^3.24.1"
+    "tailwindcss-react-native": "1.7.10"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
