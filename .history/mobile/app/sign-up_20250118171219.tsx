@@ -235,7 +235,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   genderText: {
-    color: "#575A4B",
     fontWeight: "600",
   },
   inputWrapper: { marginBottom: 16 },

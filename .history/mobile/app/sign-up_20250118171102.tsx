@@ -232,10 +232,10 @@ const styles = StyleSheet.create({
   genderSelected: {
     backgroundColor: "#575A4B",
     borderColor: "#575A4B",
-    color: "#ffffff",
+    color: "#ffffff";
   },
   genderText: {
-    color: "#575A4B",
+    color: "#4F5B46",
     fontWeight: "600",
   },
   inputWrapper: { marginBottom: 16 },
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   submitButton: {
-    backgroundColor: "#575A4B",
+    backgroundColor: "#4CAF50",
     borderRadius: 50,
     paddingVertical: 12,
     paddingHorizontal: 40,
