@@ -97,7 +97,7 @@ export default function ProfilePage() {
           {isEditingUserName ? (
             <Input
               type="text"
-              className="flex-1 p-2 border rounded border-black hover:border-black text-gray-900"
+              className="flex-1 p-2 border rounded-full border-black hover:border-black text-gray-900"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUserName(e.target.value)}
@@ -108,12 +108,12 @@ export default function ProfilePage() {
               disabled={true}
               placeholder="Enter your username"
               value={username}
-              className="flex-1 p-2 cursor-not-allowed border rounded text-gray-900 disabled:text-gray-800 disabled:opacity-100"
+              className="flex-1 p-2 cursor-not-allowed border rounded-full text-gray-900 disabled:text-gray-800 disabled:opacity-100"
             />
           )}
 
           <button
-            className="ml-3 p-2 w-40 text-base rounded font-semibold bg-textColor text-white"
+            className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
             onClick={toggleEditUserName}
           >
             {isEditingUserName ? "Save username" : "Edit username"}
@@ -126,7 +126,7 @@ export default function ProfilePage() {
           {isEditingBio ? (
             <Input
               type="text"
-              className="flex-1 p-2 border rounded border-black hover:border-black text-gray-900"
+              className="flex-1 p-2 border rounded-full border-black hover:border-black text-gray-900"
               placeholder="Enter your bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
@@ -135,14 +135,14 @@ export default function ProfilePage() {
             <Input
               variant="outline"
               disabled={true}
-              className="flex-1 p-2 cursor-not-allowed border rounded text-gray-900 disabled:text-gray-800 disabled:opacity-100"
+              className="flex-1 p-2 cursor-not-allowed border rounded-full text-gray-900 disabled:text-gray-800 disabled:opacity-100"
               placeholder="Enter your bio"
               value={bio}
             />
           )}
 
           <button
-            className="ml-3 p-2 w-40 rounded font-semibold bg-textColor text-white"
+            className="ml-3 p-2 w-40 rounded-full font-semibold bg-textColor text-white"
             onClick={toggleEditBio}
           >
             {isEditingBio ? "Save bio" : "Edit bio"}
@@ -152,7 +152,7 @@ export default function ProfilePage() {
 
       <div className="flex mt-4 ml-12 space-x-3">
         <button
-          className={`p-2 px-4 rounded font-semibold ${
+          className={`p-2 px-4 rounded-full font-semibold ${
             selectedTab === "Posts"
               ? "bg-textColor text-white"
               : "border border-black text-textColor"
@@ -162,7 +162,7 @@ export default function ProfilePage() {
           Posts
         </button>
         <button
-          className={`p-2 px-4 rounded font-semibold ${
+          className={`p-2 px-4 rounded-full font-semibold ${
             selectedTab === "Recipes"
               ? "bg-textColor text-white"
               : "border border-black text-textColor"
