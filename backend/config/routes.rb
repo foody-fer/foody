@@ -10,11 +10,12 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :registrations, only: [:create]
+      resources :registrations, only: [:create, :update]
       resources :auth, only: [:index, :create]
 
       resources :posts, only: [:index, :create, :show, :update, :destroy] do
-        resource :likes, controller: :posts_likes, only: [:create, :destroy]
+        resource :likes, controller: :posts_likes, only: [:show, :create, :destroy]
+        resources :comments, controller: :posts_comments, only: [:index, :create, :update, :destroy]
       end
     end
   end

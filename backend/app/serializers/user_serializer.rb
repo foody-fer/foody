@@ -8,6 +8,7 @@
 #  gender          :string           not null
 #  last_name       :string           not null
 #  password_digest :string           not null
+#  phone           :string
 #  username        :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null

@@ -1,6 +1,6 @@
 module Api::V1
   class PostsController < ApiController
-    before_action :set_post, only: [:update, :destroy]
+    before_action :set_post, only: [:show, :update, :destroy]
     before_action :authorize_user, only: [:update, :destroy]
 
     def index
@@ -13,48 +13,42 @@ module Api::V1
     end
 
     def create
-      post = Post.where(user: Current.user).create(create_post_params)
+      @post = Current.user.posts.create(create_post_params)
 
-      if post.save
-        render json: PostSerializer.new(post), status: :created
+      if @post.save
+        render json: PostSerializer.new(@post), status: :created
       else
-        render json: { errors: format_errors(post) }, status: :unprocessable_entity
+        render json: { errors: format_errors(@post) }, status: :unprocessable_entity
       end
     end
 
     def show
-      post = Post.find(params[:id])
-
-      render json: PostSerializer.new(post), status: :ok
+      render json: PostSerializer.new(@post), status: :ok
     end
 
     def update
-      post = Post.find(params[:id])
-
       if update_post_images_params[:add_images].present?
-        post.images.attach(update_post_images_params[:add_images])
+        @post.images.attach(update_post_images_params[:add_images])
       end
 
       if update_post_images_params[:remove_images].present?
         update_post_images_params[:remove_images].each do |image_id|
-          post.images.find(image_id).purge
+          @post.images.find(image_id).purge
         end
       end
 
-      if post.update(update_post_params)
-        render json: PostSerializer.new(post), status: :ok
+      if @post.update(update_post_params)
+        render json: PostSerializer.new(@post), status: :ok
       else
-        render json: { errors: format_errors(post) }, status: :unprocessable_entity
+        render json: { errors: format_errors(@post) }, status: :unprocessable_entity
       end
     end
 
     def destroy
-      post = Post.find(params[:id])
-
-      if post.destroy
+      if @post.destroy
         render json: { message: "Post deleted" }, status: :ok
       else
-        render json: { errors: format_errors(post) }, status: :unprocessable_entity
+        render json: { errors: format_errors(@post) }, status: :unprocessable_entity
       end
     end
 
