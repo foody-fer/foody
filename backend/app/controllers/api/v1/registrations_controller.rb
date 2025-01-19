@@ -28,7 +28,7 @@ module Api::V1
     end
 
     def update_user_params
-      params.require(:user).permit(:first_name, :last_name, :gender, :phone, :avatar)
+      params.require(:user).permit(:username, :bio, :first_name, :last_name, :gender, :phone, :avatar)
     end
   end
 end
