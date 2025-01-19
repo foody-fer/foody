@@ -17,19 +17,15 @@ import {
 import { apiCall } from "~/api";
 import { useGetUser } from "~/queries/getUser";
 
-
-export default function Post({ info, preview, update, deletePost }: any) {
-  const [likes, setLikes] = useState(info?.liked_by_current_user);
-  const [comm, setComm] = useState(true);
+export default function Post({ info, preview, posts }: any) {
+  const [comm, setComm] = useState(false);
   const [saves, setSaves] = useState(false);
-  const [likeNum, setLikeNum] = useState(info?.likes_count);
-  const [commNum, setCommNum] = useState(info?.comments_count);
 
   const userQuery = useGetUser();
 
   const handleLikes = async () => {
     if (!preview) {
-      if (likes) {
+      if (info.liked_by_current_user) {
         const response = await apiCall(
           `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
           {
@@ -37,7 +33,6 @@ export default function Post({ info, preview, update, deletePost }: any) {
           }
         );
         console.log(response);
-        setLikeNum(likeNum - 1);
       } else {
         const response = await apiCall(
           `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
@@ -46,20 +41,25 @@ export default function Post({ info, preview, update, deletePost }: any) {
           }
         );
         console.log(response);
-        setLikeNum(likeNum + 1);
       }
-      update();
-      setLikes(!likes);
+      posts.refetch();
     }
   };
 
-  const handleComments = () => {
-    let tmp = commNum + 1;
-    setCommNum(tmp);
+  const handleEdit = () => {
+
   };
 
-  const handleDelete = () => {
-    deletePost(info.id);
+  const handleDelete = async () => {
+    const response = await apiCall(
+      `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}`,
+      {
+        method: "DELETE",
+      }
+    );
+    console.log(response);
+
+    posts.refetch();
   };
 
   return (
@@ -67,11 +67,19 @@ export default function Post({ info, preview, update, deletePost }: any) {
       {/* USER */}
       <div className="flex flex-row justify-between">
         <div className="flex flex-row gap-2">
-          <FaUserCircle
-            height={24}
-            width={24}
-            className="rounded-full flex-1 w-[1.5rem] h-[1.5rem] mt-2 text-gray-700"
-          />
+          {info.user.avatar !== null ? (
+            <img
+              src={info.user.avatar}
+              alt={info.user.username + " profile picture"}
+              className="rounded-full flex-1 w-[1.5rem] h-[1.5rem] mt-2 object-cover"
+            />
+          ) : (
+            <FaUserCircle
+              height={24}
+              width={24}
+              className="rounded-full flex-1 w-[1.5rem] h-[1.5rem] mt-2 text-gray-700"
+            />
+          )}
           <span className="text-textColor mt-2">{info?.user.username}</span>
         </div>
 
@@ -98,8 +106,19 @@ export default function Post({ info, preview, update, deletePost }: any) {
             </MenuTrigger>
             {userQuery.data.username === info.user.username && (
               <MenuContent className="cursor-pointer absolute right-[3%] sm:right-[14%] md:right-[20%] lg:right-[32%] z-50 mt-[2rem]">
-                <MenuItem value="new-txt" onClick={handleDelete}>
+                <MenuItem
+                  value="new-txt"
+                  onClick={handleDelete}
+                  className="cursor-pointer"
+                >
                   Delete
+                </MenuItem>
+                <MenuItem
+                  value="new-txt"
+                  onClick={handleEdit}
+                  className="cursor-pointer"
+                >
+                  Edit post
                 </MenuItem>
               </MenuContent>
             )}
@@ -109,7 +128,11 @@ export default function Post({ info, preview, update, deletePost }: any) {
       {/* CONTENT */}
       <div className="flex flex-col gap-2">
         {info?.images.length > 0 && (
-          <Slider pictures={info?.images} title={info?.title} preview={preview}/>
+          <Slider
+            pictures={info?.images}
+            title={info?.title}
+            preview={preview}
+          />
         )}
         <ReadMore message={info?.content} />
       </div>
@@ -118,11 +141,10 @@ export default function Post({ info, preview, update, deletePost }: any) {
         <div className="flex flex-row gap-2">
           <div
             className={
-              "flex flex-row  bg-white rounded-full p-1 transition duration-300 " +
-              (likes ? "text-resedaGreen font-semibold" : " text-textColor")
+              "flex flex-row bg-white rounded-full p-1 transition duration-300"
             }
           >
-            {!likes ? (
+            {!info.liked_by_current_user ? (
               <BiLike
                 className="cursor-pointer text-resedaGreen mt-[0.1rem] ml-1"
                 size={17}
@@ -136,13 +158,13 @@ export default function Post({ info, preview, update, deletePost }: any) {
               />
             )}
             <span
-              className="mr-1 ml-1 cursor-pointer mt-[0.1rem] hidden md:block"
+              className="ml-1 cursor-pointer mt-[0.1rem] hidden md:block"
               onClick={handleLikes}
             >
-              Like
+              Likes
             </span>
-            <span className="pr-2 mt-[0.1rem] ml-1 cursor-pointer">
-              | {likeNum}
+            <span className="pr-2 mt-[0.1rem] ml-1 cursor-pointer tabular-nums">
+              | {info.likes_count}
             </span>
           </div>
           <div className="text-textColor flex flex-row  bg-white rounded-full p-1">
@@ -153,14 +175,16 @@ export default function Post({ info, preview, update, deletePost }: any) {
               className="cursor-pointer text-resedaGreen h-5 w-5 mr-1 mt-[0rem] pl-1 ml-1 md:mr-2"
             />
             <span
-              className="mr-1 cursor-pointer hidden md:block"
+              className="cursor-pointer hidden md:block"
               onClick={() => {
                 !preview && setComm(!comm);
               }}
             >
-              Comment
+              Comments
             </span>
-            <span className="pr-2 ml-1 cursor-pointer">| {commNum}</span>
+            <span className="pr-2 ml-1 cursor-pointer tabular-nums">
+              | {info.comments_count}
+            </span>
           </div>
         </div>
         <div
@@ -185,17 +209,20 @@ export default function Post({ info, preview, update, deletePost }: any) {
             />
           )}
           <span
-            className="pr-2 pl-1 cursor-pointer hidden md:block"
+            className="pl-1 cursor-pointer hidden md:block"
             onClick={() => {
               !preview && setSaves(!saves);
             }}
           >
-            Save
+            Saves
+          </span>
+          <span className="pr-2 ml-1 cursor-pointer tabular-nums">
+            | {info.user_saved_posts_count}
           </span>
         </div>
       </div>
       {/* COMMENTS */}
-      <Comments bool={comm} addComm={handleComments} preview={preview} />
+      <Comments bool={comm} postInfo={info} preview={preview} posts={posts}/>
     </div>
   );
 }

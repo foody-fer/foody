@@ -19,7 +19,7 @@ const signUpSchema = z.object({
     .string()
     .min(4, "Username must be at least 4 characters")
     .regex(/^[a-zA-Z][a-zA-Z0-9._]*$/, "Incorrect username format"),
-  number: z
+  phone: z
     .string()
     .regex(
       /^\+\d{1,4} \d{6,}$/,
@@ -37,7 +37,7 @@ function SignUpPage() {
     first_name: "",
     last_name: "",
     gender: "",
-    number: "",
+    phone: "",
   });
 
   // varijabla koja mijenja stanje je objekt
@@ -70,7 +70,7 @@ function SignUpPage() {
             first_name: formData.first_name,
             last_name: formData.last_name,
             gender: formData.gender.toLowerCase(),
-            number: formData.number,
+            phone: formData.phone,
           },
         }),
         headers: {
@@ -80,8 +80,6 @@ function SignUpPage() {
         .then(([data, status]) => {
           if (status === 201) {
             console.log(data);
-            console.log(data.token);
-            console.log("AAA");
 
             localStorage.setItem("token", data.token);
             router.push("/homepage");
@@ -192,10 +190,10 @@ function SignUpPage() {
 
             <input
               type="text"
-              name="number"
-              value={formData.number}
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
-              placeholder="Contact (mobile/telephone number)"
+              placeholder="Contact (mobile/telephone phone)"
               className="form-control mt-2 mb-[0.1rem] w-75"
               maxLength={19}
               required

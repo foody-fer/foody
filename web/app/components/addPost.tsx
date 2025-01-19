@@ -10,25 +10,21 @@ import Post from "../../app/components/Post";
 import { apiCall } from "~/api";
 import { useGetUser } from "~/queries/getUser";
 
-export default function AddPost() {
+export default function AddPost({ posts }: any) {
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [images, setImages] = useState<any>([]);
   const [postInfo, setPostInfo] = useState<any>({
-    user:{
+    user: {
       username: "",
     },
     likes_count: 0,
     comments_count: 0,
     liked_by_current_user: false,
     content: "",
-    images: []
+    images: [],
   });
-  const [data, setData] = useState<any>({
-    username: "",
-    content: "",
-    title: "",
-  });
+  const [data, setData] = useState<any>();
 
   const userQuery = useGetUser();
   const maxFiles = 5;
@@ -52,47 +48,37 @@ export default function AddPost() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
-    const form = new FormData(e.target);
-    const formVaules = Object.fromEntries(form.entries());
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const content = formData.get("post[content]");    
 
     setPostInfo({
-      user:{
+      user: {
         username: userQuery.data.username,
+        avatar: userQuery.data.avatar
       },
       likes_count: 0,
       comments_count: 0,
       liked_by_current_user: false,
-      content: formVaules.content,
-      images: images
-    })
-
-    setData({
-      username: userQuery.data.username,
+      content: content,
       images: images,
-      content: formVaules.content,
-      title: formVaules.title,
     });
-    
+    setData(formData);
+
     setConfirm(!confirm);
     setOpen(!open);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (e: any) => {
     // send data from data to backend and publish post
-
-    const formData = new FormData();
-    formData.append("post[username]", data.username)
-    formData.append("post[content]", data.content)
-    formData.append("post[title]", data.title)
-    formData.append("post[images][]", images)
-
     const response = await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
       method: "POST",
-      body: formData,
+      body: data,
     });
     console.log(response);
-    
+
     setConfirm(!confirm);
+    posts.refetch();
   };
 
   return (
@@ -147,7 +133,7 @@ export default function AddPost() {
                 {userQuery.data.username}
               </span>
             </div>
-            <div className="flex gap-1 text-gray-700 w-[11.5rem]">
+            {/*<div className="flex gap-1 text-gray-700 w-[11.5rem]">
               <label className="has-[:checked]:bg-[#6b6b6b] has-[:checked]:text-gray-100  bg-[#ffff] border-1 border-gray-300 rounded-md w-[5rem] h-9 flex justify-center items-center cursor-pointer">
                 <input
                   type="radio"
@@ -169,10 +155,16 @@ export default function AddPost() {
                 />
                 Recipes
               </label>
-            </div>
+            </div>*/}
           </div>
+          <input
+            name="post[title]"
+            className="hidden"
+            placeholder="New post"
+            defaultValue={"New post"}
+          />
           <textarea
-            name="content"
+            name="post[content]"
             placeholder="Share what's new..."
             className="bg-resedaGreen p-2 mt-[-1rem] rounded-m outline-none h-[6rem] w-full text-white break-all placeholder-white"
             required
@@ -194,7 +186,7 @@ export default function AddPost() {
           <input
             type="file"
             id="imageUpload"
-            name="image"
+            name="post[images][]"
             accept="image/*"
             className="hidden"
             onChange={imgUpload}
@@ -235,10 +227,7 @@ export default function AddPost() {
           </div>
           <div className="w-full border-s-white bg-white h-[0.01rem] mt-[0.5rem] mb-4" />
           <div className="flex justify-center items-center w-full px-4">
-            <Post
-              info={postInfo}
-              preview={true}
-            />
+            <Post info={postInfo} preview={true} />
           </div>
           <div className="flex gap-10">
             <button

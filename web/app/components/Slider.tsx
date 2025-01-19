@@ -5,7 +5,7 @@ import "swiper/swiper-bundle.css";
 export default function Slider({ pictures, title, preview }: any) {
   return (
     <>
-      <div className="bg-gray-200 text-white">
+      <div className="bg-gray-200 text-white rounded-md">
         <Swiper
           modules={[Navigation, Pagination, A11y]}
           spaceBetween={50}
@@ -24,7 +24,7 @@ export default function Slider({ pictures, title, preview }: any) {
                   <img
                     src={pic.url}
                     alt={title}
-                    className="w-full h-[315px] object-cover"
+                    className="w-full h-[265px] object-contain"
                   />
                 </SwiperSlide>
               ))
@@ -33,7 +33,7 @@ export default function Slider({ pictures, title, preview }: any) {
                   <img
                     src={pic}
                     alt={title || "post preview"}
-                    className="w-full h-[315px] object-cover"
+                    className="w-full h-[265px] object-contain"
                   />
                 </SwiperSlide>
               ))}
