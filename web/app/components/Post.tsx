@@ -1,26 +1,54 @@
 import { useState, useEffect } from "react";
 import Comments from "./Comments";
+import Slider from "./Slider";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { BsSave, BsSaveFill } from "react-icons/bs";
 import { TfiCommentAlt } from "react-icons/tfi";
 import { FaUserCircle } from "react-icons/fa";
+import { IoIosMore } from "react-icons/io";
+import ReadMore from "./ReadMore";
+import {
+  MenuRoot,
+  MenuTrigger,
+  MenuContent,
+  MenuItem,
+  Button,
+} from "@chakra-ui/react";
+import { apiCall } from "~/api";
+import { useGetUser } from "~/queries/getUser";
 
-export default function Post({ name, pic, message, like, com, preview }: any) {
-  const [likes, setLikes] = useState(false);
+
+export default function Post({ info, preview, update, deletePost }: any) {
+  const [likes, setLikes] = useState(info?.liked_by_current_user);
   const [comm, setComm] = useState(true);
   const [saves, setSaves] = useState(false);
-  const [likeNum, setLikeNum] = useState(like);
-  const [commNum, setCommNum] = useState(com);
+  const [likeNum, setLikeNum] = useState(info?.likes_count);
+  const [commNum, setCommNum] = useState(info?.comments_count);
 
-  const handleClick1 = () => {
+  const userQuery = useGetUser();
+
+  const handleLikes = async () => {
     if (!preview) {
       if (likes) {
-        let tmp = like;
-        setLikeNum(tmp);
+        const response = await apiCall(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
+          {
+            method: "DELETE",
+          }
+        );
+        console.log(response);
+        setLikeNum(likeNum - 1);
       } else {
-        let tmp = like + 1;
-        setLikeNum(tmp);
+        const response = await apiCall(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
+          {
+            method: "POST",
+          }
+        );
+        console.log(response);
+        setLikeNum(likeNum + 1);
       }
+      update();
       setLikes(!likes);
     }
   };
@@ -28,6 +56,10 @@ export default function Post({ name, pic, message, like, com, preview }: any) {
   const handleComments = () => {
     let tmp = commNum + 1;
     setCommNum(tmp);
+  };
+
+  const handleDelete = () => {
+    deletePost(info.id);
   };
 
   return (
@@ -40,14 +72,46 @@ export default function Post({ name, pic, message, like, com, preview }: any) {
             width={24}
             className="rounded-full flex-1 w-[1.5rem] h-[1.5rem] mt-2 text-gray-700"
           />
-          <span className="text-textColor mt-2">{name}</span>
+          <span className="text-textColor mt-2">{info?.user.username}</span>
         </div>
-        <img src="./images/more.svg" alt="" height={16} width={16} />
+
+        {preview ? (
+          <IoIosMore
+            id="dropdownMenuButton"
+            data-bs-toggle="dropdown"
+            height={16}
+            width={16}
+            className="h-6 w-6 mt-1 p-1 rounded-xl transition duration-300"
+          />
+        ) : (
+          <MenuRoot positioning={{ placement: "bottom-start" }}>
+            <MenuTrigger asChild>
+              <Button className="outline-none" size="sm">
+                <IoIosMore
+                  id="dropdownMenuButton"
+                  data-bs-toggle="dropdown"
+                  height={16}
+                  width={16}
+                  className="h-6 w-6 mt-1 p-1 rounded-xl hover:bg-gray-300 transition duration-300"
+                />
+              </Button>
+            </MenuTrigger>
+            {userQuery.data.username === info.user.username && (
+              <MenuContent className="cursor-pointer absolute right-[3%] sm:right-[14%] md:right-[20%] lg:right-[32%] z-50 mt-[2rem]">
+                <MenuItem value="new-txt" onClick={handleDelete}>
+                  Delete
+                </MenuItem>
+              </MenuContent>
+            )}
+          </MenuRoot>
+        )}
       </div>
       {/* CONTENT */}
       <div className="flex flex-col gap-2">
-        {pic && <img src={pic} alt="food" className="w-full rounded-md" />}
-        <span className="text-textColor">{message}</span>
+        {info?.images.length > 0 && (
+          <Slider pictures={info?.images} title={info?.title} preview={preview}/>
+        )}
+        <ReadMore message={info?.content} />
       </div>
       {/* INTERACTION */}
       <div className="flex flex-row justify-between text-xs">
@@ -62,18 +126,18 @@ export default function Post({ name, pic, message, like, com, preview }: any) {
               <BiLike
                 className="cursor-pointer text-resedaGreen mt-[0.1rem] ml-1"
                 size={17}
-                onClick={handleClick1}
+                onClick={handleLikes}
               />
             ) : (
               <BiSolidLike
                 className="cursor-pointer text-resedaGreen mt-[0.1rem] ml-1"
                 size={17}
-                onClick={handleClick1}
+                onClick={handleLikes}
               />
             )}
             <span
               className="mr-1 ml-1 cursor-pointer mt-[0.1rem] hidden md:block"
-              onClick={handleClick1}
+              onClick={handleLikes}
             >
               Like
             </span>
