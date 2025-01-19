@@ -10,7 +10,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :registrations, only: [:create, :update]
+      resource :registrations, only: [:create, :update]
       resources :auth, only: [:index, :create]
 
       resources :posts, only: [:index, :create, :show, :update, :destroy] do
