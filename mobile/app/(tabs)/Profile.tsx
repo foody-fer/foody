@@ -18,6 +18,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { apiCall } from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Post = ({
   user,

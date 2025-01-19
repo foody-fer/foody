@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { useAuth } from "@/authContext"; // Use your Auth Context
 import { Text } from "@/components/ui/CustomText";
 import { useRouter } from "expo-router";
 

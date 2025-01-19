@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { z } from "zod";
 import { useRouter } from "expo-router";
-import { apiCall } from "@/api";
+import { apiCall, queryClient } from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const signUpSchema = z.object({
@@ -74,8 +74,10 @@ const SignUpPage = () => {
 
       await AsyncStorage.setItem("token", res.token);
 
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+
       Alert.alert("Success", "Account created successfully!");
-      router.push("/Profile");
+      router.push("/");
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors = error.errors.reduce((acc: any, curr) => {

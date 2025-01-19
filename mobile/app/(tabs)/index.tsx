@@ -19,7 +19,7 @@ import { Text } from "@/components/ui/CustomText";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "expo-router";
-import { apiCall } from "@/api/index";
+import { apiCall, queryClient } from "@/api/index";
 
 const Post = ({
   user,
@@ -134,7 +134,7 @@ const Post = ({
   );
 };
 
-function Index() {
+export default function Index() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -213,10 +213,11 @@ function Index() {
       <Button
         onPress={() => {
           AsyncStorage.removeItem("token");
-          postsQuery.refetch();
+          queryClient.invalidateQueries({});
+          router.push("/Login");
         }}
       >
-        <Text style={{ color: "white" }}>Logout</Text>
+        <Text style={{ color: "red" }}>Logout</Text>
       </Button>
 
       <ScrollView>

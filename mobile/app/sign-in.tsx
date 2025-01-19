@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { apiCall } from "@/api";
+import { apiCall, queryClient } from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignIn = () => {
@@ -46,7 +46,9 @@ const SignIn = () => {
 
       await AsyncStorage.setItem("token", res.token);
 
-      router.push("/Profile");
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+
+      router.push("/");
     } catch (error) {
       Alert.alert("Error", "Invalid email or password");
     }

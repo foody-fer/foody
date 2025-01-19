@@ -9,7 +9,10 @@ export const queryClient = new QueryClient({
   },
 });
 
-export const apiCall = async (url: string, options: RequestInit = {}) => {
+export const apiCall = async <T = any>(
+  url: string,
+  options: RequestInit = {}
+) => {
   const token = await AsyncStorage.getItem("token");
   const res = await fetch(`https://foody-backend.zeko.run/api/v1${url}`, {
     ...options,
@@ -27,8 +30,7 @@ export const apiCall = async (url: string, options: RequestInit = {}) => {
   }
 
   if (res.ok) {
-    console.log("OK request");
-    return await res.json();
+    return (await res.json()) as T;
   }
 
   throw [res.status, await res.text()];
