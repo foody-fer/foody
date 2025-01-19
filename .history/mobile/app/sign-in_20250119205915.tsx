@@ -90,7 +90,7 @@ const SignIn = () => {
           )}
 
           <TouchableOpacity
-            className="bg-[#575A4B] rounded-full px-4 py-3 items-center mt-4"
+            className="bg-[#718355] rounded-full px-4 py-3 items-center mt-4"
             onPress={handleSubmit}
           >
             <Text className="text-white text-sm font-bold">Sign In</Text>

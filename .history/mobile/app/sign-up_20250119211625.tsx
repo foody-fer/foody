@@ -95,7 +95,7 @@ const SignUpPage = () => {
 
           {/* Gender Toggle Button */}
           <View className="flex-row justify-center items-center mb-4">
-            <View className="flex-row border border-[#575A4B] rounded-full bg-[#F8FBEF]">
+            <View className="flex-row border border-[#AEB5A1] rounded-full bg-[#F8FBEF]">
               <TouchableOpacity
                 className={`flex-1 px-4 py-2 rounded-l-full ${
                   formData.gender === "male" ? "bg-[#575A4B]" : ""
