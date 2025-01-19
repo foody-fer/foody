@@ -22,7 +22,7 @@ class UserSerializer
   include Alba::Resource
   include ImageHelper
 
-  attributes :id, :username, :first_name, :last_name, :gender
+  attributes :id, :username, :first_name, :last_name, :gender, :bio
 
   attribute :avatar do |user|
     image_url_for(user.avatar)
