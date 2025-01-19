@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/global.css";
+import { AuthProvider } from "@/authContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,15 +16,19 @@ const queryClient = new QueryClient({
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <GluestackUIProvider mode="light">
-        <StatusBar style="light"></StatusBar>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="LogProgress" options={{ headerShown: false }} />
-          <Stack.Screen name="Login" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </GluestackUIProvider>
+      <AuthProvider>
+        <GluestackUIProvider mode="light">
+          <StatusBar style="light" />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="LogProgress" options={{ headerShown: false }} />
+            <Stack.Screen name="Login" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+            <Stack.Screen name="sign-in" />
+            <Stack.Screen name="sign-up" />
+          </Stack>
+        </GluestackUIProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

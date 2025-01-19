@@ -1,9 +1,0 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  weekly_plan: one
-  planned_meal: one
-
-two:
-  weekly_plan: two
-  planned_meal: two
