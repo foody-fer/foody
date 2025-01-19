@@ -1,11 +1,13 @@
 module Api::V1
   class RegistrationsController < ApiController
-    skip_before_action :authenticate_user!
+    include Api::V1::Concerns::AuthConcern
+
+    skip_before_action :authenticate_user!, only: [:create]
 
     def create
       user = User.new(user_params)
       if user.save
-        render json: { message: "User created successfully" }, status: :created
+        render json: { token: create_auth_token(user) }, status: :created
       else
         render json: { errors: format_errors(user) }, status: :unprocessable_entity
       end

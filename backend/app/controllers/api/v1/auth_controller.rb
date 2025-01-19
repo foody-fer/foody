@@ -1,5 +1,7 @@
 module Api::V1
   class AuthController < ApiController
+    include Api::V1::Concerns::AuthConcern
+
     skip_before_action :authenticate_user!, only: [:create]
 
     def index
@@ -9,9 +11,7 @@ module Api::V1
     def create
       user = User.find_by(email: user_params[:email])
       if user&.authenticate(user_params[:password])
-        token = JWT.encode({ user_id: user.id }, Rails.application.credentials.secret_key_base, "HS256")
-
-        render json: { token: token }, status: :ok
+        render json: { token: create_auth_token(user) }, status: :ok
       else
         render json: { error: "Invalid email or password" }, status: :unauthorized
       end
