@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { z } from "zod";
 import { useRouter } from "expo-router";
+import { apiCall } from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const signUpSchema = z.object({
   name: z
@@ -32,6 +34,7 @@ const signUpSchema = z.object({
     ),
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  gender: z.enum(["male", "female"]),
 });
 
 const SignUpPage = () => {
@@ -54,18 +57,36 @@ const SignUpPage = () => {
 
   const handleSubmit = async () => {
     try {
-      signUpSchema.parse(formData);
+      const data = signUpSchema.parse(formData);
       setErrors({});
+
+      const res = await apiCall("/registrations", {
+        method: "POST",
+        body: JSON.stringify({
+          user: {
+            ...data,
+            first_name: data.name,
+            last_name: data.surname,
+            phone: data.num,
+          },
+        }),
+      });
+
+      await AsyncStorage.setItem("token", res.token);
+
       Alert.alert("Success", "Account created successfully!");
-      router.push("/Login");
+      router.push("/Profile");
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors = error.errors.reduce((acc: any, curr) => {
           acc[curr.path[0]] = curr.message;
           return acc;
         }, {});
-        setErrors(formattedErrors);
+
+        return setErrors(formattedErrors);
       }
+
+      Alert.alert("Error", "Error creating account");
     }
   };
 
@@ -87,18 +108,18 @@ const SignUpPage = () => {
             <TouchableOpacity
               style={[
                 styles.genderOption,
-                formData.gender === "Male" && styles.genderSelected,
+                formData.gender === "male" && styles.genderSelected,
               ]}
-              onPress={() => handleChange("gender", "Male")}
+              onPress={() => handleChange("gender", "male")}
             >
               <Text style={styles.genderText}>Male</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.genderOption,
-                formData.gender === "Female" && styles.genderSelected,
+                formData.gender === "female" && styles.genderSelected,
               ]}
-              onPress={() => handleChange("gender", "Female")}
+              onPress={() => handleChange("gender", "female")}
             >
               <Text style={styles.genderText}>Female</Text>
             </TouchableOpacity>

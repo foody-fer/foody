@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
+import { apiCall } from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignIn = () => {
   const [input, setInput] = useState("");
@@ -31,43 +33,22 @@ const SignIn = () => {
   };
 
   const handleSubmit = async () => {
-    let var1 = false,
-      var2 = false;
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (emailRegex.test(input)) {
-      setBool1(true);
-      var1 = true;
-    } else {
-      let counter = 0;
-      let tmp = input.split("");
-      tmp.forEach((t) => {
-        if (!/^[a-zA-Z0-9._]$/.test(t)) counter++;
+    try {
+      const res = await apiCall("/auth", {
+        method: "POST",
+        body: JSON.stringify({
+          user: {
+            email: input,
+            password: password,
+          },
+        }),
       });
 
-      if (!counter && /^[a-zA-Z]$/.test(tmp[0])) {
-        setBool1(true);
-        var1 = true;
-      } else {
-        setEmailError("Incorrect e-mail/username format");
-        setServerErrorMessage("");
-        setBool1(false);
-      }
-    }
+      await AsyncStorage.setItem("token", res.token);
 
-    if (password.length < 6) {
-      setEmailError2("Password must be longer than 6 characters");
-      setServerErrorMessage("");
-      setBool2(false);
-    } else {
-      setBool2(true);
-      var2 = true;
-    }
-
-    if (var1 && var2) {
-      Alert.alert("Success", "Sign-in successful");
-      // Handle API calls here
+      router.push("/Profile");
+    } catch (error) {
+      Alert.alert("Error", "Invalid email or password");
     }
   };
 
@@ -104,16 +85,7 @@ const SignIn = () => {
 
       <View style={styles.buttons}>
         <TouchableOpacity onPress={handleSubmit} style={styles.signInButton}>
-          <Text
-            onPress={() =>
-              router.push({
-                pathname: "/sign-in",
-              })
-            }
-            style={styles.buttonText}
-          >
-            Sign in
-          </Text>
+          <Text style={styles.buttonText}>Sign in</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

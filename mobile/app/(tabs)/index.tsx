@@ -5,39 +5,21 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
-  Image
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  useQuery,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { Text } from "@/components/ui/CustomText";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "expo-router";
-
-export const apiCall = async (url: string, options: RequestInit = {}) => {
-  const token = await AsyncStorage.getItem("token");
-  const res = await fetch(`https://foody-backend.zeko.run/api/v1${url}`, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (res.status === 401) {
-    await AsyncStorage.removeItem("token");
-  }
-
-  if (res.ok) {
-    return res.json();
-  }
-
-  throw await res.text();
-};
-
-const queryClient = new QueryClient();
+import { apiCall } from "@/api/index";
 
 const Post = ({
   user,
@@ -98,11 +80,29 @@ const Post = ({
             />
             {images.length > 1 && (
               <View style={styles.imageNavigation}>
-                <TouchableOpacity onPress={handlePreviousImage} disabled={currentImageIndex === 0}>
-                  <Ionicons name="chevron-back" size={24} color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"} />
+                <TouchableOpacity
+                  onPress={handlePreviousImage}
+                  disabled={currentImageIndex === 0}
+                >
+                  <Ionicons
+                    name="chevron-back"
+                    size={24}
+                    color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"}
+                  />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleNextImage} disabled={currentImageIndex === images.length - 1}>
-                  <Ionicons name="chevron-forward" size={24} color={currentImageIndex === images.length - 1 ? "#575A4B" : "#CFE1B9"} />
+                <TouchableOpacity
+                  onPress={handleNextImage}
+                  disabled={currentImageIndex === images.length - 1}
+                >
+                  <Ionicons
+                    name="chevron-forward"
+                    size={24}
+                    color={
+                      currentImageIndex === images.length - 1
+                        ? "#575A4B"
+                        : "#CFE1B9"
+                    }
+                  />
                 </TouchableOpacity>
               </View>
             )}
@@ -204,10 +204,7 @@ function Index() {
       </Button>
 
       <View style={styles.topView}>
-        <TouchableOpacity
-          onPress={pickImage}
-          style={styles.cameraButton}
-        >
+        <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <Text>Post your meal! </Text>
@@ -253,9 +250,14 @@ function Index() {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             {selectedImage ? (
-              <Image source={{ uri: selectedImage }} style={styles.modalImage} />
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.modalImage}
+              />
             ) : (
-              <Text style={styles.modalText}>Choose a new image from your gallery!</Text>
+              <Text style={styles.modalText}>
+                Choose a new image from your gallery!
+              </Text>
             )}
 
             <View style={styles.modalButtonContainer}>
@@ -276,14 +278,6 @@ function Index() {
         </View>
       </Modal>
     </View>
-  );
-}
-
-export default function WrappedIndex() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Index />
-    </QueryClientProvider>
   );
 }
 
@@ -327,9 +321,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     borderColor: "#718355",
-   // backgroundColor: "#718355",
+    // backgroundColor: "#718355",
     borderRadius: 10,
-  //  borderWidth: 1,
+    //  borderWidth: 1,
   },
   image: {
     width: 300,
@@ -387,12 +381,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   imageNavigation: {
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    width: "100%", 
-    marginTop: 10, 
-  }, 
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 10,
+  },
   modalButtonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
