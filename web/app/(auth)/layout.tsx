@@ -46,7 +46,7 @@ export default function AuthLayout({
         <nav>
           <img src="/images/logo.png" alt="Logo" className="mt-8 mb-20" />
 
-          <div className="flex flex-col items-center justify-center mb-24">
+          <div className="flex flex-col items-center justify-center mb-16">
             <Link
               href={"/homepage"}
               className="group flex flex-col items-center justify-center"
@@ -66,7 +66,7 @@ export default function AuthLayout({
             </Link>
           </div>
 
-          <div className="flex flex-col items-center justify-center mb-24">
+          <div className="flex flex-col items-center justify-center mb-16">
             <Link
               href={"/progress"}
               className="group flex flex-col items-center justify-center"
@@ -86,7 +86,7 @@ export default function AuthLayout({
             </Link>
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-[70px]">
+          <div className="flex flex-col items-center justify-center mb-8">
             <Link
               href={"/profile"}
               className="group flex flex-col items-center justify-center"
@@ -104,12 +104,14 @@ export default function AuthLayout({
                 Profile
               </p>
             </Link>
+          </div>
+          <div className="flex flex-col items-center justify-center">
             <button
-              className="bg-resedaGreen text-gray-100 px-3 py-2 rounded-full transition-transform duration-200 hover:scale-110"
+              className="bg-resedaGreen text-gray-100 w-10 md:w-20 lg:w-28 py-2 rounded-full transition-transform duration-200 hover:scale-110 flex justify-center"
               onClick={() => {
-                localStorage.clear();
-                console.log("Sign out");
-                router.push("/")
+              localStorage.clear();
+              console.log("Sign out");
+              router.push("/")
               }}
             >
               <p className="hidden md:block">Sign out</p>

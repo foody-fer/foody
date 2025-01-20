@@ -4,8 +4,16 @@ import React, { useEffect, useState } from "react";
 import Feed from "../../components/Feed";
 import { useGetUser } from "~/queries/getUser";
 import { apiCall } from "~/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProfilePage() {
+  const posts = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => apiCall(`${process.env.NEXT_PUBLIC_API_URL}/posts`, { method: "GET"}),
+    refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
+    staleTime: 0, // Podaci će biti uvijek svježi
+  });
+  
   const userQuery = useGetUser();
   const [name, setName] = useState(userQuery.data.first_name + " " + userQuery.data.last_name);
   const [firstName, setfirstName] = useState(userQuery.data.first_name);
@@ -78,14 +86,14 @@ export default function ProfilePage() {
         return (
           <div className="p-1 md:p-4">
             <p>Ovdje ce ici objave korisnika</p>
-            <Feed />
+            <Feed posts={posts}/>
           </div>
         );
       case "Recipes":
         return (
           <div className="p-1 md:p-4">
             <p>Ovdje ce ici recepti korisnika</p>
-            <Feed />
+            <Feed posts={posts}/>
           </div>
         );
       default:
@@ -336,7 +344,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <div className="flex-1 mt-2 mx-10 mb-10"></div>
+      <div className="flex-1 mt-2 mx-10 mb-10">{renderContent()}</div>
     </div>
   );
 }
