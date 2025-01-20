@@ -1,26 +1,46 @@
 "use client";
 import { Input } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Feed from "../../components/Feed";
 import { useGetUser } from "~/queries/getUser";
 import { apiCall } from "~/api";
 
 export default function ProfilePage() {
   const userQuery = useGetUser();
-
-  console.log(userQuery.data);
   const [name, setName] = useState(userQuery.data.first_name + " " + userQuery.data.last_name);
   const [firstName, setfirstName] = useState(userQuery.data.first_name);
   const [lastName, setlastName] = useState(userQuery.data.last_name);
   const [username, setUserName] = useState(userQuery.data.username);
-  const [bio, setBio] = useState("");
-  const [isEditingFirstName, setisEditingFirstName] = useState(false);
-  const [isEditingLastName, setisEditingLastName] = useState(false);
-  const [isEditingBio, setIsEditingBio] = useState(false);
-  const [isEditingUserName, setIsEditingUserName] = useState(false);
+  const [bio, setBio] = useState(userQuery.data.bio);
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isHovered, setIsHovered] = useState(false);
-  
+  const [error, setError] = useState("");
+  const [editingField, setEditingField] = useState<string | null>(null);
+
+  const [originalData, setOriginalData] = useState({
+    firstName: userQuery.data.first_name,
+    lastName: userQuery.data.last_name,
+    username: userQuery.data.username,
+    bio: userQuery.data.bio
+  });
+
+  const resetFields = () => {
+    setfirstName(originalData.firstName);
+    setlastName(originalData.lastName);
+    setUserName(originalData.username);
+    setBio(originalData.bio);
+    setError("");
+  };
+
+  useEffect(() => {
+    setOriginalData({
+      firstName: userQuery.data.first_name,
+      lastName: userQuery.data.last_name,
+      username: userQuery.data.username,
+      bio: userQuery.data.bio
+    });
+  }, [userQuery.data]);
+
   if (userQuery.isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -51,35 +71,7 @@ export default function ProfilePage() {
       {name.split(" ")[1][0].toUpperCase()}
     </span>
   );
-
-  const resetEditing = () => {
-    setisEditingFirstName(false);
-    setisEditingLastName(false);
-    setIsEditingUserName(false);
-    setIsEditingBio(false);
-  };
   
-  const toggleEditFirstName = () => {
-    resetEditing();
-    setisEditingFirstName((prev) => !prev); 
-  };
-
-  const toggleEditLastName = () => {
-    resetEditing();
-    setisEditingLastName((prev) => !prev);
-  };
-
-  const toggleEditUserName = () => {
-    resetEditing();
-    setIsEditingUserName((prev) => !prev);
-  };
-  
-  const toggleEditBio = () => {
-    resetEditing();
-    setIsEditingBio((prev) => !prev);
-  };
-
-
   const renderContent = () => {
     switch (selectedTab) {
       case "Posts":
@@ -101,6 +93,15 @@ export default function ProfilePage() {
     }
   };
 
+  const toggleEdit = (field: string) => {
+    if (editingField === field) {
+      handleSave(field); 
+    } else {
+      resetFields();
+      setEditingField(field);
+    }
+  };
+
   const imgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
@@ -118,6 +119,41 @@ export default function ProfilePage() {
       userQuery.refetch();
     } catch (error) {
       console.error("Error updating avatar:", error);
+    }
+  };
+  
+  const handleSave = async (field: string) => {
+
+    const formData = new FormData();
+
+    if (field === "firstName") {
+      formData.append("user[first_name]", firstName);
+    } else if (field === "lastName") {
+      formData.append("user[last_name]", lastName);
+    } else if (field === "username") {
+      formData.append("user[username]", username);
+    } else if (field === "bio") {
+      formData.append("user[bio]", bio);
+    }
+  
+    try {
+      const [data, status] = await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/registrations`, {
+        method: "PATCH",
+        body: formData,
+      });
+  
+      if (status === 422) {
+        setError(data.error.username);
+        return;
+      }
+
+      console.log("Profil je uspješno ažuriran:", data);
+      userQuery.refetch();
+      setName(data.first_name + " " + data.last_name);
+      setError("");
+      setEditingField(null);
+    } catch (error) {
+      console.error("Greška pri ažuriranju profila:", error);
     }
   };
   
@@ -151,7 +187,7 @@ export default function ProfilePage() {
         <p className="text-lg font-medium mt-4 ml-3">First name:</p>
 
         <div className="flex ml-3 text-gray-900">
-          {isEditingFirstName ? (
+          {editingField === "firstName" ? (
             <Input
               type="text"
               className="flex-1 p-2 border rounded-full border-black hover:border-black text-gray-900"
@@ -171,16 +207,16 @@ export default function ProfilePage() {
 
           <button
             className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
-            onClick={toggleEditFirstName}
+            onClick={() => toggleEdit("firstName")}
           >
-            {isEditingFirstName ? "Save first name" : "Edit first name"}
+            {editingField === "firstName" ? "Save first name" : "Edit first name"}
           </button>
         </div>
 
         <p className="text-lg font-medium mt-4 ml-3">Last name:</p>
         
         <div className="flex ml-3 text-gray-900">
-          {isEditingLastName ? (
+          {editingField === "lastName" ? (
             <Input
               type="text"
               className="flex-1 p-2 border rounded-full border-black hover:border-black text-gray-900"
@@ -200,16 +236,16 @@ export default function ProfilePage() {
 
           <button
             className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
-            onClick={toggleEditLastName}
+            onClick={() => toggleEdit("lastName")}
           >
-            {isEditingLastName ? "Save last name" : "Edit last name"}
+            {editingField === "lastName" ? "Save last name" : "Edit last name"}
           </button>
         </div>
 
     	  <p className="text-lg font-medium mt-4 ml-3">Username:</p>
 
         <div className="flex ml-3 text-gray-900">
-          {isEditingUserName ? (
+          {editingField === "username" ? (
             <Input
               type="text"
               className="flex-1 p-2 border rounded-full border-black hover:border-black text-gray-900"
@@ -229,16 +265,22 @@ export default function ProfilePage() {
 
           <button
             className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
-            onClick={toggleEditUserName}
+            onClick={() => toggleEdit("username")}
           >
-            {isEditingUserName ? "Save username" : "Edit username"}
+            {editingField === "username" ? "Save username" : "Edit username"}
           </button>
         </div>
         
+        {error && (
+            <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
+             Username {error}.
+            </div>
+        )}
+
         <p className="text-lg font-medium mt-4 ml-3">Bio:</p>
 
         <div className="flex mt-2 ml-3">
-          {isEditingBio ? (
+          {editingField === "bio" ? (
             <Input
               type="text"
               className="flex-1 p-2 border rounded-full border-black hover:border-black text-gray-900"
@@ -258,9 +300,9 @@ export default function ProfilePage() {
 
           <button
             className="ml-3 p-2 w-40 rounded-full font-semibold bg-textColor text-white"
-            onClick={toggleEditBio}
+            onClick={() => toggleEdit("bio")}
           >
-            {isEditingBio ? "Save bio" : "Edit bio"}
+            {editingField === "bio" ? "Save bio" : "Edit bio"}
           </button>
         </div>
 
