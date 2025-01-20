@@ -210,7 +210,7 @@ export default function Index() {
         </TouchableOpacity>
         <Text>Post your meal! </Text>
         <TouchableOpacity
-          className="rounded-full bg-[#575A4B] px-4 py-3 items-center mt-4"
+          className="rounded-full"
           onPress={() => router.push("/Chat")}
         >
           <Text>Chat</Text>

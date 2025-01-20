@@ -37,7 +37,6 @@ const Post = ({
   likePost: () => void;
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const router = useRouter();
 
   const handleNextImage = () => {
     if (currentImageIndex < images.length - 1) {
@@ -53,6 +52,9 @@ const Post = ({
 
   return (
     <View style={styles.postView}>
+      <TouchableOpacity
+        onPress={() => router.push("/sign-up")}
+      ></TouchableOpacity>
       <View style={styles.topSection}>
         {user.avatar ? (
           <Image
@@ -209,12 +211,6 @@ export default function Index() {
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <Text>Post your meal! </Text>
-        <TouchableOpacity
-          className="rounded-full bg-[#575A4B] px-4 py-3 items-center mt-4"
-          onPress={() => router.push("/Chat")}
-        >
-          <Text>Chat</Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView>

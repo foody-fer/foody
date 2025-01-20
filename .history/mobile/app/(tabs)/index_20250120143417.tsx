@@ -209,12 +209,6 @@ export default function Index() {
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <Text>Post your meal! </Text>
-        <TouchableOpacity
-          className="rounded-full bg-[#575A4B] px-4 py-3 items-center mt-4"
-          onPress={() => router.push("/Chat")}
-        >
-          <Text>Chat</Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView>
