@@ -19,7 +19,7 @@ export default function ProfilePage() {
   const [firstName, setfirstName] = useState(userQuery.data.first_name);
   const [lastName, setlastName] = useState(userQuery.data.last_name);
   const [username, setUserName] = useState(userQuery.data.username);
-  const [bio, setBio] = useState(userQuery.data.bio);
+  const [bio, setBio] = useState(userQuery.data.bio ? userQuery.data.bio : "");
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isHovered, setIsHovered] = useState(false);
   const [error, setError] = useState("");
