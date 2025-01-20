@@ -29,14 +29,14 @@ export default function ProfilePage() {
     firstName: userQuery.data.first_name,
     lastName: userQuery.data.last_name,
     username: userQuery.data.username,
-    bio: userQuery.data.bio
+    bio: userQuery.data.bio? userQuery.data.bio : ""
   });
 
   const resetFields = () => {
     setfirstName(originalData.firstName);
     setlastName(originalData.lastName);
     setUserName(originalData.username);
-    setBio(originalData.bio);
+    setBio(originalData.bio? originalData.bio : "");
     setError("");
   };
 
