@@ -59,6 +59,7 @@ export default function AddPost({ posts }: any) {
       },
       likes_count: 0,
       comments_count: 0,
+      user_saved_posts_count: 0,
       liked_by_current_user: false,
       content: content,
       images: images,
@@ -226,7 +227,7 @@ export default function AddPost({ posts }: any) {
             </div>
           </div>
           <div className="w-full border-s-white bg-white h-[0.01rem] mt-[0.5rem] mb-4" />
-          <div className="flex justify-center items-center w-full px-4">
+          <div className="flex justify-center items-center w-full px-2">
             <Post info={postInfo} preview={true} />
           </div>
           <div className="flex gap-10">

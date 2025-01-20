@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import {
   IoHomeOutline,
@@ -11,6 +12,7 @@ import {
   IoPerson,
 } from "react-icons/io5";
 import { useGetUser } from "~/queries/getUser";
+import { FaSignOutAlt } from "react-icons/fa";
 
 export default function AuthLayout({
   children,
@@ -18,6 +20,8 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   const userQuery = useGetUser();
+  const router = useRouter();
+
   if (userQuery.isLoading) {
     return (
       <div className="flex flex-col gap-1 justify-center items-center bg-backgroundGreen min-h-screen text-gray-600">
@@ -40,7 +44,7 @@ export default function AuthLayout({
     <div className="flex min-h-screen bg-backgroundGreen">
       <aside className="w-[13%] bg-navbarColor p-2 fixed h-[96%] ml-3 sm:ml-8 mt-3 rounded-lg">
         <nav>
-          <img src="/images/logo.png" alt="Logo" className="mt-10 mb-28" />
+          <img src="/images/logo.png" alt="Logo" className="mt-8 mb-20" />
 
           <div className="flex flex-col items-center justify-center mb-24">
             <Link
@@ -82,7 +86,7 @@ export default function AuthLayout({
             </Link>
           </div>
 
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-[70px]">
             <Link
               href={"/profile"}
               className="group flex flex-col items-center justify-center"
@@ -100,6 +104,17 @@ export default function AuthLayout({
                 Profile
               </p>
             </Link>
+            <button
+              className="bg-resedaGreen text-gray-100 px-3 py-2 rounded-full transition-transform duration-200 hover:scale-110"
+              onClick={() => {
+                localStorage.clear();
+                console.log("Sign out");
+                router.push("/")
+              }}
+            >
+              <p className="hidden md:block">Sign out</p>
+              <FaSignOutAlt className="block md:hidden m-1 w-5 h-5"/>
+            </button>
           </div>
         </nav>
       </aside>
