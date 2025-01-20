@@ -3,27 +3,45 @@ import { Input } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Feed from "../../components/Feed";
 import { useGetUser } from "~/queries/getUser";
+import { apiCall } from "~/api";
 
 export default function ProfilePage() {
   const userQuery = useGetUser();
 
+  console.log(userQuery.data);
   const [name, setName] = useState(userQuery.data.first_name + " " + userQuery.data.last_name);
+  const [firstName, setfirstName] = useState(userQuery.data.first_name);
+  const [lastName, setlastName] = useState(userQuery.data.last_name);
   const [username, setUserName] = useState(userQuery.data.username);
   const [bio, setBio] = useState("");
+  const [isEditingFirstName, setisEditingFirstName] = useState(false);
+  const [isEditingLastName, setisEditingLastName] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [isEditingUserName, setIsEditingUserName] = useState(false);
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isHovered, setIsHovered] = useState(false);
-  const [image, setImage] = useState("");
   
+  if (userQuery.isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (userQuery.isError || !userQuery.data) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Error loading user data.</p>
+      </div>
+    );
+  }
+
   const avatarContent = userQuery.data.avatar ? 
   (
     <img
-      src={image || userQuery.data.avatar.replace(    // ovaj replace cemo maknuti kada fran rjesi problem sa linkom
-        "example.com",
-        "foody-backend.zeko.run"
-      )}
-      alt={`${name}`}
+      src={userQuery.data.avatar}
+      alt={`${name} image`}
       className="w-full h-full object-cover"
     />
   )
@@ -34,8 +52,33 @@ export default function ProfilePage() {
     </span>
   );
 
-  const toggleEditBio = () => setIsEditingBio((prev) => !prev);
-  const toggleEditUserName = () => setIsEditingUserName((prev) => !prev);
+  const resetEditing = () => {
+    setisEditingFirstName(false);
+    setisEditingLastName(false);
+    setIsEditingUserName(false);
+    setIsEditingBio(false);
+  };
+  
+  const toggleEditFirstName = () => {
+    resetEditing();
+    setisEditingFirstName((prev) => !prev); 
+  };
+
+  const toggleEditLastName = () => {
+    resetEditing();
+    setisEditingLastName((prev) => !prev);
+  };
+
+  const toggleEditUserName = () => {
+    resetEditing();
+    setIsEditingUserName((prev) => !prev);
+  };
+  
+  const toggleEditBio = () => {
+    resetEditing();
+    setIsEditingBio((prev) => !prev);
+  };
+
 
   const renderContent = () => {
     switch (selectedTab) {
@@ -58,12 +101,26 @@ export default function ProfilePage() {
     }
   };
 
-  const imgUpload = (e: any) => {
+  const imgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setImage(URL.createObjectURL(file)); // stvara privremeni URL sa kojeg se ce prikazivati slika
-    console.log(file);
-  };
 
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("user[avatar]", file);
+  
+    try {
+      const data = await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/registrations`, {
+        method: "PATCH",
+        body: formData,
+      });
+  
+      userQuery.refetch();
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+    }
+  };
+  
   return (
     <div className="flex flex-col h-screen">
       <div className="p-10 mt-4">
@@ -89,6 +146,64 @@ export default function ProfilePage() {
             />
           </div>
           <h1 className="text-3xl text-textColor">{name}</h1>
+        </div>
+        
+        <p className="text-lg font-medium mt-4 ml-3">First name:</p>
+
+        <div className="flex ml-3 text-gray-900">
+          {isEditingFirstName ? (
+            <Input
+              type="text"
+              className="flex-1 p-2 border rounded-full border-black hover:border-black text-gray-900"
+              placeholder="Enter your name"
+              value={firstName}
+              onChange={(e) => setfirstName(e.target.value)}
+            />
+          ) : (
+            <Input
+              variant="outline"
+              disabled={true}
+              placeholder="Enter your name"
+              value={firstName}
+              className="flex-1 p-2 cursor-not-allowed border rounded-full text-gray-900 disabled:text-gray-800 disabled:opacity-100"
+            />
+          )}
+
+          <button
+            className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
+            onClick={toggleEditFirstName}
+          >
+            {isEditingFirstName ? "Save first name" : "Edit first name"}
+          </button>
+        </div>
+
+        <p className="text-lg font-medium mt-4 ml-3">Last name:</p>
+        
+        <div className="flex ml-3 text-gray-900">
+          {isEditingLastName ? (
+            <Input
+              type="text"
+              className="flex-1 p-2 border rounded-full border-black hover:border-black text-gray-900"
+              placeholder="Enter your surname"
+              value={lastName}
+              onChange={(e) => setlastName(e.target.value)}
+            />
+          ) : (
+            <Input
+              variant="outline"
+              disabled={true}
+              placeholder="Enter your surname"
+              value={lastName}
+              className="flex-1 p-2 cursor-not-allowed border rounded-full text-gray-900 disabled:text-gray-800 disabled:opacity-100"
+            />
+          )}
+
+          <button
+            className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
+            onClick={toggleEditLastName}
+          >
+            {isEditingLastName ? "Save last name" : "Edit last name"}
+          </button>
         </div>
 
     	  <p className="text-lg font-medium mt-4 ml-3">Username:</p>
@@ -120,7 +235,7 @@ export default function ProfilePage() {
           </button>
         </div>
         
-        <p className="text-lg font-medium mt-2 ml-3">Bio:</p>
+        <p className="text-lg font-medium mt-4 ml-3">Bio:</p>
 
         <div className="flex mt-2 ml-3">
           {isEditingBio ? (
@@ -148,6 +263,12 @@ export default function ProfilePage() {
             {isEditingBio ? "Save bio" : "Edit bio"}
           </button>
         </div>
+
+        <p className="text-lg font-medium mt-4 ml-3">Gender:</p>
+
+        <div className="ml-5 text-gray-900 text-base">
+          {userQuery.data.gender.charAt(0).toUpperCase() + userQuery.data.gender.slice(1)}
+        </div>
       </div>
 
       <div className="flex mt-4 ml-12 space-x-3">
@@ -173,7 +294,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <div className="flex-1 mt-2 mx-10 mb-10">{renderContent()}</div>
+      <div className="flex-1 mt-2 mx-10 mb-10"></div>
     </div>
   );
 }
