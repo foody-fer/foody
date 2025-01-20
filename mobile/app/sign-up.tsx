@@ -10,6 +10,8 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { apiCall, queryClient } from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const signUpSchema = z.object({
   name: z
@@ -56,7 +58,21 @@ const SignUpPage = () => {
     try {
       const data = signUpSchema.parse(formData);
       setErrors({});
-      Alert.alert("Success", "Account created successfully!");
+      const res = await apiCall("/registrations", {
+        method: "POST",
+        body: JSON.stringify({
+          user: {
+            ...data,
+            first_name: data.name,
+            last_name: data.surname,
+            phone: data.num,
+          },
+        }),
+      });
+
+      await AsyncStorage.setItem("token", res.token);
+
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
       router.push("/");
     } catch (error) {
       if (error instanceof z.ZodError) {

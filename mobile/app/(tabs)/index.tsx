@@ -193,7 +193,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Button
+      {/* <Button
         onPress={() => {
           AsyncStorage.removeItem("token");
           router.push("/Login");
@@ -201,7 +201,7 @@ export default function Index() {
         style={styles.logoutButton}
       >
         <Text style={{ color: "white" }}>Logout</Text>
-      </Button>
+      </Button> */}
 
       <View style={styles.topView}>
         <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
@@ -209,16 +209,6 @@ export default function Index() {
         </TouchableOpacity>
         <Text>Post your meal! </Text>
       </View>
-
-      <Button
-        onPress={() => {
-          AsyncStorage.removeItem("token");
-          queryClient.invalidateQueries({});
-          router.push("/Login");
-        }}
-      >
-        <Text style={{ color: "red" }}>Logout</Text>
-      </Button>
 
       <ScrollView>
         {postsQuery.isLoading && <Spinner />}

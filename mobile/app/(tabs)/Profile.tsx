@@ -17,8 +17,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
-import { apiCall } from "@/api";
+import { apiCall, queryClient } from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 const Post = ({
   user,
@@ -119,6 +120,7 @@ export default function ProfileScreen() {
   });
 
   const { data: user, isLoading, error } = useUser();
+  const router = useRouter();
 
   {
     isLoading && <Spinner />;
@@ -393,6 +395,16 @@ export default function ProfileScreen() {
           />
         </View>
       </View>
+
+      <Button
+        onPress={() => {
+          AsyncStorage.removeItem("token");
+          queryClient.invalidateQueries({});
+          router.push("/Login");
+        }}
+      >
+        <Text style={{ color: "white" }}>Logout</Text>
+      </Button>
 
       <View className="flex-row mt-5 justify-center">
         {selectedTab === "Posts" ? (
