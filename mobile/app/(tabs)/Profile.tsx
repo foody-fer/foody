@@ -13,11 +13,12 @@ import { Button, ButtonText } from "@/components/ui/button";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "@/components/ui/CustomText";
-import { apiCall } from ".";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
+import { apiCall } from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Post = ({
   user,

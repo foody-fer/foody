@@ -93,43 +93,6 @@ const SignUpPage = () => {
             Join us and enjoy personalized experiences!
           </Text>
 
-          {/* Gender Toggle Button */}
-          <View className="flex-row justify-center items-center mb-4">
-            <View className="flex-row border border-[#575A4B] rounded-full bg-[#F8FBEF]">
-              <TouchableOpacity
-                className={`flex-1 px-4 py-2 rounded-l-full ${
-                  formData.gender === "male" ? "bg-[#575A4B]" : ""
-                }`}
-                onPress={() => handleChange("gender", "male")}
-              >
-                <Text
-                  className={`text-center text-sm font-bold ${
-                    formData.gender === "male" ? "text-white" : "text-[#575A4B]"
-                  }`}
-                >
-                  Male
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className={`flex-1 px-4 py-2 rounded-r-full ${
-                  formData.gender === "female" ? "bg-[#575A4B]" : ""
-                }`}
-                onPress={() => handleChange("gender", "female")}
-              >
-                <Text
-                  className={`text-center text-sm font-bold ${
-                    formData.gender === "female"
-                      ? "text-white"
-                      : "text-[#575A4B]"
-                  }`}
-                >
-                  Female
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Input Fields */}
           {[
             { name: "name", placeholder: "Name" },
             { name: "surname", placeholder: "Surname" },
