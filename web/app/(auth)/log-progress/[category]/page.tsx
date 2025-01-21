@@ -8,7 +8,6 @@ export default function LogProgressPage({ params }: { params: Promise<{ category
   const flatpickrRef = useRef<any>(null);
 
   const [value, setValue] = useState("");
-  const [unit, setUnit] = useState("cm");
   const [date, setDate] = useState(new Date());
 
   const handleSubmit = () => {
@@ -27,27 +26,23 @@ export default function LogProgressPage({ params }: { params: Promise<{ category
         Log Progress for <span className="">{category}</span>
       </h1>
 
-      <input 
+      {category === "weight" ? (
+        <input 
         type="number"
         className="h-16 rounded-full px-4 w-96 mb-4 bg-white text-xl text-center"
-        placeholder="Enter value"
+        placeholder="Enter value in kg"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-      />
-
-      <div className="w-96 rounded-full h-16 overflow-hidden mb-4 bg-white flex items-center px-4 text-xl">
-        <select
-          className="w-full h-full bg-transparent border-none outline-none text-center"
-          value={unit}
-          onChange={(e) => setUnit(e.target.value)}
-        >
-          <option value="mm">mm</option>
-          <option value="cm">cm</option>
-          <option value="m">m</option>
-          <option value="kg">kg</option>
-          <option value="lbs">lbs</option>
-        </select>
-      </div>
+        />
+      ): (
+        <input 
+        type="number"
+        className="h-16 rounded-full px-4 w-96 mb-4 bg-white text-xl text-center"
+        placeholder="Enter value in cm"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        />
+      )}
 
       <div className="flex flex-col text-lg">
         <Flatpickr
@@ -55,20 +50,13 @@ export default function LogProgressPage({ params }: { params: Promise<{ category
           value={date}
           onChange={(selectedDates: React.SetStateAction<Date>[]) => setDate(selectedDates[0])}
           options={{ dateFormat: "d.m.Y" }}
-          className="bg-white border border-gray-300 px-8 py-3 rounded-full text-center read-only"
+          className="bg-white border border-gray-300 px-[5.5rem] py-3 rounded-full text-center read-only"
         />
-
-        <button 
-          className="mt-3 bg-resedaGreen px-8 py-3 rounded-full text-white font-bold"
-          onClick={openDatePicker}
-        >
-          Change date
-        </button>
       </div>
 
       <div className="mt-4">
         <button
-          className="bg-resedaGreen px-32 py-3 rounded-full text-white text-lg font-bold"
+          className="bg-resedaGreen px-14 py-3 rounded-full text-white text-lg font-bold"
           onClick={handleSubmit}
         >
           Submit Progress

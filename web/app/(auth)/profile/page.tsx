@@ -5,8 +5,30 @@ import Feed from "../../components/Feed";
 import { useGetUser } from "~/queries/getUser";
 import { apiCall } from "~/api";
 import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
 
 export default function ProfilePage() {
+  const profileSchema_first_name = z.object({
+    first_name: z
+      .string()
+      .min(2, "Name must be at least 2 characters")
+      .regex(/^[A-ZČĆŠĐŽ][a-zA-ZČĆŠĐŽčćšđž]*$/, "Incorrect first_name format"),
+  });
+
+  const profileSchema_last_name = z.object({
+    last_name: z
+      .string()
+      .min(2, "last_name must be at least 2 characters")
+      .regex(/^[A-ZŠČĆĐŽ][a-zA-ZČĆŠĐŽčćšđž]*$/, "Incorrect last_name format"),
+  });
+
+  const profileSchema_username = z.object({
+    username: z
+      .string()
+      .min(4, "Username must be at least 4 characters")
+      .regex(/^[a-zA-Z][a-zA-Z0-9._]*$/, "Incorrect username format")
+  });
+
   const posts = useQuery({
     queryKey: ["posts"],
     queryFn: () => apiCall(`${process.env.NEXT_PUBLIC_API_URL}/posts`, { method: "GET"}),
@@ -22,6 +44,7 @@ export default function ProfilePage() {
   const [bio, setBio] = useState(userQuery.data.bio ? userQuery.data.bio : "");
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isHovered, setIsHovered] = useState(false);
+  const [errors, setErrors] = useState<any>({});
   const [error, setError] = useState("");
   const [editingField, setEditingField] = useState<string | null>(null);
 
@@ -38,6 +61,7 @@ export default function ProfilePage() {
     setUserName(originalData.username);
     setBio(originalData.bio? originalData.bio : "");
     setError("");
+    setErrors({});
   };
 
   useEffect(() => {
@@ -131,9 +155,8 @@ export default function ProfilePage() {
   };
   
   const handleSave = async (field: string) => {
-
     const formData = new FormData();
-
+  
     if (field === "firstName") {
       formData.append("user[first_name]", firstName);
     } else if (field === "lastName") {
@@ -145,6 +168,19 @@ export default function ProfilePage() {
     }
   
     try {
+      // Validate first name with Zod
+      if(field === "firstName"){
+        profileSchema_first_name.parse({ first_name: firstName });
+      } else if (field === "lastName") {
+        profileSchema_last_name.parse({ last_name: lastName });
+      } else if (field === "username") {
+        profileSchema_username.parse({ username: username });
+      }
+  
+      // Reset errors if validation passes
+      setErrors({});
+  
+      // Make API call to update the profile
       const [data, status] = await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/registrations`, {
         method: "PATCH",
         body: formData,
@@ -154,14 +190,22 @@ export default function ProfilePage() {
         setError(data.error.username);
         return;
       }
-
-      console.log("Profil je uspješno ažuriran:", data);
+  
+      console.log("Profile updated successfully:", data);
       userQuery.refetch();
       setName(data.first_name + " " + data.last_name);
       setError("");
+
       setEditingField(null);
+  
     } catch (error) {
-      console.error("Greška pri ažuriranju profila:", error);
+      if (error instanceof z.ZodError) {
+        const formattedErrors = error.errors.reduce((acc: any, curr) => {
+          acc[curr.path[0]] = curr.message;
+          return acc;
+        }, {});
+        setErrors(formattedErrors);
+      }
     }
   };
   
@@ -221,6 +265,12 @@ export default function ProfilePage() {
           </button>
         </div>
 
+        {errors.first_name && (
+          <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
+            {errors.first_name}
+          </div>
+        )}
+
         <p className="text-lg font-medium mt-4 ml-3">Last name:</p>
         
         <div className="flex ml-3 text-gray-900">
@@ -249,6 +299,12 @@ export default function ProfilePage() {
             {editingField === "lastName" ? "Save last name" : "Edit last name"}
           </button>
         </div>
+
+        {errors.last_name && (
+          <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
+            {errors.last_name}
+          </div>
+        )}
 
     	  <p className="text-lg font-medium mt-4 ml-3">Username:</p>
 
@@ -279,11 +335,17 @@ export default function ProfilePage() {
           </button>
         </div>
         
-        {error && (
-            <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
-             Username {error}.
-            </div>
+
+        {errors.username ? (
+          <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
+            {errors.username}
+          </div>
+        ) : error && (
+          <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
+            Username {error}.
+          </div>
         )}
+
 
         <p className="text-lg font-medium mt-4 ml-3">Bio:</p>
 
