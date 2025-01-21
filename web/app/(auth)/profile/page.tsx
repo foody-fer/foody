@@ -210,7 +210,7 @@ export default function ProfilePage() {
   };
   
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen md:ml-16 lg:ml-32">
       <div className="p-10 mt-4">
         <div className="flex items-center space-x-4">
           <div
@@ -258,7 +258,7 @@ export default function ProfilePage() {
           )}
 
           <button
-            className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
+            className="ml-3 p-2 w-32 sm:w-40 text-base rounded-full font-semibold bg-textColor text-white"
             onClick={() => toggleEdit("firstName")}
           >
             {editingField === "firstName" ? "Save first name" : "Edit first name"}
@@ -293,7 +293,7 @@ export default function ProfilePage() {
           )}
 
           <button
-            className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
+            className="ml-3 p-2 w-32 sm:w-40 text-base rounded-full font-semibold bg-textColor text-white"
             onClick={() => toggleEdit("lastName")}
           >
             {editingField === "lastName" ? "Save last name" : "Edit last name"}
@@ -328,7 +328,7 @@ export default function ProfilePage() {
           )}
 
           <button
-            className="ml-3 p-2 w-40 text-base rounded-full font-semibold bg-textColor text-white"
+            className="ml-3 p-2 w-32 sm:w-40 text-base rounded-full font-semibold bg-textColor text-white"
             onClick={() => toggleEdit("username")}
           >
             {editingField === "username" ? "Save username" : "Edit username"}
@@ -369,7 +369,7 @@ export default function ProfilePage() {
           )}
 
           <button
-            className="ml-3 p-2 w-40 rounded-full font-semibold bg-textColor text-white"
+            className="ml-3 p-2 w-32 sm:w-40 rounded-full font-semibold bg-textColor text-white"
             onClick={() => toggleEdit("bio")}
           >
             {editingField === "bio" ? "Save bio" : "Edit bio"}

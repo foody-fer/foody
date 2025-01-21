@@ -57,16 +57,16 @@ export default function ProgressPage() {
 
   return (
     <div className="flex flex-col min-h-screen mt-5 mb-5">
-      <p className="text-textColor font-semibold text-lg before:content-['•'] before:mr-2">
+      <p className="text-textColor font-semibold text-lg before:content-['•'] before:mr-2 ml-8 md:ml-32 lg:ml-40">
         Select the category:
       </p>
 
-      <div className="flex flex-wrap gap-2 mt-2 ml-4">
+      <div className="flex flex-wrap gap-2 mt-2 ml-8 md:ml-32 lg:ml-40">
         {categories.map((category) => (
           <button
             key={category}
             onClick={() => handleCategoryChange(category)}
-            className={`py-2 px-4 rounded-full ${
+            className={`py-2 w-20 md:w-16 lg:w-20 rounded-full ${
               selectedCategory === category
                 ? "bg-[#575A4B] text-white font-bold"
                 : "bg-[#718355] text-white"
@@ -78,7 +78,7 @@ export default function ProgressPage() {
       </div>
 
       <div className="flex flex-col items-center">
-        <div className="w-5/6 mt-12 ml-6">
+        <div className="w-5/6 mt-12 md:ml-20 lg:ml-28">
           <div className="bg-white p-4 rounded-xl shadow-lg">
             <div className="h-80">
               <Line data={chartData} options={chartOptions}/>
@@ -86,7 +86,7 @@ export default function ProgressPage() {
           </div>
         </div>
 
-        <div className="mt-6 bg-white p-4 rounded-lg shadow-md w-52">
+        <div className="mt-6 bg-white p-4 rounded-lg shadow-md w-52 md:ml-12 lg:ml-6">
           {[
             { value: "24 cm", date: "15.3.2025" },
             { value: "30 cm", date: "20.5.2025" },
@@ -102,7 +102,7 @@ export default function ProgressPage() {
           ))}
         </div>
 
-        <Link href={`/log-progress/${selectedCategory}`} className="no-underline">
+        <Link href={`/log-progress/${selectedCategory}`} className="no-underline md:ml-12 lg:ml-6">
           <button className="mt-6 py-3 w-80 rounded-full bg-[#718355] text-white font-bold">
             Log Progress
           </button>

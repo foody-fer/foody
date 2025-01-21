@@ -22,14 +22,14 @@ export default function LogProgressPage({ params }: { params: Promise<{ category
 
   return (
     <div className="flex flex-col items-center mt-20">
-      <h1 className="text-5xl mb-16 font-bold text-textColor text-center">
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl mb-16 font-bold text-textColor text-center">
         Log Progress for <span className="">{category}</span>
       </h1>
 
       {category === "weight" ? (
         <input 
         type="number"
-        className="h-16 rounded-full px-4 w-96 mb-4 bg-white text-xl text-center"
+        className="h-16 rounded-full px-4 w-80 sm:w-96 mb-4 bg-white text-xl text-center"
         placeholder="Enter value in kg"
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -37,7 +37,7 @@ export default function LogProgressPage({ params }: { params: Promise<{ category
       ): (
         <input 
         type="number"
-        className="h-16 rounded-full px-4 w-96 mb-4 bg-white text-xl text-center"
+        className="h-16 rounded-full px-4 w-80 sm:w-96 mb-4 bg-white text-xl text-center"
         placeholder="Enter value in cm"
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -50,13 +50,13 @@ export default function LogProgressPage({ params }: { params: Promise<{ category
           value={date}
           onChange={(selectedDates: React.SetStateAction<Date>[]) => setDate(selectedDates[0])}
           options={{ dateFormat: "d.m.Y" }}
-          className="bg-white border border-gray-300 px-[5.5rem] py-3 rounded-full text-center read-only"
+          className="bg-white border border-gray-300 px-[3.5rem] sm:px-[5.5rem] py-3 rounded-full text-center read-only"
         />
       </div>
 
       <div className="mt-4">
         <button
-          className="bg-resedaGreen px-14 py-3 rounded-full text-white text-lg font-bold"
+          className="bg-resedaGreen px-10 sm:px-14 py-3 rounded-full text-white text-lg font-bold"
           onClick={handleSubmit}
         >
           Submit Progress
