@@ -11,7 +11,7 @@ import {
   IoBarChart,
   IoPerson,
   IoChatboxEllipsesOutline,
-  IoChatboxEllipses  
+  IoChatboxEllipses,
 } from "react-icons/io5";
 import { useGetUser } from "~/queries/getUser";
 import { FaSignOutAlt } from "react-icons/fa";
@@ -70,7 +70,7 @@ export default function AuthLayout({
 
           <div className="flex flex-col items-center justify-center mb-10">
             <Link
-              href={"/progress"}
+              href={"/progress/weight"}
               className="group flex flex-col items-center justify-center"
             >
               <IoBarChartOutline
@@ -132,9 +132,9 @@ export default function AuthLayout({
             <button
               className="bg-resedaGreen text-gray-100 md:w-20 lg:w-24 py-2 rounded-full transition-transform duration-200 hover:scale-110 flex justify-center"
               onClick={() => {
-              localStorage.clear();
-              console.log("Sign out");
-              router.push("/")
+                localStorage.clear();
+                console.log("Sign out");
+                router.push("/");
               }}
             >
               <p className="hidden md:block">Sign out</p>
@@ -228,18 +228,20 @@ export default function AuthLayout({
           <button
             className="bg-resedaGreen text-gray-100 w-10 md:w-20 lg:w-28 py-2 rounded-full transition-transform duration-200 hover:scale-110 flex justify-center"
             onClick={() => {
-            localStorage.clear();
-            console.log("Sign out");
-            router.push("/")
+              localStorage.clear();
+              console.log("Sign out");
+              router.push("/");
             }}
           >
             <p className="hidden md:block">Sign out</p>
-            <FaSignOutAlt className="block md:hidden m-1 w-5 h-5"/>
+            <FaSignOutAlt className="block md:hidden m-1 w-5 h-5" />
           </button>
         </div>
       </nav>
 
-      <main className="w-full md:ml-[10rem] lg:ml-[15rem] overflow-x-hidden pb-20 md:pb-0">{children}</main>
+      <main className="w-full md:ml-[10rem] lg:ml-[15rem] overflow-x-hidden pb-20 md:pb-0">
+        {children}
+      </main>
     </div>
   );
 }
