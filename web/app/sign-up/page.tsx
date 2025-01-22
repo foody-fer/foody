@@ -23,7 +23,7 @@ const signUpSchema = z.object({
     .string()
     .regex(
       /^\+\d{1,4} \d{6,}$/,
-      "Phone number must follow the format +(country_code) phone_number"
+      "Incorrect phone number format: +X/XX/XXX XXXXXX..."
     ),
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),

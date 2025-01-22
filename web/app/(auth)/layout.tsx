@@ -11,7 +11,7 @@ import {
   IoBarChart,
   IoPerson,
   IoChatboxEllipsesOutline,
-  IoChatboxEllipses  
+  IoChatboxEllipses,
 } from "react-icons/io5";
 import { useGetUser } from "~/queries/getUser";
 import { FaSignOutAlt } from "react-icons/fa";
@@ -44,7 +44,7 @@ export default function AuthLayout({
 
   return (
     <div className="flex min-h-screen bg-backgroundGreen">
-      <aside className="w-[13%] bg-navbarColor p-2 fixed h-[96%] ml-3 sm:ml-8 mt-3 rounded-lg">
+      <aside className="w-[13%] bg-navbarColor p-2 fixed h-[96%] md:ml-[7rem] lg:ml-[10rem] mt-3 rounded-lg hidden md:block">
         <nav>
           <img src="/images/logo.png" alt="Logo" className="mt-8 mb-12" />
 
@@ -70,7 +70,7 @@ export default function AuthLayout({
 
           <div className="flex flex-col items-center justify-center mb-10">
             <Link
-              href={"/progress"}
+              href={"/progress/weight"}
               className="group flex flex-col items-center justify-center"
             >
               <IoBarChartOutline
@@ -130,21 +130,118 @@ export default function AuthLayout({
 
           <div className="flex flex-col items-center justify-center">
             <button
-              className="bg-resedaGreen text-gray-100 w-10 md:w-20 lg:w-28 py-2 rounded-full transition-transform duration-200 hover:scale-110 flex justify-center"
+              className="bg-resedaGreen text-gray-100 md:w-20 lg:w-24 py-2 rounded-full transition-transform duration-200 hover:scale-110 flex justify-center"
               onClick={() => {
-              localStorage.clear();
-              console.log("Sign out");
-              router.push("/")
+                localStorage.clear();
+                console.log("Sign out");
+                router.push("/");
               }}
             >
               <p className="hidden md:block">Sign out</p>
-              <FaSignOutAlt className="block md:hidden m-1 w-5 h-5"/>
             </button>
           </div>
         </nav>
       </aside>
 
-      <main className="w-full ml-[23%] overflow-x-hidden">{children}</main>
+      <nav className="md:hidden w-full z-50 fixed bottom-0 flex flex-row gap-12 sm:gap-16 bg-navbarColor justify-center items-center h-24">
+        <div>
+          <Link
+            href={"/homepage"}
+            className="group flex flex-col items-center justify-center"
+          >
+            <IoHomeOutline
+              size={38}
+              color="white"
+              className="group-hover:hidden"
+            />
+            <IoHome
+              size={38}
+              className="hidden group-hover:block text-resedaGreen"
+            />
+            <p className="text-center text-[#ffffff] group-hover:text-resedaGreen">
+              Home
+            </p>
+          </Link>
+        </div>
+
+        <div className="flex flex-col items-center justify-center">
+          <Link
+            href={"/progress"}
+            className="group flex flex-col items-center justify-center"
+          >
+            <IoBarChartOutline
+              size={38}
+              color="white"
+              className="group-hover:hidden"
+            />
+            <IoBarChart
+              size={38}
+              className="hidden group-hover:block text-resedaGreen"
+            />
+            <p className="text-center text-[#ffffff] group-hover:text-resedaGreen">
+              Progress
+            </p>
+          </Link>
+        </div>
+
+        <div className="flex flex-col items-center justify-center">
+          <Link
+            href={"/profile"}
+            className="group flex flex-col items-center justify-center"
+          >
+            <IoPersonOutline
+              size={38}
+              color="white"
+              className="group-hover:hidden"
+            />
+            <IoPerson
+              size={38}
+              className="hidden group-hover:block text-resedaGreen"
+            />
+            <p className="text-center text-[#ffffff] group-hover:text-resedaGreen">
+              Profile
+            </p>
+          </Link>
+        </div>
+
+        <div className="flex flex-col items-center justify-center">
+          <Link
+            href={"/chat"}
+            className="group flex flex-col items-center justify-center"
+          >
+            <IoChatboxEllipsesOutline
+              size={38}
+              color="white"
+              className="group-hover:hidden"
+            />
+            <IoChatboxEllipses
+              size={38}
+              className="hidden group-hover:block text-resedaGreen"
+            />
+            <p className="text-center text-[#ffffff] group-hover:text-resedaGreen">
+              Chat
+            </p>
+          </Link>
+        </div>
+
+        <div className="flex flex-col items-center justify-center">
+          <button
+            className="bg-resedaGreen text-gray-100 w-10 md:w-20 lg:w-28 py-2 rounded-full transition-transform duration-200 hover:scale-110 flex justify-center"
+            onClick={() => {
+              localStorage.clear();
+              console.log("Sign out");
+              router.push("/");
+            }}
+          >
+            <p className="hidden md:block">Sign out</p>
+            <FaSignOutAlt className="block md:hidden m-1 w-5 h-5" />
+          </button>
+        </div>
+      </nav>
+
+      <main className="w-full md:ml-[10rem] lg:ml-[15rem] overflow-x-hidden pb-20 md:pb-0">
+        {children}
+      </main>
     </div>
   );
 }
