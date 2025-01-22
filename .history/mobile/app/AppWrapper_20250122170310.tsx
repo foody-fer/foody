@@ -12,12 +12,7 @@ const FloatingChatButton = () => {
   };
 
   // Don't render the button if on the Chat screen
-  if (
-    pathname === "/Chat" ||
-    pathname === "/Login" ||
-    pathname === "/sign-up" ||
-    pathname === "/sign-in"
-  ) {
+  if (pathname === "/Chat" || pathname === "/Login") {
     return null;
   }
 
