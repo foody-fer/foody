@@ -20,8 +20,7 @@ import { useGetUser } from "~/queries/getUser";
 
 export default function Post({ info, preview, posts }: any) {
   const [comm, setComm] = useState(false);
-  const [saves, setSaves] = useState(false);
-  const [edit, setEdit] = useState(false)
+  const [edit, setEdit] = useState(false);
 
   const userQuery = useGetUser();
 
@@ -38,6 +37,29 @@ export default function Post({ info, preview, posts }: any) {
       } else {
         const response = await apiCall(
           `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
+          {
+            method: "POST",
+          }
+        );
+        console.log(response);
+      }
+      posts.refetch();
+    }
+  };
+
+  const handleSaves = async () => {
+    if (!preview) {
+      if (info.saved_by_current_user) {
+        const response = await apiCall(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/saves`,
+          {
+            method: "DELETE",
+          }
+        );
+        console.log(response);
+      } else {
+        const response = await apiCall(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/saves`,
           {
             method: "POST",
           }
@@ -188,20 +210,20 @@ export default function Post({ info, preview, posts }: any) {
         <div
           className={
             "text-textColor flex flex-row rounded-full p-1 transition duration-300" +
-            (saves ? " bg-green-400 text-white" : " bg-white")
+            (info.saved_by_current_user ? " bg-green-400 text-white" : " bg-white")
           }
         >
-          {!saves ? (
+          {!info.saved_by_current_user ? (
             <BsSave
               onClick={() => {
-                !preview && setSaves(!saves);
+                !preview && handleSaves;
               }}
               className="cursor-pointer text-resedaGreen h-3 w-4 mr-2 mt-[0.2rem] pl-1 ml-1 md:mr-1"
             />
           ) : (
             <BsSaveFill
               onClick={() => {
-                !preview && setSaves(!saves);
+                !preview && handleSaves;
               }}
               className="cursor-pointer h-3 w-4 mr-2 mt-[0.2rem] pl-1 ml-1 md:mr-1"
             />
@@ -209,7 +231,7 @@ export default function Post({ info, preview, posts }: any) {
           <span
             className="pl-1 cursor-pointer hidden md:block"
             onClick={() => {
-              !preview && setSaves(!saves);
+              !preview && handleSaves;
             }}
           >
             Saves
@@ -220,16 +242,20 @@ export default function Post({ info, preview, posts }: any) {
         </div>
       </div>
       {/* COMMENTS */}
-      <Comments bool={comm} postInfo={info} preview={preview} posts={posts}/>
+      <Comments bool={comm} postInfo={info} preview={preview} posts={posts} />
       {/* EDIT MODAL */}
-      <div className={
-          "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 " +
-          (edit
-            ? "flex justify-center items-center overflow-y-auto scrollbar-hide"
-            : "hidden")
-        }>
-          <EditPost info={info} posts={posts} close={setEdit} edit={edit}/>
-      </div>
+      {!preview && (
+        <div
+          className={
+            "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 " +
+            (edit
+              ? "flex justify-center items-center overflow-y-auto scrollbar-hide"
+              : "hidden")
+          }
+        >
+          <EditPost info={info} posts={posts} close={setEdit} edit={edit} />
+        </div>
+      )}
     </div>
   );
 }

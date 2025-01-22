@@ -5,41 +5,58 @@ import { apiCall } from "~/api";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { MdAddPhotoAlternate } from "react-icons/md";
 
+
 export default function EditPost({ info, posts, close, edit }: any) {
-  const [postInfo, setPostInfo] = useState(info)
   const [rmImg, setRmImg] = useState<any>([]);
   const [addImg, setAddImg] = useState<any>([]);
 
   useEffect(() => {
-    console.log("Updated info:", postInfo);
-  }, [info]);
-  
-  useEffect(() => {
-    setRmImg([])
-    setAddImg([])
+    setRmImg([]);
+    setAddImg([]);
   }, [edit]);
 
-  const handleSubmit = (e: any) => {
+  // useEffect(() => {
+  //   console.log(addImg);
+  // }, [addImg]);
+
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    //slanje na backend
+    let formData = new FormData(e.target as HTMLFormElement);
+    if(rmImg.length > 0)
+      formData.append("post[remove_images][]", rmImg);
+
+    console.log(addImg);
+    console.log(rmImg);
+
+    const response = await apiCall(
+      `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}`,
+      {
+        method: "PATCH",
+        body: formData,
+      }
+    );
+    console.log(response);
+    posts.refetch();
+    close(false);
   };
 
   const handleImgDelete = (id: any) => {
-    setRmImg((prev:any) => [...prev, id]);
-    console.log("delete ", id, rmImg);
-    console.log(postInfo);
+    setRmImg([...rmImg, id]);
   };
 
   const handleImgAdd = (e: any) => {
     const selectedFiles = e.target.files;
-    const maxFiles = 5 - info.images.length + rmImg.length;
-    console.log(maxFiles);
-    console.log(postInfo);
-    console.log(rmImg);
-    
+    let maxFiles = 5 - info.images.length - addImg.length + rmImg.length;
+
+    console.log("____________________________");
+    console.log("You could have add:", maxFiles);
+    console.log("Org pics:", info);
+    console.log("Added pics:", addImg.length);
+    console.log("Removed pics:", rmImg.length);
+
     if (selectedFiles.length > maxFiles) {
-      alert(`You can select maximum of ${maxFiles} images.`);
+      alert(`You can select maximum of 5 images.`);
       e.target.value = null; // Resetiraj input
     } else {
       let arr = [];
@@ -47,14 +64,12 @@ export default function EditPost({ info, posts, close, edit }: any) {
         let file = e.target.files[i];
         arr.push(URL.createObjectURL(file));
       }
-      setAddImg((prev:any) => [...prev, ...arr]);
-      console.log("AAAAAAAAAA");
-      console.log(arr); 
+      setAddImg(arr);
     }
   };
 
   return (
-    <div className="bg-gray-200 w-[50%] rounded p-4">
+    <div className="bg-gray-200 w-[28rem] rounded p-4">
       <div className="flex justify-between mb-2">
         <div></div>
         <p className="font-semibold text-lg">Edit your post</p>
@@ -74,8 +89,7 @@ export default function EditPost({ info, posts, close, edit }: any) {
           <br />
           <input
             type="text"
-            placeholder={info.content || ""}
-            defaultValue={info.content}
+            placeholder={info.content}
             name="post[content]"
             className="p-2 rounded mt-1 w-full mb-2"
           />
@@ -83,7 +97,7 @@ export default function EditPost({ info, posts, close, edit }: any) {
           <label htmlFor="" className="mt-2">
             Add/Remove images:
           </label>
-          <div className="flex gap-1 overflow-x-auto bg-gray-300 rounded mt-1">
+          <div className="flex gap-1 overflow-x-auto bg-gray-300 rounded mt-1 p-[1rem] w-full">
             {info.images.map(
               (pic: any) =>
                 rmImg.filter((id: any) => id === pic.id).length === 0 && (
@@ -94,16 +108,16 @@ export default function EditPost({ info, posts, close, edit }: any) {
                     <img
                       src={pic.url}
                       alt={info.title}
-                      className="w-full h-[200px] object-cover"
+                      className="w-full h-[200px] object-cover rounded-md"
                     />
                     <IoTrashBinOutline
                       onClick={() => handleImgDelete(pic.id)}
-                      className="absolute w-5 h-5 top-1 right-1 text-red-500 hover:scale-125 transition duration-300 cursor-pointer"
+                      className="absolute w-5 h-5 top-2 right-2 text-red-500 hover:scale-125 transition duration-300 cursor-pointer"
                     />
                   </div>
                 )
             )}
-            {addImg?.map((pic: any) => (
+            {addImg.map((pic: any) => (
               <div
                 className="relative flex justify-center items-start min-w-full mr-2"
                 key={pic}
@@ -111,11 +125,7 @@ export default function EditPost({ info, posts, close, edit }: any) {
                 <img
                   src={pic}
                   alt={info.title}
-                  className="w-full h-[200px] object-cover"
-                />
-                <IoTrashBinOutline
-                  onClick={() => handleImgDelete(pic)}
-                  className="absolute w-5 h-5 top-1 right-1 text-red-500 hover:scale-125 transition duration-300 cursor-pointer"
+                  className="w-full h-[200px] object-cover rounded-md"
                 />
               </div>
             ))}
