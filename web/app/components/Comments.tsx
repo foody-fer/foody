@@ -30,7 +30,6 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
       { method: "GET" }
     );
     setComments(response);
-    console.log(response);
   };
 
   useEffect(() => {

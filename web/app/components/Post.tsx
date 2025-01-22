@@ -7,6 +7,7 @@ import { TfiCommentAlt } from "react-icons/tfi";
 import { FaUserCircle } from "react-icons/fa";
 import { IoIosMore } from "react-icons/io";
 import ReadMore from "./ReadMore";
+import EditPost from "./EditPost";
 import {
   MenuRoot,
   MenuTrigger,
@@ -20,6 +21,7 @@ import { useGetUser } from "~/queries/getUser";
 export default function Post({ info, preview, posts }: any) {
   const [comm, setComm] = useState(false);
   const [saves, setSaves] = useState(false);
+  const [edit, setEdit] = useState(false)
 
   const userQuery = useGetUser();
 
@@ -44,10 +46,6 @@ export default function Post({ info, preview, posts }: any) {
       }
       posts.refetch();
     }
-  };
-
-  const handleEdit = () => {
-
   };
 
   const handleDelete = async () => {
@@ -115,7 +113,7 @@ export default function Post({ info, preview, posts }: any) {
                 </MenuItem>
                 <MenuItem
                   value="new-txt"
-                  onClick={handleEdit}
+                  onClick={() => setEdit(!edit)}
                   className="cursor-pointer"
                 >
                   Edit post
@@ -223,6 +221,15 @@ export default function Post({ info, preview, posts }: any) {
       </div>
       {/* COMMENTS */}
       <Comments bool={comm} postInfo={info} preview={preview} posts={posts}/>
+      {/* EDIT MODAL */}
+      <div className={
+          "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 " +
+          (edit
+            ? "flex justify-center items-center overflow-y-auto scrollbar-hide"
+            : "hidden")
+        }>
+          <EditPost info={info} posts={posts} close={setEdit} edit={edit}/>
+      </div>
     </div>
   );
 }
