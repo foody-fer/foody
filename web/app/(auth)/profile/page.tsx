@@ -210,7 +210,7 @@ export default function ProfilePage() {
   };
   
   return (
-    <div className="flex flex-col min-h-screen md:ml-16 lg:ml-32">
+    <div className="flex flex-col min-h-screen md:ml-16 lg:ml-36">
       <div className="p-10 mt-4">
         <div className="flex items-center space-x-4">
           <div

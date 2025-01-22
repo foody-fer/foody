@@ -2,6 +2,8 @@
 import React, { useRef, useState } from "react";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/airbnb.css";
+import { IoArrowBackCircleOutline, IoArrowBackCircle  } from "react-icons/io5";
+import Link from "next/link";
 
 export default function LogProgressPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = React.use(params); // za dohvatiti koja kategorija se radi
@@ -22,9 +24,19 @@ export default function LogProgressPage({ params }: { params: Promise<{ category
 
   return (
     <div className="flex flex-col items-center mt-20">
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl mb-16 font-bold text-textColor text-center">
-        Log Progress for <span className="">{category}</span>
-      </h1>
+      <div className="flex flex-row gap-3 justify-center items-center pb-8">
+        <Link
+            href={"/progress"}
+            className="group"
+        >
+          <IoArrowBackCircleOutline className="self-center w-8 h-8 sm:w-9 sm:h-9 md:w-12 md:h-12 lg:w-16 lg:h-16 group-hover:hidden" />
+          <IoArrowBackCircle className="self-center w-8 h-8 sm:w-9 sm:h-9 md:w-12 md:h-12 lg:w-16 lg:h-16 hidden group-hover:block" />
+        </Link>
+        
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-textColor leading-none">
+            Log Progress for <span>{category}</span>
+        </h1>
+      </div>
 
       {category === "weight" ? (
         <input 
