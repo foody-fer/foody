@@ -61,9 +61,23 @@ const Post = ({
   likedByCurrentUser: boolean;
   likePost: () => void;
 }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const handleNextImage = () => {
+    if (currentImageIndex < images.length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1);
+    }
+  };
+
+  const handlePreviousImage = () => {
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex(currentImageIndex - 1);
+    }
+  };
+
   return (
-    <View className="mt-2 p-5 m-5 w-[90%] rounded-lg items-center border-[#575A4B]">
-      <View className="flex-row justify-start w-full pb-2 pt-1 border border-[#718355]">
+    <View className="mt-2 p-[5%] m-[5%] w-[90%] rounded-lg items-center bg-[#718355] border border-[#575A4B] border-opacity-20">
+      <View className="flex flex-row justify-start w-full pb-0.5 pt-[1%]">
         {user.avatar ? (
           <Image
             source={{ uri: user.avatar }}
@@ -82,24 +96,53 @@ const Post = ({
 
       <Text>{content}</Text>
 
-      <View className="w-full items-center my-2.5 border border-[#718335]">
-        {images.map((image) => (
-          <Image
-            key={image.id}
-            source={{ uri: image.url }}
-            className="w-[150px] h-[150px] rounded-lg border border-[#718355]"
-          />
-        ))}
+      <View className="w-full pt-5 flex items-center my-2.5 border-[#718355] rounded-lg">
+        {images.length > 0 && (
+          <>
+            <Image
+              source={{ uri: images[currentImageIndex].url }}
+              className="w-72 h-72 rounded-lg border border-[#718355] border-opacity-100"
+            />
+            {images.length > 1 && (
+              <View className="flex flex-row justify-between items-center w-full mt-2.5">
+                <TouchableOpacity
+                  onPress={handlePreviousImage}
+                  disabled={currentImageIndex === 0}
+                >
+                  <Ionicons
+                    name="chevron-back"
+                    size={24}
+                    color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleNextImage}
+                  disabled={currentImageIndex === images.length - 1}
+                >
+                  <Ionicons
+                    name="chevron-forward"
+                    size={24}
+                    color={
+                      currentImageIndex === images.length - 1
+                        ? "#575A4B"
+                        : "#CFE1B9"
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          </>
+        )}
       </View>
 
-      <View className="flex-row justify-around w-full mt-2.5">
+      <View className="flex flex-row justify-around w-full mt-2.5">
         <Text>{likes}</Text>
         <TouchableOpacity onPress={likePost}>
           <Ionicons
             name="heart"
             size={24}
             color={likedByCurrentUser ? "red" : "#575A4B"}
-            className="mx-5"
+            className="mx-1.25"
           />
         </TouchableOpacity>
 
@@ -108,7 +151,7 @@ const Post = ({
             name="chatbubble"
             size={24}
             color="#575A4B"
-            className="mx-5"
+            className="mx-1.25"
           />
         </TouchableOpacity>
       </View>
@@ -215,91 +258,6 @@ export default function ProfileScreen() {
       setGender(user?.data.gender || "");
     }
   }, [user?.data]);
-
-  /*interface ProfileUpdateData {
-    username?: string;
-    bio?: string;
-    first_name?: string;
-    last_name?: string;
-    gender?: string;
-    phone?: string;
-    avatar?: File;
-  }
-
-  const updateProfileMutation = useMutation<unknown, Error, ProfileUpdateData>({
-    mutationFn: async (updatedData: ProfileUpdateData) => {
-      let body: FormData | string;
-      //let headers = { "Content-Type"?: string} = { "Content-Type": "application/json" };
-      let headers: Record<string, string> = {};
-
-      if (updatedData.avatar) {
-        const formData = new FormData();
-        Object.entries(updatedData).forEach(([key, value]) => {
-          if (value) {
-            if (key === "avatar") {
-              formData.append(`user[avatar]`, value as File);
-            } else {
-              formData.append(`user[${key}]`, value as string);
-            }
-          }
-        });
-        body = formData;
-      } else {
-        body = JSON.stringify({ user: updatedData });
-        headers["Content-Type"] = "application/json";
-      }
-
-      const [data, status] = await apiCall("/registrations", {
-        method: "PATCH",
-        body,
-        headers,
-      });
-
-      if (status !== 200) {
-        throw new Error(data.message || "Failed to update profile");
-      }
-
-      return data;
-    },
-    onSuccess: (data) => {
-      console.log("Profile updated successfully:", data);
-    },
-    onError: (error) => {
-      console.log("Error updating profile:", error);
-    },
-    mutationFn: async (updatedData: ProfileUpdateData) => {
-      const formData = new FormData();
-
-      Object.entries(updatedData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === "avatar") {
-            formData.append(`user[avatar]`, value as Blob); // Use Blob for file uploads
-          } else {
-            formData.append(`user[${key}]`, value as string);
-          }
-        }
-      });
-      console.log(formData);
-
-      const [data, status] = await apiCall("/registrations", {
-        method: "PATCH",
-        body: formData,
-        headers: {},
-      });
-
-      if (status !== 200) {
-        throw new Error(data.message || "Failed to update profile");
-      }
-
-      return data;
-    },
-    onSuccess: (data) => {
-      console.log("Profile updated successfully:", data);
-    },
-    onError: (error) => {
-      console.log("Error updating profile:", error);
-    },
-  });*/
 
   const handleSaveProfile = async (field: string) => {
     const formData = new FormData();
