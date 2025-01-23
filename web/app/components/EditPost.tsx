@@ -9,6 +9,7 @@ import { MdAddPhotoAlternate } from "react-icons/md";
 export default function EditPost({ info, posts, close, edit }: any) {
   const [rmImg, setRmImg] = useState<any>([]);
   const [addImg, setAddImg] = useState<any>([]);
+  const [content, setContent] = useState<any>(info.content);
 
   useEffect(() => {
     setRmImg([]);
@@ -22,12 +23,12 @@ export default function EditPost({ info, posts, close, edit }: any) {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    let formData = new FormData(e.target as HTMLFormElement);
-    if(rmImg.length > 0)
-      formData.append("post[remove_images][]", rmImg);
-
-    console.log(addImg);
-    console.log(rmImg);
+    const form = e.target as HTMLFormElement;
+    let formData = new FormData(form);
+    if(rmImg.length > 0){
+      rmImg.map((el:any) => formData.append("post[remove_images][]", el))
+    }
+    formData.append("post[content]", content);
 
     const response = await apiCall(
       `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}`,
@@ -38,6 +39,7 @@ export default function EditPost({ info, posts, close, edit }: any) {
     );
     console.log(response);
     posts.refetch();
+    form.reset();
     close(false);
   };
 
@@ -48,12 +50,6 @@ export default function EditPost({ info, posts, close, edit }: any) {
   const handleImgAdd = (e: any) => {
     const selectedFiles = e.target.files;
     let maxFiles = 5 - info.images.length - addImg.length + rmImg.length;
-
-    console.log("____________________________");
-    console.log("You could have add:", maxFiles);
-    console.log("Org pics:", info);
-    console.log("Added pics:", addImg.length);
-    console.log("Removed pics:", rmImg.length);
 
     if (selectedFiles.length > maxFiles) {
       alert(`You can select maximum of 5 images.`);
@@ -92,6 +88,7 @@ export default function EditPost({ info, posts, close, edit }: any) {
             placeholder={info.content}
             name="post[content]"
             className="p-2 rounded mt-1 w-full mb-2"
+            onChange={(e) => setContent(e.target.value)}
           />
 
           <label htmlFor="" className="mt-2">
