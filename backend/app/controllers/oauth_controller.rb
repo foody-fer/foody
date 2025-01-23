@@ -23,7 +23,7 @@ class OauthController < ApplicationController
   class TokenError < StandardError; end
 
   def github
-    if Rails.env.development?
+    if Rails.env.development? # && false
       render plain: "This is disabled in dev"
     else
       redirect_to oauth_init_url(provider: :github), allow_other_host: true
@@ -73,12 +73,8 @@ class OauthController < ApplicationController
     user = User.find_by(email: email)
     return unless user
 
-    redirect_to frontend_url("/sign-in?#{{token: user.jwt}.to_query}"), allow_other_host: true
+    redirect_to frontend_url("/sign-in?#{{ token: user.jwt }.to_query}"), allow_other_host: true
     true
-  end
-
-  def frontend_url(path, query = {})
-    "#{Rails.application.config.x.frontend_url}/#{path}?#{query.to_query}"
   end
 
   def handle_callback(provider:)
@@ -99,7 +95,10 @@ class OauthController < ApplicationController
     user_info_response = HTTP.auth("Bearer #{token_data['access_token']}").get(config[:user_info_url])
     raise TokenError unless response.status.success?
 
-    JSON.parse(user_info_response.body.to_s)
+    parsed = JSON.parse(user_info_response.body.to_s)
+    raise TokenError if parsed["status"] == "401"
+
+    parsed
   end
 
   def oauth_init_url(provider:)
@@ -108,9 +107,24 @@ class OauthController < ApplicationController
                   .merge({
                            response_type: "code",
                            access_type: "offline",
-                           prompt: "consent"
+                           prompt: "consent",
+                           state: { host: params[:host].presence }.to_json
                          })
 
     "#{config[:oauth_init_url]}?#{query.to_query}"
+  end
+
+  def frontend_url(path, query = {})
+    "#{frontend_host}#{path}?#{query.to_query}"
+  end
+
+  def frontend_host
+    url = Rails.application.config.x.frontend_url
+
+    return url if params[:state].blank?
+
+    JSON.parse(params[:state])["host"].presence || url
+  rescue JSON::ParserError
+    url
   end
 end
