@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_18_231349) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_19_180826) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -91,6 +91,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_231349) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone"
+    t.string "bio"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
