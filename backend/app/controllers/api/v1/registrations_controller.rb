@@ -4,6 +4,14 @@ module Api::V1
 
     def create
       user = User.new(user_params)
+      if params.dig(:user, :avatar_url).present?
+        user.avatar.attach(
+          io: URI.open(params.dig(:user, :avatar_url)),
+          filename: "image.jpg",
+          content_type: "image/jpeg"
+        )
+      end
+
       if user.save
         render json: { token: user.jwt }, status: :created
       else
