@@ -27,20 +27,14 @@ export default function Post({ info, preview, posts }: any) {
   const handleLikes = async () => {
     if (!preview) {
       if (info.liked_by_current_user) {
-        const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await apiCall(`/posts/${info.id}/likes`, {
+          method: "DELETE",
+        });
         console.log(response);
       } else {
-        const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
-          {
-            method: "POST",
-          }
-        );
+        const response = await apiCall(`/posts/${info.id}/likes`, {
+          method: "POST",
+        });
         console.log(response);
       }
       posts.refetch();
@@ -50,20 +44,14 @@ export default function Post({ info, preview, posts }: any) {
   const handleSaves = async () => {
     if (!preview) {
       if (info.saved_by_current_user) {
-        const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/saves`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await apiCall(`/posts/${info.id}/saves`, {
+          method: "DELETE",
+        });
         console.log(response);
       } else {
-        const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/saves`,
-          {
-            method: "POST",
-          }
-        );
+        const response = await apiCall(`/posts/${info.id}/saves`, {
+          method: "POST",
+        });
         console.log(response);
       }
       posts.refetch();
@@ -71,12 +59,9 @@ export default function Post({ info, preview, posts }: any) {
   };
 
   const handleDelete = async () => {
-    const response = await apiCall(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await apiCall(`/posts/${info.id}`, {
+      method: "DELETE",
+    });
     console.log(response);
 
     posts.refetch();
@@ -210,7 +195,9 @@ export default function Post({ info, preview, posts }: any) {
         <div
           className={
             "text-textColor flex flex-row rounded-full p-1 transition duration-300" +
-            (info.saved_by_current_user ? " bg-green-400 text-white" : " bg-white")
+            (info.saved_by_current_user
+              ? " bg-green-400 text-white"
+              : " bg-white")
           }
         >
           {!info.saved_by_current_user ? (

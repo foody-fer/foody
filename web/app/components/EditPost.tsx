@@ -5,7 +5,6 @@ import { apiCall } from "~/api";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { MdAddPhotoAlternate } from "react-icons/md";
 
-
 export default function EditPost({ info, posts, close, edit }: any) {
   const [rmImg, setRmImg] = useState<any>([]);
   const [addImg, setAddImg] = useState<any>([]);
@@ -25,18 +24,15 @@ export default function EditPost({ info, posts, close, edit }: any) {
 
     const form = e.target as HTMLFormElement;
     let formData = new FormData(form);
-    if(rmImg.length > 0){
-      rmImg.map((el:any) => formData.append("post[remove_images][]", el))
+    if (rmImg.length > 0) {
+      rmImg.map((el: any) => formData.append("post[remove_images][]", el));
     }
     formData.append("post[content]", content);
 
-    const response = await apiCall(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}`,
-      {
-        method: "PATCH",
-        body: formData,
-      }
-    );
+    const response = await apiCall(`/posts/${info.id}`, {
+      method: "PATCH",
+      body: formData,
+    });
     console.log(response);
     posts.refetch();
     form.reset();

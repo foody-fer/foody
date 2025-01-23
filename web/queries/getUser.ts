@@ -8,10 +8,7 @@ export const useGetUser = () => {
     queryKey: ["user"],
     retry: false,
     queryFn: async () => {
-      const [data, status] = await apiCall(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth`,
-        { method: "GET" }
-      );
+      const [data, status] = await apiCall(`/auth`, { method: "GET" });
       if (status !== 200) {
         router.push("/sign-in");
         return null;
