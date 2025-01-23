@@ -4,7 +4,7 @@ import Logo from "../components/Logo";
 import Login from "../components/Login";
 import SignIn from "../components/SignIn";
 import { use } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Home({
