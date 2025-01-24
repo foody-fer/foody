@@ -22,6 +22,16 @@ Rails.application.routes.draw do
         resource :likes, controller: :posts_likes, only: [ :show, :create, :destroy ]
         resources :comments, controller: :posts_comments, only: [ :index, :create, :update, :destroy ]
       end
+
+      resource :planner, controller: :planner_config, only: [ :show, :update ] do
+        resources :week_plans, only: [ :index, :show, :create ] do
+          post :regenerate
+
+          resources :meals, controller: :planned_meals, only: [:index, :show, :update, :destroy] do
+            post :regenerate
+          end
+        end
+      end
     end
   end
 end

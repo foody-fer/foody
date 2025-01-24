@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id              :integer          not null, primary key
+#  bio             :string
 #  email           :string           not null
 #  first_name      :string           not null
 #  gender          :string           not null
@@ -27,6 +28,10 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :user_saved_posts, dependent: :destroy
   has_many :saved_posts, through: :user_saved_posts, source: :post
+
+  has_one :planner_config, dependent: :destroy
+  has_many :week_plans, through: :planner_config, class_name: "WeekPlan"
+  has_many :planned_meals, through: :week_plans, class_name: "PlannedMeal"
 
   has_many :likes, dependent: :destroy
   has_many :comments, dependent: :destroy
