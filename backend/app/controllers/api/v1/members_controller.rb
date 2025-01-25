@@ -1,4 +1,5 @@
-class Api::V1::MembersController < ApplicationController
+module Api::V1
+  class MembersController < ApiController
     before_action :set_chat_group
   
     def index
@@ -37,3 +38,4 @@ class Api::V1::MembersController < ApplicationController
       @chat_group = ChatGroup.find(params[:chat_group_id])
     end
   end
+end

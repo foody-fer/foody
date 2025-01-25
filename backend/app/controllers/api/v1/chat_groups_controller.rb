@@ -1,4 +1,5 @@
-class Api::V1::ChatGroupsController < ApplicationController
+module Api::V1
+  class ChatGroupsController < ApiController
     def index
       @chat_groups = ChatGroup.all
       render json: ChatGroupSerializer.new(@chat_groups).serializable_hash
@@ -44,3 +45,4 @@ class Api::V1::ChatGroupsController < ApplicationController
       params.require(:chat_group).permit(:name, :image, user_ids: [])
     end
   end
+end
