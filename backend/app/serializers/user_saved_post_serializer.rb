@@ -19,14 +19,11 @@
 #  post_id  (post_id => posts.id)
 #  user_id  (user_id => users.id)
 #
+class UserSavedPostSerializer
+  include Alba::Resource
 
-class UserSavedPost < ApplicationRecord
-  belongs_to :user
-  belongs_to :post, counter_cache: true
+  attributes :id, :created_at
 
-  validates :user_id, uniqueness: { scope: :post_id }
-
-  def self.with_relations(query)
-    query.includes(user: { avatar_attachment: :blob }, post: { images_attachments: :blob })
-  end
+  one :user, serializer: UserSerializer
+  one :post, serializer: PostSerializer
 end

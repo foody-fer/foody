@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id              :integer          not null, primary key
+#  bio             :string
 #  email           :string           not null
 #  first_name      :string           not null
 #  gender          :string           not null
@@ -30,6 +31,8 @@ class User < ApplicationRecord
 
   has_many :likes, dependent: :destroy
   has_many :comments, dependent: :destroy
+
+  has_many :measurements, -> { order(recorded_at: :desc) }, dependent: :destroy
 
   validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP, message: "is invalid" }
