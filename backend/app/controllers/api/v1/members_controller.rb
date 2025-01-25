@@ -4,7 +4,7 @@ module Api::V1
   
     def index
       @members = @chat_group.members
-      render json: MemberSerializer.new(@members).serializable_hash
+      render json: MemberSerializer.new(@members)
     end
   
     def create
@@ -35,7 +35,7 @@ module Api::V1
     private
   
     def set_chat_group
-      @chat_group = ChatGroup.find(params[:chat_group_id])
+      @chat_group = Current.user.chat_groups.find(params[:chat_group_id])
     end
   end
 end

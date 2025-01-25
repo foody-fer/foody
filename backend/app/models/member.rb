@@ -21,4 +21,6 @@
 class Member < ApplicationRecord
   belongs_to :chat_group
   belongs_to :user
+
+  validates :user_id, uniqueness: { scope: :chat_group_id }
 end

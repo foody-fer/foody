@@ -1,46 +1,47 @@
 module Api::V1
   class ChatGroupsController < ApiController
     def index
-      @chat_groups = ChatGroup.all
-      render json: ChatGroupSerializer.new(@chat_groups).serializable_hash
+      render json: ChatGroupSerializer.new(Current.user.chat_groups)
     end
   
     def show
-      @chat_group = ChatGroup.find(params[:id])
-      render json: ChatGroupSerializer.new(@chat_group, include: [:members, :messages]).serializable_hash
+      @chat_group = Current.user.chat_groups.find(params[:id])
+      render json: ChatGroupSerializer.new(@chat_group)
     end
   
     def create
       @chat_group = ChatGroup.new(chat_group_params)
+      @chat_group.members.build(user: Current.user)
   
       if @chat_group.save
         if params[:user_ids].present?
           @chat_group.add_users(params[:user_ids])  # Assuming you have an add_users method
         end
-        render json: ChatGroupSerializer.new(@chat_group).serializable_hash, status: :created
+
+        render json: ChatGroupSerializer.new(@chat_group), status: :created
       else
         render json: { errors: @chat_group.errors.full_messages }, status: :unprocessable_entity
       end
     end
   
     def update
-      @chat_group = ChatGroup.find(params[:id])
+      @chat_group = Current.user.chat_groups.find(params[:id])
   
       if @chat_group.update(chat_group_params)
-        render json: ChatGroupSerializer.new(@chat_group, include: [:members, :messages]).serializable_hash, status: :ok
+        render json: ChatGroupSerializer.new(@chat_group), status: :ok
       else
         render json: { errors: @chat_group.errors.full_messages }, status: :unprocessable_entity
       end
     end
   
     def destroy
-      @chat_group = ChatGroup.find(params[:id])
+      @chat_group = Current.user.chat_groups.find(params[:id])
       @chat_group.destroy
       head :no_content
     end
   
     private
-  
+
     def chat_group_params
       params.require(:chat_group).permit(:name, :image, user_ids: [])
     end
