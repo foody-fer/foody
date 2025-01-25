@@ -26,7 +26,7 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
     if (postInfo.id === undefined) return;
 
     const response = await apiCall(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts/${postInfo.id}/comments`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${postInfo.id}/comments`,
       { method: "GET" }
     );
     setComments(response);
@@ -43,7 +43,7 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
       const form = e.target as HTMLFormElement;
       const formData = new FormData(e.target);
       const response = await apiCall(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts/${postInfo.id}/comments`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${postInfo.id}/comments`,
         { method: "POST", body: formData }
       );
       console.log(response);
@@ -55,7 +55,7 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
 
   const handleDeleteCom = async (id: any) => {
     const response = await apiCall(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts/${postInfo.id}/comments/${id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${postInfo.id}/comments/${id}`,
       { method: "DELETE" }
     );
     console.log(response);
@@ -72,7 +72,7 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
 
     const formData = new FormData(e.target);
     const response = await apiCall(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts/${postInfo.id}/comments/${open}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${postInfo.id}/comments/${open}`,
       { method: "PATCH", body: formData }
     );
     console.log(response);

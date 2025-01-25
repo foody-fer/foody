@@ -9,7 +9,7 @@ export const useGetUser = () => {
     retry: false,
     queryFn: async () => {
       const [data, status] = await apiCall(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth`,
+        `${process.env.NEXT_PUBLIC_BACEKND_URL}/auth`,
         { method: "GET" }
       );
       if (status !== 200) {

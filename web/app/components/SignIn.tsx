@@ -21,7 +21,7 @@ const SignIn = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    apiCall(`${process.env.NEXT_PUBLIC_API_URL}/auth`, {
+    apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth`, {
       method: "POST",
       body: JSON.stringify({ user: { email: email, password: password } }),
       headers: {

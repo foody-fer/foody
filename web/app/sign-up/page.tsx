@@ -60,7 +60,7 @@ function SignUpPage() {
       signUpSchema.parse(formData);
       setErrors({});
 
-      apiCall(`${process.env.NEXT_PUBLIC_API_URL}/registrations`, {
+      apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/registrations`, {
         method: "POST",
         body: JSON.stringify({
           user: {

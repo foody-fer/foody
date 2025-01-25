@@ -9,7 +9,7 @@ import { apiCall } from "~/api";
 export default function Homepage() {
   const posts = useQuery({
     queryKey: ["posts"],
-    queryFn: () => apiCall(`${process.env.NEXT_PUBLIC_API_URL}/posts`, { method: "GET"}),
+    queryFn: () => apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`, { method: "GET"}),
     refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
     staleTime: 0, // Podaci će biti uvijek svježi
   });

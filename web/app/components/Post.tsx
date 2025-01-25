@@ -28,7 +28,7 @@ export default function Post({ info, preview, posts }: any) {
     if (!preview) {
       if (info.liked_by_current_user) {
         const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}/likes`,
           {
             method: "DELETE",
           }
@@ -36,7 +36,7 @@ export default function Post({ info, preview, posts }: any) {
         console.log(response);
       } else {
         const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/likes`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}/likes`,
           {
             method: "POST",
           }
@@ -51,7 +51,7 @@ export default function Post({ info, preview, posts }: any) {
     if (!preview) {
       if (info.saved_by_current_user) {
         const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/saves`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}/saves`,
           {
             method: "DELETE",
           }
@@ -59,7 +59,7 @@ export default function Post({ info, preview, posts }: any) {
         console.log(response);
       } else {
         const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}/saves`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}/saves`,
           {
             method: "POST",
           }
@@ -72,7 +72,7 @@ export default function Post({ info, preview, posts }: any) {
 
   const handleDelete = async () => {
     const response = await apiCall(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}`,
       {
         method: "DELETE",
       }

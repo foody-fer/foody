@@ -31,7 +31,7 @@ export default function ProfilePage() {
 
   const posts = useQuery({
     queryKey: ["posts"],
-    queryFn: () => apiCall(`${process.env.NEXT_PUBLIC_API_URL}/posts`, { method: "GET"}),
+    queryFn: () => apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`, { method: "GET"}),
     refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
     staleTime: 0, // Podaci će biti uvijek svježi
   });
@@ -143,7 +143,7 @@ export default function ProfilePage() {
     formData.append("user[avatar]", file);
   
     try {
-      const data = await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/registrations`, {
+      const data = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/registrations`, {
         method: "PATCH",
         body: formData,
       });
@@ -181,7 +181,7 @@ export default function ProfilePage() {
       setErrors({});
   
       // Make API call to update the profile
-      const [data, status] = await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/registrations`, {
+      const [data, status] = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/registrations`, {
         method: "PATCH",
         body: formData,
       });

@@ -31,7 +31,7 @@ export default function EditPost({ info, posts, close, edit }: any) {
     formData.append("post[content]", content);
 
     const response = await apiCall(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts/${info.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}`,
       {
         method: "PATCH",
         body: formData,

@@ -72,7 +72,7 @@ export default function AddPost({ posts }: any) {
 
   const handleConfirm = async (e: any) => {
     // send data from data to backend and publish post
-    const response = await apiCall(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+    const response = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`, {
       method: "POST",
       body: data,
     });
