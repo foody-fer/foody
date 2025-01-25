@@ -39,7 +39,7 @@ module Api::V1
     def update
       @chat_group = Current.user.chat_groups.find(params[:id])
   
-      if @chat_group.update(chat_group_params)
+      if @chat_group.update(chat_group_params.except(:is_dm))
         render json: ChatGroupSerializer.new(@chat_group), status: :ok
       else
         render json: { errors: @chat_group.errors.full_messages }, status: :unprocessable_entity
