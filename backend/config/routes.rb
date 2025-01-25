@@ -28,10 +28,12 @@ Rails.application.routes.draw do
 
         resource :saves, controller: :saved_posts, only: [ :show, :create, :destroy ]
       end
+
       resources :chat_groups, only: [:index, :create, :show, :update, :destroy] do 
-        resources :messages, only: [:index, :create, :show, :update, :destroy]
+        resources :messages, only: [:index, :create, :destroy]
         resources :members, only: [:index, :create, :destroy]
       end
+
       resources :users, only: [:index]
     end
   end

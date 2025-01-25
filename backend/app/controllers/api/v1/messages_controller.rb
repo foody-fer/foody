@@ -6,11 +6,6 @@ class Api::V1::MessagesController < Api::V1::ApiController
     render json: MessageSerializer.new(@messages)
   end
 
-  def show 
-    @message = @chat_group.messages.find(params[:id])
-    render json: MessageSerializer.new(@message)
-  end
-
   def create
     @message = @chat_group.messages.new(message_params)
     @message.user = Current.user
@@ -20,20 +15,6 @@ class Api::V1::MessagesController < Api::V1::ApiController
       render json: { errors: @message.errors.full_messages }, status: :unprocessable_entity
     end
   end
-
-  def update
-    @message = @chat_group.messages.find(params[:id])
-    if @message.user == Current.user
-      if @message.update(message_params)
-        render json: MessageSerializer.new(@message)
-      else
-        render json: { errors: @message.errors.full_messages }, status: :unprocessable_entity
-      end
-    else
-      render json: { error: 'You are not authorized to update this message' }, status: :forbidden
-    end
-  end
-
 
   def destroy
     @message = @chat_group.messages.find(params[:id])
