@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_18_231349) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_22_162354) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_231349) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "chat_groups", force: :cascade do |t|
+    t.string "name"
+    t.string "image"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "comments", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "post_id", null: false
@@ -57,6 +64,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_231349) do
     t.index ["post_id"], name: "index_likes_on_post_id"
     t.index ["user_id", "post_id"], name: "index_likes_on_user_id_and_post_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "members", force: :cascade do |t|
+    t.integer "chat_group_id", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_group_id"], name: "index_members_on_chat_group_id"
+    t.index ["user_id"], name: "index_members_on_user_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "content"
+    t.integer "chat_group_id", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_group_id"], name: "index_messages_on_chat_group_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -91,6 +117,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_231349) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone"
+    t.string "bio"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
@@ -101,6 +128,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_18_231349) do
   add_foreign_key "comments", "users"
   add_foreign_key "likes", "posts"
   add_foreign_key "likes", "users"
+  add_foreign_key "members", "chat_groups"
+  add_foreign_key "members", "users"
+  add_foreign_key "messages", "chat_groups"
+  add_foreign_key "messages", "users"
   add_foreign_key "posts", "users"
   add_foreign_key "user_saved_posts", "posts"
   add_foreign_key "user_saved_posts", "users"
