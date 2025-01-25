@@ -7,7 +7,5 @@ class MessageSerializer
           Rails.application.routes.url_helpers.rails_blob_url(object.attachment, only_path: true) if object.attachment.attached?
     end
   
-    attribute :user do |message|
-        UserSerializer.new(message.user).serializable_hash[:data]
-    end
+    one :user, serializer: UserSerializer
   end
