@@ -29,8 +29,6 @@ module Api::V1
         @chat_group.members.build(user_id: user_id)
       end
 
-      debugger
-
       if @chat_group.save
         render json: ChatGroupSerializer.new(@chat_group), status: :created
       else
