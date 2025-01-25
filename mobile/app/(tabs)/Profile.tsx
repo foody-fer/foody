@@ -5,29 +5,20 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { HStack } from "@/components/ui/hstack";
-import { Input, InputField } from "@/components/ui/input";
-import {
-  View,
-  FlatList,
-  ScrollView,
-  SafeAreaView,
-  TextInput,
-} from "react-native";
-import { useFonts, Quicksand_400Regular } from "@expo-google-fonts/quicksand";
+import { View, FlatList, SafeAreaView, TextInput } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button, ButtonText } from "@/components/ui/button";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "@/components/ui/CustomText";
 import { apiCall } from ".";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import * as FileSystem from "expo-file-system";
 import { z } from "zod";
-import { launchImageLibrary } from "react-native-image-picker";
+import Comments from "@/components/ui/Comments";
 
 const useGetUser = () => {
   const router = useRouter();
@@ -53,6 +44,8 @@ const Post = ({
   likes,
   likedByCurrentUser,
   likePost,
+  id,
+  comments_count,
 }: {
   user: { username: string; avatar: string | null };
   content: string;
@@ -60,6 +53,8 @@ const Post = ({
   likes: number;
   likedByCurrentUser: boolean;
   likePost: () => void;
+  id: string;
+  comments_count: string;
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -145,7 +140,7 @@ const Post = ({
             className="mx-1.25"
           />
         </TouchableOpacity>
-
+        <Text>{comments_count}</Text>
         <TouchableOpacity>
           <Ionicons
             name="chatbubble"
@@ -155,6 +150,8 @@ const Post = ({
           />
         </TouchableOpacity>
       </View>
+
+      <Comments postInfo={id} />
     </View>
   );
 };
@@ -382,6 +379,8 @@ export default function ProfileScreen() {
                   postsQuery.refetch(); // Refetch posts after liking/unliking
                 });
               }}
+              id={item.id}
+              comments_count={item.comments_count}
             />
           )}
         />
@@ -422,6 +421,8 @@ export default function ProfileScreen() {
                   postsQuery.refetch(); // Refetch posts after liking/unliking
                 });
               }}
+              id={item.id}
+              comments_count={item.comments_count}
             />
           )}
         />

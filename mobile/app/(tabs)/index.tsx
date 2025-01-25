@@ -5,16 +5,22 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
-  Image
+  Image,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  useQuery,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { Text } from "@/components/ui/CustomText";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "expo-router";
+import Comments from "@/components/ui/Comments";
 
 export const apiCall = async (url: string, options: RequestInit = {}) => {
   const token = await AsyncStorage.getItem("token");
@@ -46,6 +52,8 @@ const Post = ({
   likes,
   likedByCurrentUser,
   likePost,
+  id,
+  comments_count,
 }: {
   user: { username: string; avatar: string | null };
   content: string;
@@ -53,6 +61,8 @@ const Post = ({
   likes: number;
   likedByCurrentUser: boolean;
   likePost: () => void;
+  id: string;
+  comments_count: string;
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -98,11 +108,29 @@ const Post = ({
             />
             {images.length > 1 && (
               <View style={styles.imageNavigation}>
-                <TouchableOpacity onPress={handlePreviousImage} disabled={currentImageIndex === 0}>
-                  <Ionicons name="chevron-back" size={24} color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"} />
+                <TouchableOpacity
+                  onPress={handlePreviousImage}
+                  disabled={currentImageIndex === 0}
+                >
+                  <Ionicons
+                    name="chevron-back"
+                    size={24}
+                    color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"}
+                  />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleNextImage} disabled={currentImageIndex === images.length - 1}>
-                  <Ionicons name="chevron-forward" size={24} color={currentImageIndex === images.length - 1 ? "#575A4B" : "#CFE1B9"} />
+                <TouchableOpacity
+                  onPress={handleNextImage}
+                  disabled={currentImageIndex === images.length - 1}
+                >
+                  <Ionicons
+                    name="chevron-forward"
+                    size={24}
+                    color={
+                      currentImageIndex === images.length - 1
+                        ? "#575A4B"
+                        : "#CFE1B9"
+                    }
+                  />
                 </TouchableOpacity>
               </View>
             )}
@@ -120,7 +148,7 @@ const Post = ({
             style={styles.icon}
           />
         </TouchableOpacity>
-
+        <Text>{comments_count}</Text>
         <TouchableOpacity>
           <Ionicons
             name="chatbubble"
@@ -130,6 +158,8 @@ const Post = ({
           />
         </TouchableOpacity>
       </View>
+
+      <Comments postInfo={id} />
     </View>
   );
 };
@@ -204,10 +234,7 @@ function Index() {
       </Button>
 
       <View style={styles.topView}>
-        <TouchableOpacity
-          onPress={pickImage}
-          style={styles.cameraButton}
-        >
+        <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <Text>Post your meal! </Text>
@@ -222,7 +249,7 @@ function Index() {
         <Text style={{ color: "white" }}>Logout</Text>
       </Button>
 
-      <ScrollView>
+      {/*<ScrollView>
         {postsQuery.isLoading && <Spinner />}
         {postsQuery.data &&
           postsQuery.data.map((post) => (
@@ -240,9 +267,35 @@ function Index() {
                   postsQuery.refetch();
                 });
               }}
+              id={post.id}
             />
           ))}
-      </ScrollView>
+      </ScrollView>*/}
+
+      <FlatList
+        data={postsQuery.data || []}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <Post
+            key={item.id}
+            user={item.user}
+            content={item.content}
+            images={item.images}
+            likes={item.likes_count}
+            likedByCurrentUser={item.liked_by_current_user}
+            likePost={() => {
+              apiCall(`/posts/${item.id}/likes`, {
+                method: item.liked_by_current_user ? "DELETE" : "POST",
+              }).then(() => {
+                postsQuery.refetch();
+              });
+            }}
+            id={item.id}
+            comments_count={item.comments_count}
+          />
+        )}
+        ListEmptyComponent={<Spinner />}
+      />
 
       <Modal
         animationType="slide"
@@ -253,9 +306,14 @@ function Index() {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             {selectedImage ? (
-              <Image source={{ uri: selectedImage }} style={styles.modalImage} />
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.modalImage}
+              />
             ) : (
-              <Text style={styles.modalText}>Choose a new image from your gallery!</Text>
+              <Text style={styles.modalText}>
+                Choose a new image from your gallery!
+              </Text>
             )}
 
             <View style={styles.modalButtonContainer}>
@@ -327,9 +385,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     borderColor: "#718355",
-   // backgroundColor: "#718355",
+    // backgroundColor: "#718355",
     borderRadius: 10,
-  //  borderWidth: 1,
+    //  borderWidth: 1,
   },
   image: {
     width: 300,
@@ -387,12 +445,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   imageNavigation: {
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    width: "100%", 
-    marginTop: 10, 
-  }, 
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 10,
+  },
   modalButtonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
