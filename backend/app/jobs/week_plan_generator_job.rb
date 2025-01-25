@@ -17,15 +17,7 @@ class WeekPlanGeneratorJob < ApplicationJob
     week_plan.planner_config.meal_time_config.each do |time_of_day, enabled|
       next unless enabled
 
-      week_plan.planned_meals.create!(
-        date: week_plan.monday + day.days,
-        title: "#{time_of_day} generate",
-        meal_time: time_of_day,
-        description: "asd",
-        macros: {}
-      )
-
-      sleep 5
+      GenerateMealJob.perform_now(time_of_day: time_of_day, week_plan: week_plan)
     end
   end
 end

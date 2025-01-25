@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   get "/", to: "root#index"
 
+  if Rails.env.development?
+    get "/sandbox", to: "root#sandbox"
+  end
+
   get "/auth/google" => "oauth#google"
   get "/auth/google/callback" => "oauth#google_callback"
   get "/auth/github" => "oauth#github"

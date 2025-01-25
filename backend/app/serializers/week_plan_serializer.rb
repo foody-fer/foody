@@ -22,4 +22,12 @@ class WeekPlanSerializer
   include ImageHelper
 
   attributes :id, :monday, :status
+
+  STATE_TO_PROGRESS_MAP = { "pending" => 0, "failed" => -1, "generated" => 1 }
+
+  attribute :progress do |week_plan|
+    STATE_TO_PROGRESS_MAP[week_plan.status] || (
+      week_plan.planned_meals.count / (week_plan.planner_config.meal_time_config.values.compact.count * 7)
+    )
+  end
 end
