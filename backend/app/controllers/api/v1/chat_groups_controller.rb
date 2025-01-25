@@ -12,12 +12,26 @@ module Api::V1
     def create
       @chat_group = ChatGroup.new(chat_group_params)
       @chat_group.members.build(user: Current.user)
-  
-      if @chat_group.save
-        if params[:user_ids].present?
-          @chat_group.add_users(params[:user_ids])  # Assuming you have an add_users method
+
+      if params[:chat_group][:user_ids].blank?
+        return render json: { errors: "You need to pass user_ids array" }, status: :unprocessable_entity
+      end
+
+      if @chat_group.is_dm
+        if params[:chat_group][:user_ids].length != 1
+          return render json: { errors: "DM must have exactly one user" }, status: :unprocessable_entity
         end
 
+        @chat_group.name = User.find(params[:chat_group][:user_ids].first).name
+      end
+
+      params[:chat_group][:user_ids].each do |user_id|
+        @chat_group.members.build(user_id: user_id)
+      end
+
+      debugger
+
+      if @chat_group.save
         render json: ChatGroupSerializer.new(@chat_group), status: :created
       else
         render json: { errors: @chat_group.errors.full_messages }, status: :unprocessable_entity
@@ -43,7 +57,7 @@ module Api::V1
     private
 
     def chat_group_params
-      params.require(:chat_group).permit(:name, :image, user_ids: [])
+      params.require(:chat_group).permit(:name, :image, :is_dm)
     end
   end
 end

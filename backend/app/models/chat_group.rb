@@ -3,7 +3,7 @@
 # Table name: chat_groups
 #
 #  id         :integer          not null, primary key
-#  image      :string
+#  is_dm      :boolean
 #  name       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -15,16 +15,27 @@ class ChatGroup < ApplicationRecord
   
   has_one_attached :image
 
-  validates :name, presence: true
+  validates :name, presence: true, unless: :is_dm
+  validate :only_two_members, if: :is_dm
+  validate :only_one_dm, if: :is_dm
 
-  def add_users(user_ids)
-    users = User.where(id: user_ids)
-    users.each do |user|
-      self.members.create(user: user)
-    end
+  def other_user
+    return unless is_dm
+
+    members.where.not(user_id: Current.user.id).first
   end
 
-  def remove_users(user_ids)
-    self.members.where(user_id: user_ids).destroy_all
+  private
+
+  def only_two_members
+    errors.add(:base, "DM must have exactly two members") if members.size != 2
+  end
+
+  def only_one_dm
+    if ChatGroup.joins(:members)
+                .where(is_dm: true)
+                .where(members: { user_id: members.map(&:user_id) }).exists?
+      errors.add(:base, "DM already exists")
+    end
   end
 end

@@ -49,4 +49,8 @@ class User < ApplicationRecord
   def jwt
     JWT.encode({ user_id: id }, Rails.application.credentials.secret_key_base, "HS256")
   end
+
+  def name
+    "#{first_name} #{last_name}"
+  end
 end

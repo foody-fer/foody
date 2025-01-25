@@ -3,7 +3,7 @@
 # Table name: chat_groups
 #
 #  id         :integer          not null, primary key
-#  image      :string
+#  is_dm      :boolean
 #  name       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -12,11 +12,23 @@ class ChatGroupSerializer
   include Alba::Resource
   include ImageHelper
 
-  attributes :id, :name, :created_at, :updated_at
+  attributes :id, :is_dm, :created_at, :updated_at
   many :members, serializer: MemberSerializer
   # many :messages, serializer: MessageSerializer
 
+  attribute :name do |chat_group|
+    if chat_group.is_dm
+      chat_group.other_user&.user&.name
+    else
+      chat_group.name
+    end
+  end
+
   attribute :image do |chat_group|
-    image_url_for(chat_group.image)
+    if chat_group.is_dm
+      image_url_for(chat_group.other_user&.user&.avatar)
+    else
+      image_url_for(chat_group.image)
+    end
   end
 end
