@@ -1,7 +1,25 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "@/api/auth";
+import { Spinner } from "@/components/ui/spinner";
+import { View } from "react-native";
 
 export default function Layout() {
+  const user = useAuth();
+  console.log(user);
+
+  if (user.isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Spinner size="large" />
+      </View>
+    );
+  }
+
+  if (!user.data) {
+    return <Redirect href="/Login" />;
+  }
+
   return (
     <Tabs
       screenOptions={{
