@@ -64,7 +64,10 @@ const Chat = () => {
           ))}
         </ScrollView>
 
-        <View className="flex-row items-center bg-white p-3 shadow-md">
+        <View
+          className="flex-row items-center bg-white p-3 shadow-md"
+          style={{ paddingBottom: 25, paddingTop: 15 }}
+        >
           <TextInput
             className="flex-1 font-quicksand border border-[#AEB5A1] rounded-full px-4 py-3 bg-[#F8FBEF] text-sm"
             placeholder="Type a message..."

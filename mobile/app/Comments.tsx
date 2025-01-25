@@ -1,5 +1,11 @@
-/*import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const Comments = () => {
@@ -22,8 +28,7 @@ const Comments = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Comments</Text>
 
-      {/* Input for new comment */
-    /*}
+      {/* Input for new comment */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -36,8 +41,7 @@ const Comments = () => {
         </TouchableOpacity>
       </View>
 
-      {/* List of comments */
-    /*}
+      {/* List of comments */}
       {comments.map((comment, index) => (
         <View key={index} style={styles.commentContainer}>
           <View style={styles.commentTextContainer}>
@@ -109,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Comments;*/
+export default Comments;

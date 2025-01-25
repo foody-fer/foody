@@ -11,10 +11,6 @@ module ImageHelper
   private
 
   def default_url_options
-    if Rails.env.development?
-      { host: 'localhost', port: 3000 }
-    else
-      { host: 'foody-backend.zeko.run' }
-    end
+    Rails.application.config.action_mailer.default_url_options
   end
 end

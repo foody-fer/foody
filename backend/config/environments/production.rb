@@ -57,6 +57,9 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "foody-backend.zeko.run" }
 
+  config.x.host_url = "https://foody-backend.zeko.run"
+  config.x.frontend_url = ENV["FRONTEND_URL"].presence || "https://foody-frontend.zeko.run"
+
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {
   #   user_name: Rails.application.credentials.dig(:smtp, :user_name),

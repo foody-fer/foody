@@ -32,12 +32,18 @@ class User < ApplicationRecord
   has_many :likes, dependent: :destroy
   has_many :comments, dependent: :destroy
 
+  has_many :measurements, -> { order(recorded_at: :desc) }, dependent: :destroy
+
   validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP, message: "is invalid" }
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :gender, presence: true, inclusion: { in: %w(male female) }
+  validates :gender, presence: true, inclusion: { in: %w[male female] }
   validates :phone, presence: true
 
   enum :gender, { male: "male", female: "female" }
+
+  def jwt
+    JWT.encode({ user_id: id }, Rails.application.credentials.secret_key_base, "HS256")
+  end
 end

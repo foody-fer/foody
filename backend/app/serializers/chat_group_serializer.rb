@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: chat_groups
+#
+#  id         :integer          not null, primary key
+#  image      :string
+#  name       :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
 class ChatGroupSerializer
     include Alba::Resource
     include ImageHelper

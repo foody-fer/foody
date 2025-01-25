@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_22_162354) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_25_174802) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -66,6 +66,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_22_162354) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "measurements", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "key"
+    t.float "value"
+    t.datetime "recorded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_measurements_on_user_id"
+  end
+
   create_table "members", force: :cascade do |t|
     t.integer "chat_group_id", null: false
     t.integer "user_id", null: false
@@ -83,6 +93,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_22_162354) do
     t.datetime "updated_at", null: false
     t.index ["chat_group_id"], name: "index_messages_on_chat_group_id"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "planned_meals", force: :cascade do |t|
+    t.integer "week_plan_id", null: false
+    t.datetime "date", null: false
+    t.string "meal_time", null: false
+    t.string "title", null: false
+    t.string "description", null: false
+    t.string "macros", null: false
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["week_plan_id"], name: "index_planned_meals_on_week_plan_id"
+  end
+
+  create_table "planner_configs", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "goals", null: false
+    t.string "base_prompt", null: false
+    t.string "meal_time_config", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_planner_configs_on_user_id", unique: true
   end
 
   create_table "posts", force: :cascade do |t|
@@ -122,17 +155,30 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_22_162354) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "week_plans", force: :cascade do |t|
+    t.date "monday", null: false
+    t.integer "planner_config_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["planner_config_id"], name: "index_week_plans_on_planner_config_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "likes", "posts"
   add_foreign_key "likes", "users"
+  add_foreign_key "measurements", "users"
   add_foreign_key "members", "chat_groups"
   add_foreign_key "members", "users"
   add_foreign_key "messages", "chat_groups"
   add_foreign_key "messages", "users"
+  add_foreign_key "planned_meals", "week_plans"
+  add_foreign_key "planner_configs", "users"
   add_foreign_key "posts", "users"
   add_foreign_key "user_saved_posts", "posts"
   add_foreign_key "user_saved_posts", "users"
+  add_foreign_key "week_plans", "planner_configs"
 end

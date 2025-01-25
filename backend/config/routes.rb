@@ -8,14 +8,25 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   get "/", to: "root#index"
 
+  get "/auth/google" => "oauth#google"
+  get "/auth/google/callback" => "oauth#google_callback"
+  get "/auth/github" => "oauth#github"
+  get "/auth/github/callback" => "oauth#github_callback"
+
   namespace :api do
     namespace :v1 do
-      resource :registrations, only: [:create, :update]
-      resources :auth, only: [:index, :create]
+      resource :registrations, only: [ :create, :update ]
+      resources :auth, only: [ :index, :create ]
 
-      resources :posts, only: [:index, :create, :show, :update, :destroy] do
-        resource :likes, controller: :posts_likes, only: [:show, :create, :destroy]
-        resources :comments, controller: :posts_comments, only: [:index, :create, :update, :destroy]
+      get "saved_posts", to: "saved_posts#index"
+
+      resources :measurements, only: [ :index, :create, :destroy ]
+
+      resources :posts, only: [ :index, :create, :show, :update, :destroy ] do
+        resource :likes, controller: :posts_likes, only: [ :show, :create, :destroy ]
+        resources :comments, controller: :posts_comments, only: [ :index, :create, :update, :destroy ]
+
+        resource :saves, controller: :saved_posts, only: [ :show, :create, :destroy ]
       end
       resources :chat_groups, only: [:index, :create, :show, :update, :destroy] do 
         resources :messages, only: [:index, :create, :show, :update, :destroy]
@@ -25,4 +36,3 @@ Rails.application.routes.draw do
     end
   end
 end
-
