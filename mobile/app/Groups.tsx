@@ -7,8 +7,10 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const ChatScreen = () => {
+  const router = useRouter();
   const chats = [
     {
       id: 1,
@@ -26,6 +28,10 @@ const ChatScreen = () => {
       lastMessage: "Zadnja poruka bla bla bla bla",
     },
   ];
+
+  const handlePressGroup = () => {
+    router.push("/Chat");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#CFE1B9]">
@@ -45,6 +51,7 @@ const ChatScreen = () => {
         {chats.map((chat) => (
           <TouchableOpacity
             key={chat.id}
+            onPress={handlePressGroup}
             className="flex-row items-center p-4 mb-2 bg-[#F8FBEF] rounded-xl shadow"
           >
             {/* Chat Icon */}
