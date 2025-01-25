@@ -6,8 +6,12 @@ module Api::V1
     def index
       posts = Post.includes(:user, images_attachments: :blob).order(created_at: :desc).load_async
       user_likes = Current.user.likes.pluck(:post_id)
+      user_saved_posts = Current.user.user_saved_posts.pluck(:post_id)
 
-      posts.each { |post| post.liked_by_current_user = user_likes.include?(post.id) }
+      posts.each do |post|
+        post.liked_by_current_user = user_likes.include?(post.id)
+        post.saved_by_current_user = user_saved_posts.include?(post.id)
+      end
 
       render json: PostSerializer.new(posts), status: :ok
     end
