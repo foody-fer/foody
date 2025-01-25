@@ -5,7 +5,13 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { HStack } from "@/components/ui/hstack";
-import { View, FlatList, SafeAreaView, TextInput } from "react-native";
+import {
+  View,
+  FlatList,
+  SafeAreaView,
+  TextInput,
+  StyleSheet,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button, ButtonText } from "@/components/ui/button";
 import * as ImagePicker from "expo-image-picker";
@@ -56,6 +62,7 @@ const Post = ({
   id: string;
   comments_count: string;
 }) => {
+  const [toggleComments, setToggleComments] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleNextImage = () => {
@@ -71,8 +78,8 @@ const Post = ({
   };
 
   return (
-    <View className="mt-2 p-[5%] m-[5%] w-[90%] rounded-lg items-center bg-[#718355] border border-[#575A4B] border-opacity-20">
-      <View className="flex flex-row justify-start w-full pb-0.5 pt-[1%]">
+    <View style={styles.postView}>
+      <View style={styles.topSection}>
         {user.avatar ? (
           <Image
             source={{ uri: user.avatar }}
@@ -83,25 +90,23 @@ const Post = ({
             name="person-circle"
             size={30}
             color="#575A4B"
-            className="ml-2.5"
+            style={styles.iconLeft}
           />
         )}
-        <Text className="text-lg mb-3.5 text-center">
-          {user?.username || "Unknown User"}
-        </Text>
+        <Text style={styles.modalText}>{user.username}</Text>
       </View>
 
       <Text>{content}</Text>
 
-      <View className="w-full pt-5 flex items-center my-2.5 border-[#718355] rounded-lg">
+      <View style={styles.middleSection}>
         {images.length > 0 && (
           <>
             <Image
               source={{ uri: images[currentImageIndex].url }}
-              className="w-72 h-72 rounded-lg border border-[#718355] border-opacity-100"
+              style={styles.image}
             />
             {images.length > 1 && (
-              <View className="flex flex-row justify-between items-center w-full mt-2.5">
+              <View style={styles.imageNavigation}>
                 <TouchableOpacity
                   onPress={handlePreviousImage}
                   disabled={currentImageIndex === 0}
@@ -132,14 +137,14 @@ const Post = ({
         )}
       </View>
 
-      <View className="flex flex-row justify-around w-full mt-2.5">
+      <View style={styles.bottomSection}>
         <Text>{likes}</Text>
         <TouchableOpacity onPress={likePost}>
           <Ionicons
             name="heart"
             size={24}
             color={likedByCurrentUser ? "red" : "#575A4B"}
-            className="mx-1.25"
+            style={styles.icon}
           />
         </TouchableOpacity>
         <Text>{comments_count}</Text>
@@ -148,12 +153,13 @@ const Post = ({
             name="chatbubble"
             size={24}
             color="#575A4B"
-            className="mx-1.25"
+            style={styles.icon}
+            onPress={() => setToggleComments(!toggleComments)}
           />
         </TouchableOpacity>
       </View>
 
-      <Comments postInfo={id} />
+      {toggleComments === true && <Comments postInfo={id} />}
     </View>
   );
 };
@@ -365,7 +371,6 @@ export default function ProfileScreen() {
     return (
       <SafeAreaView>
         <FlatList
-          className="w-full"
           keyExtractor={(item) => item.id}
           data={userPosts}
           renderItem={({ item }) => (
@@ -407,7 +412,6 @@ export default function ProfileScreen() {
     return (
       <SafeAreaView className="flex-1">
         <FlatList
-          className="w-full"
           keyExtractor={(item) => item.id}
           data={userRecipes}
           renderItem={({ item }) => (
@@ -639,3 +643,136 @@ export default function ProfileScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#CFE1B9",
+  },
+  topView: {
+    backgroundColor: "#718355",
+    borderRadius: 15,
+    padding: 16,
+    borderWidth: 0.2,
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  postView: {
+    marginTop: 10,
+    padding: "5%",
+    margin: "5%",
+    width: "90%",
+    borderRadius: 10,
+    borderColor: "#575A4B",
+    borderWidth: 0.2,
+    alignItems: "center",
+    backgroundColor: "#718355",
+  },
+  topSection: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    width: "100%",
+    paddingBottom: 2,
+    paddingTop: "1%",
+  },
+  iconLeft: {
+    marginLeft: 10,
+  },
+  middleSection: {
+    width: "100%",
+    paddingTop: 20,
+    alignItems: "center",
+    marginVertical: 10,
+    borderColor: "#718355",
+    // backgroundColor: "#718355",
+    borderRadius: 10,
+    //  borderWidth: 1,
+  },
+  image: {
+    width: 300,
+    height: 300,
+    borderRadius: 10,
+    borderColor: "#718355",
+    borderWidth: 1,
+  },
+  bottomSection: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginTop: 10,
+  },
+  icon: {
+    marginHorizontal: 5,
+  },
+  cameraButton: {
+    position: "absolute",
+    top: "18%",
+    right: "3%",
+    backgroundColor: "#575A4B",
+    borderRadius: 20,
+    padding: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "#FFF",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 15,
+    marginLeft: 10,
+    textAlign: "center",
+  },
+  modalImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 15,
+    borderRadius: 10,
+  },
+  imageNavigation: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 10,
+  },
+  modalButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  closeButton: {
+    backgroundColor: "#575A4B",
+    borderRadius: 10,
+    padding: 10,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  closeButtonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  logoutButton: {
+    alignSelf: "flex-start",
+    margin: 5,
+    backgroundColor: "#575A4B",
+    padding: 8,
+    borderRadius: 10,
+  },
+});

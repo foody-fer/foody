@@ -64,8 +64,8 @@ const Post = ({
   id: string;
   comments_count: string;
 }) => {
+  const [toggleComments, setToggleComments] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const router = useRouter();
 
   const handleNextImage = () => {
     if (currentImageIndex < images.length - 1) {
@@ -156,11 +156,12 @@ const Post = ({
             size={24}
             color="#575A4B"
             style={styles.icon}
+            onPress={() => setToggleComments(!toggleComments)}
           />
         </TouchableOpacity>
       </View>
 
-      <Comments postInfo={id} />
+      {toggleComments === true && <Comments postInfo={id} />}
     </View>
   );
 };
@@ -429,6 +430,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 18,
     marginBottom: 15,
+    marginLeft: 10,
     textAlign: "center",
   },
   modalImage: {
