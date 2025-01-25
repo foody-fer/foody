@@ -18,9 +18,13 @@ Rails.application.routes.draw do
       resource :registrations, only: [ :create, :update ]
       resources :auth, only: [ :index, :create ]
 
+      get "saved_posts", to: "saved_posts#index"
+
       resources :posts, only: [ :index, :create, :show, :update, :destroy ] do
         resource :likes, controller: :posts_likes, only: [ :show, :create, :destroy ]
         resources :comments, controller: :posts_comments, only: [ :index, :create, :update, :destroy ]
+
+        resource :saves, controller: :saved_posts, only: [ :show, :create, :destroy ]
       end
     end
   end
