@@ -6,6 +6,7 @@ import {
   Modal,
   ScrollView,
   Image,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -19,7 +20,30 @@ import { Text } from "@/components/ui/CustomText";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "expo-router";
-import { apiCall, queryClient } from "@/api/index";
+import Comments from "@/components/ui/Comments";
+
+export const apiCall = async (url: string, options: RequestInit = {}) => {
+  const token = await AsyncStorage.getItem("token");
+  const res = await fetch(`https://foody-backend.zeko.run/api/v1${url}`, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (res.status === 401) {
+    await AsyncStorage.removeItem("token");
+  }
+
+  if (res.ok) {
+    return res.json();
+  }
+
+  throw await res.text();
+};
+
+const queryClient = new QueryClient();
 
 const Post = ({
   user,
@@ -28,6 +52,8 @@ const Post = ({
   likes,
   likedByCurrentUser,
   likePost,
+  id,
+  comments_count,
 }: {
   user: { username: string; avatar: string | null };
   content: string;
@@ -35,6 +61,8 @@ const Post = ({
   likes: number;
   likedByCurrentUser: boolean;
   likePost: () => void;
+  id: string;
+  comments_count: string;
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const router = useRouter();
@@ -121,7 +149,7 @@ const Post = ({
             style={styles.icon}
           />
         </TouchableOpacity>
-
+        <Text>{comments_count}</Text>
         <TouchableOpacity>
           <Ionicons
             name="chatbubble"
@@ -131,6 +159,8 @@ const Post = ({
           />
         </TouchableOpacity>
       </View>
+
+      <Comments postInfo={id} />
     </View>
   );
 };
@@ -211,7 +241,16 @@ export default function Index() {
         <Text>Post your meal! </Text>
       </View>
 
-      <ScrollView>
+      <Button
+        onPress={() => {
+          AsyncStorage.removeItem("token");
+          postsQuery.refetch();
+        }}
+      >
+        <Text style={{ color: "white" }}>Logout</Text>
+      </Button>
+
+      {/*<ScrollView>
         {postsQuery.isLoading && <Spinner />}
         {postsQuery.data &&
           postsQuery.data.map((post) => (
@@ -229,9 +268,35 @@ export default function Index() {
                   postsQuery.refetch();
                 });
               }}
+              id={post.id}
             />
           ))}
-      </ScrollView>
+      </ScrollView>*/}
+
+      <FlatList
+        data={postsQuery.data || []}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <Post
+            key={item.id}
+            user={item.user}
+            content={item.content}
+            images={item.images}
+            likes={item.likes_count}
+            likedByCurrentUser={item.liked_by_current_user}
+            likePost={() => {
+              apiCall(`/posts/${item.id}/likes`, {
+                method: item.liked_by_current_user ? "DELETE" : "POST",
+              }).then(() => {
+                postsQuery.refetch();
+              });
+            }}
+            id={item.id}
+            comments_count={item.comments_count}
+          />
+        )}
+        ListEmptyComponent={<Spinner />}
+      />
 
       <Modal
         animationType="slide"
