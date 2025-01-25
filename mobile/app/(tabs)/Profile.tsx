@@ -86,7 +86,9 @@ const Post = ({
             className="ml-2.5"
           />
         )}
-        <Text className="text-lg mb-3.5 text-center">{user.username}</Text>
+        <Text className="text-lg mb-3.5 text-center">
+          {user?.username || "Unknown User"}
+        </Text>
       </View>
 
       <Text>{content}</Text>
