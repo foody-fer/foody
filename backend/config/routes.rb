@@ -20,6 +20,8 @@ Rails.application.routes.draw do
 
       get "saved_posts", to: "saved_posts#index"
 
+      resources :measurements, only: [ :index, :create, :destroy ]
+
       resources :posts, only: [ :index, :create, :show, :update, :destroy ] do
         resource :likes, controller: :posts_likes, only: [ :show, :create, :destroy ]
         resources :comments, controller: :posts_comments, only: [ :index, :create, :update, :destroy ]
