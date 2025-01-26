@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   FlatList,
+  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -21,6 +22,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "expo-router";
 import Comments from "@/components/ui/Comments";
+import { setStatusBarBackgroundColor } from "expo-status-bar";
+
+const queryClient = new QueryClient();
+
 
 export const apiCall = async (url: string, options: RequestInit = {}) => {
   const token = await AsyncStorage.getItem("token");
@@ -43,8 +48,6 @@ export const apiCall = async (url: string, options: RequestInit = {}) => {
   throw await res.text();
 };
 
-const queryClient = new QueryClient();
-
 const Post = ({
   user,
   content,
@@ -66,13 +69,11 @@ const Post = ({
 }) => {
   const [toggleComments, setToggleComments] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
   const handleNextImage = () => {
     if (currentImageIndex < images.length - 1) {
       setCurrentImageIndex(currentImageIndex + 1);
     }
   };
-
   const handlePreviousImage = () => {
     if (currentImageIndex > 0) {
       setCurrentImageIndex(currentImageIndex - 1);
@@ -99,7 +100,7 @@ const Post = ({
       </View>
 
       <Text>{content}</Text>
-
+     
       <View style={styles.middleSection}>
         {images.length > 0 && (
           <>
@@ -170,8 +171,18 @@ export default function Index() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [ideaModalVisible, setIdeaModalVisible] = useState(false);
+  const [ideaContent, setIdeaContent] = useState("");
   const [heartColor, setHeartColor] = useState("#575A4B");
+  const [postContent, setPostContent] = useState("");
   const [commentColor, setCommentColor] = useState("#575A4B");
+
+  const postsQuery = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => apiCall("/posts"),
+    retry: false,
+  });
+
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -186,11 +197,47 @@ export default function Index() {
     }
   };
 
-  const postsQuery = useQuery({
-    queryKey: ["posts"],
-    queryFn: () => apiCall("/posts"),
-    retry: false,
-  });
+  const openIdeaModal = async () => {
+    setIdeaModalVisible(true);
+};
+
+  
+  const handlePost = async () => {
+    if (!selectedImage || !postContent) {
+      alert("Please add content and an image.");
+      return;
+    }
+
+    try {
+      // Convert the selected image (URI) to a Blob
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+  
+      const formData = new FormData();
+      formData.append("post[content]", postContent);
+    formData.append("post[images][]", blob, "upload.jpg");
+
+      const result = await apiCall("/posts", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setModalVisible(false);
+      setPostContent("");
+      setSelectedImage(null);
+      postsQuery.refetch(); // Refresh the list of posts
+    } catch (err) {
+      console.error(err);
+      
+    }
+  };
+
+
+  //if (postsQuery.isLoading) return <Spinner />;
+  // return <Text>Error loading posts</Text>;
+
 
   if (postsQuery.error) {
     return (
@@ -224,99 +271,110 @@ export default function Index() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topView}>
-        <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
-          <Ionicons name="camera" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text>Post your meal! </Text>
-      </View>
-
-      {/*<ScrollView>
-        {postsQuery.isLoading && <Spinner />}
-        {postsQuery.data &&
-          postsQuery.data.map((post) => (
-            <Post
-              key={post.id}
-              user={post.user}
-              content={post.content}
-              images={post.images}
-              likes={post.likes_count}
-              likedByCurrentUser={post.liked_by_current_user}
-              likePost={() => {
-                apiCall(`/posts/${post.id}/likes`, {
-                  method: post.liked_by_current_user ? "DELETE" : "POST",
-                }).then(() => {
-                  postsQuery.refetch();
-                });
-              }}
-              id={post.id}
-            />
-          ))}
-      </ScrollView>*/}
-
-      <FlatList
-        data={postsQuery.data || []}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <Post
-            key={item.id}
-            user={item.user}
-            content={item.content}
-            images={item.images}
-            likes={item.likes_count}
-            likedByCurrentUser={item.liked_by_current_user}
-            likePost={() => {
-              apiCall(`/posts/${item.id}/likes`, {
-                method: item.liked_by_current_user ? "DELETE" : "POST",
-              }).then(() => {
-                postsQuery.refetch();
-              });
-            }}
-            id={item.id}
-            comments_count={item.comments_count}
-          />
-        )}
-        ListEmptyComponent={<Spinner />}
-      />
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {selectedImage ? (
-              <Image
-                source={{ uri: selectedImage }}
-                style={styles.modalImage}
-              />
-            ) : (
-              <Text style={styles.modalText}>
-                Choose a new image from your gallery!
-              </Text>
-            )}
-
-            <View style={styles.modalButtonContainer}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>Choose</Text>
+    <QueryClientProvider client={queryClient}>
+        <View style={styles.container}>
+            <View style={styles.topView}>
+              <TouchableOpacity onPress={openIdeaModal} style={styles.noteButton}>
+                <Ionicons name="document-text-outline" size={24} color="#FFFFFF" />
+              </TouchableOpacity>        
+              
+              <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
+                <Ionicons name="camera" size={24} color="#FFFFFF" />
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>Dismiss</Text>
-              </TouchableOpacity>
+              <Text>Post your meal! </Text>
             </View>
-          </View>
-        </View>
-      </Modal>
-    </View>
+
+            <FlatList
+              data={postsQuery.data || []}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <Post
+                user={item.user}
+                content={item.content}
+                images={item.images}
+                likes={item.likes_count}
+                likedByCurrentUser={item.liked_by_current_user}
+                likePost={() => {
+                  apiCall(`/posts/${item.id}/likes`, {
+                    method: item.liked_by_current_user ? "DELETE" : "POST",
+                  }).then(() => postsQuery.refetch());
+                }}
+                id={item.id}
+                comments_count={item.comments_count}
+              />
+            )}
+            ListEmptyComponent={<Text>Loading posts or no posts available...</Text>}
+          />
+            <Modal
+              animationType="slide"
+              transparent={true} 
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  {selectedImage ? (
+                    <Image
+                      source={{ uri: selectedImage }}
+                      style={styles.modalImage}
+                    />
+                  ) : (
+                    <Text style={styles.modalText}>
+                      Choose a new image from your gallery!
+                    </Text>
+                  )}
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Write your post..."
+                    value={postContent}
+                    onChangeText={setPostContent}
+                  />
+
+                  <View style={styles.modalButtonContainer}>            
+                      <Button onPress={handlePost}>
+                        <Text>Post</Text>
+                      </Button>
+                      <Button onPress={() => setModalVisible(false)}>
+                        <Text>Dismiss</Text>
+                      </Button>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={ideaModalVisible}
+              onRequestClose={() => setIdeaModalVisible(false)}>
+
+                  <View style={styles.modalContainer}>
+                      <View style={styles.modalContent}>
+                          <Text style={styles.modalText}>Post your idea</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Write your idea here..."
+                              value={ideaContent}
+                              onChangeText={setIdeaContent}
+                          />
+                          <View style={styles.modalButtonContainer}>
+                              <Button onPress={() => {
+                                  // Handle the submission of the idea
+                                  console.log("Idea submitted:", ideaContent);
+                                  setIdeaModalVisible(false);
+                                  setIdeaContent("");
+                              }}>
+                                  <Text>Post</Text>
+                              </Button>
+                              <Button onPress={() => setIdeaModalVisible(false)}>
+                                  <Text>Dismiss</Text>
+                              </Button>
+                          </View>
+                      </View>
+                  </View>
+            </Modal>
+
+      </View>
+    </QueryClientProvider>
   );
 }
 
@@ -380,10 +438,22 @@ const styles = StyleSheet.create({
   icon: {
     marginHorizontal: 5,
   },
+  noteButton: {
+    position: "absolute", // Ensures the button is positioned absolutely relative to its closest positioned ancestor
+    top: "8%", // Vertical position (adjust as needed)
+    left: "3%", // Positions the button to the very left
+    backgroundColor: "#575A4B", // Button background color
+    borderRadius: 20, // Rounded corners
+    marginTop: 2,
+    padding: 8, // Padding inside the button
+    alignItems: "center", // Center align items horizontally
+    justifyContent: "center", // Center align items vertically
+  },
   cameraButton: {
     position: "absolute",
     top: "18%",
     right: "3%",
+    marginTop: 1,
     backgroundColor: "#575A4B",
     borderRadius: 20,
     padding: 8,
@@ -398,7 +468,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "80%",
-    backgroundColor: "#FFF",
+    backgroundColor: "#CFE1B9",
     borderRadius: 20,
     padding: 20,
     alignItems: "center",
@@ -428,6 +498,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   modalButtonContainer: {
+    borderRadius: 25,
+    //backgroundColor: "#718355",
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -449,6 +521,14 @@ const styles = StyleSheet.create({
     margin: 5,
     backgroundColor: "#575A4B",
     padding: 8,
+    borderRadius: 10,
+  },
+  input: {
+    width: "100%",
+    borderColor: "#575A4B",
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 10,
     borderRadius: 10,
   },
 });
