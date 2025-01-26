@@ -34,7 +34,7 @@ export default function EditPost({ info, posts, close, edit }: any) {
       body: formData,
     });
     console.log(response);
-    posts.refetch();
+    posts.refetch()
     form.reset();
     close(false);
   };

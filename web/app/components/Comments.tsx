@@ -48,7 +48,7 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
       console.log(response);
       setTriger(!triger);
       form.reset();
-      posts.refetch();
+      posts.refetch()
     }
   };
 
@@ -58,7 +58,7 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
     });
     console.log(response);
     setTriger(!triger);
-    posts.refetch();
+    posts.refetch()
   };
 
   const openEditCom = async (id: any) => {

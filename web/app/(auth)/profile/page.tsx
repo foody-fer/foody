@@ -1,11 +1,12 @@
 "use client";
 import { Input } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import Feed from "../../components/Feed";
 import { useGetUser } from "~/queries/getUser";
 import { apiCall } from "~/api";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import ProfileFeed from "~/app/components/ProfileFeed";
+import MealPlanner from "~/app/components/MealPlanner";
 
 export default function ProfilePage() {
   const profileSchema_first_name = z.object({
@@ -29,13 +30,6 @@ export default function ProfilePage() {
       .regex(/^[a-zA-Z][a-zA-Z0-9._]*$/, "Incorrect username format"),
   });
 
-  const posts = useQuery({
-    queryKey: ["posts"],
-    queryFn: () => apiCall(`/posts`, { method: "GET" }),
-    refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
-    staleTime: 0, // Podaci će biti uvijek svježi
-  });
-
   const userQuery = useGetUser();
   const [name, setName] = useState(
     userQuery.data.first_name + " " + userQuery.data.last_name
@@ -44,7 +38,7 @@ export default function ProfilePage() {
   const [lastName, setlastName] = useState(userQuery.data.last_name);
   const [username, setUserName] = useState(userQuery.data.username);
   const [bio, setBio] = useState(userQuery.data.bio ? userQuery.data.bio : "");
-  const [selectedTab, setSelectedTab] = useState("Posts");
+  const [selectedTab, setSelectedTab] = useState("My posts");
   const [isHovered, setIsHovered] = useState(false);
   const [errors, setErrors] = useState<any>({});
   const [error, setError] = useState("");
@@ -103,27 +97,6 @@ export default function ProfilePage() {
       {name.split(" ")[1][0].toUpperCase()}
     </span>
   );
-
-  const renderContent = () => {
-    switch (selectedTab) {
-      case "Posts":
-        return (
-          <div className="p-1 md:p-4">
-            <p>Ovdje ce ici objave korisnika</p>
-            <Feed posts={posts} />
-          </div>
-        );
-      case "Recipes":
-        return (
-          <div className="p-1 md:p-4">
-            <p>Ovdje ce ici recepti korisnika</p>
-            <Feed posts={posts} />
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
 
   const toggleEdit = (field: string) => {
     if (editingField === field) {
@@ -384,31 +357,50 @@ export default function ProfilePage() {
             userQuery.data.gender.slice(1)}
         </div>
       </div>
-
+          
+      {/* TABS OPTIONS ON PROFILE */}
       <div className="flex mt-4 ml-12 space-x-3">
         <button
           className={`p-2 px-4 rounded-full font-semibold ${
-            selectedTab === "Posts"
+            selectedTab === "My posts"
               ? "bg-textColor text-white"
               : "border border-black text-textColor"
           }`}
-          onClick={() => setSelectedTab("Posts")}
+          onClick={() => setSelectedTab("My posts")}
         >
-          Posts
+          My posts
         </button>
         <button
           className={`p-2 px-4 rounded-full font-semibold ${
-            selectedTab === "Recipes"
+            selectedTab === "Saved posts"
               ? "bg-textColor text-white"
               : "border border-black text-textColor"
           }`}
-          onClick={() => setSelectedTab("Recipes")}
+          onClick={() => setSelectedTab("Saved posts")}
         >
-          Recipes
+          Saved posts
+        </button>
+        <button
+          className={`p-2 px-4 rounded-full font-semibold ${
+            selectedTab === "Meal planner"
+              ? "bg-textColor text-white"
+              : "border border-black text-textColor"
+          }`}
+          onClick={() => setSelectedTab("Meal planner")}
+        >
+          Meal planner
         </button>
       </div>
 
-      <div className="flex-1 mt-2 mx-10 mb-10">{renderContent()}</div>
+      {selectedTab !== "Meal planner" ? (
+        <div className="flex-1 mt-2 mx-10 mb-10">
+          <ProfileFeed tab={selectedTab} />
+        </div>
+      ) : (
+        <div className="flex-1 mt-2 mx-10 mb-10 bg-navbarColor w-[88%] rounded"> 
+          <MealPlanner/>
+        </div>
+      )}
     </div>
   );
 }

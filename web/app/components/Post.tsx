@@ -20,7 +20,7 @@ import { useGetUser } from "~/queries/getUser";
 
 export default function Post({ info, preview, posts }: any) {
   const [comm, setComm] = useState(false);
-  const [edit, setEdit] = useState(false);
+  const [edit, setEdit] = useState(false);  
 
   const userQuery = useGetUser();
 
@@ -37,24 +37,24 @@ export default function Post({ info, preview, posts }: any) {
         });
         console.log(response);
       }
-      posts.refetch();
+      posts.refetch()
     }
   };
 
   const handleSaves = async () => {
     if (!preview) {
       if (info.saved_by_current_user) {
-        const response = await apiCall(`/posts/${info.id}/saved_posts`, {
+        const response = await apiCall(`/posts/${info.id}/saves`, {
           method: "DELETE",
         });
         console.log(response);
       } else {
-        const response = await apiCall(`/posts/${info.id}/saved_posts`, {
+        const response = await apiCall(`/posts/${info.id}/saves`, {
           method: "POST",
         });
         console.log(response);
       }
-      posts.refetch();
+      posts.refetch()
     }
   };
 
@@ -64,7 +64,7 @@ export default function Post({ info, preview, posts }: any) {
     });
     console.log(response);
 
-    posts.refetch();
+    posts.refetch()
   };
 
   return (
