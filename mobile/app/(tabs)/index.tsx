@@ -143,7 +143,7 @@ const Post = ({
           <Ionicons
             name="heart"
             size={24}
-            color={likedByCurrentUser ? "red" : "#575A4B"}
+            color={likedByCurrentUser ? "#f51d5a" : "#718355"}
             style={styles.icon}
           />
         </TouchableOpacity>
@@ -152,7 +152,7 @@ const Post = ({
           <Ionicons
             name="chatbubble"
             size={24}
-            color="#575A4B"
+            color="#718355"
             style={styles.icon}
             onPress={() => setToggleComments(!toggleComments)}
           />
