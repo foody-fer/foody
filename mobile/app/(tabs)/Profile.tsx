@@ -25,6 +25,7 @@ import { TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { z } from "zod";
 import Comments from "@/components/ui/Comments";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const useGetUser = () => {
   const router = useRouter();
@@ -484,6 +485,16 @@ export default function ProfileScreen() {
                   {firstName + " " + lastName}
                 </Text>
               </HStack>
+
+              <Button
+                className="rounded-full bg-[#718355]"
+                onPress={() => {
+                  AsyncStorage.removeItem("token");
+                  postsQuery.refetch();
+                }}
+              >
+                <Text style={{ color: "white" }}>Logout</Text>
+              </Button>
             </View>
 
             <View className="mb-2">
