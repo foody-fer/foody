@@ -26,18 +26,20 @@ export default function ProfilePage() {
     username: z
       .string()
       .min(4, "Username must be at least 4 characters")
-      .regex(/^[a-zA-Z][a-zA-Z0-9._]*$/, "Incorrect username format")
+      .regex(/^[a-zA-Z][a-zA-Z0-9._]*$/, "Incorrect username format"),
   });
 
   const posts = useQuery({
     queryKey: ["posts"],
-    queryFn: () => apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`, { method: "GET"}),
+    queryFn: () => apiCall(`/posts`, { method: "GET" }),
     refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
     staleTime: 0, // Podaci će biti uvijek svježi
   });
-  
+
   const userQuery = useGetUser();
-  const [name, setName] = useState(userQuery.data.first_name + " " + userQuery.data.last_name);
+  const [name, setName] = useState(
+    userQuery.data.first_name + " " + userQuery.data.last_name
+  );
   const [firstName, setfirstName] = useState(userQuery.data.first_name);
   const [lastName, setlastName] = useState(userQuery.data.last_name);
   const [username, setUserName] = useState(userQuery.data.username);
@@ -52,14 +54,14 @@ export default function ProfilePage() {
     firstName: userQuery.data.first_name,
     lastName: userQuery.data.last_name,
     username: userQuery.data.username,
-    bio: userQuery.data.bio? userQuery.data.bio : ""
+    bio: userQuery.data.bio ? userQuery.data.bio : "",
   });
 
   const resetFields = () => {
     setfirstName(originalData.firstName);
     setlastName(originalData.lastName);
     setUserName(originalData.username);
-    setBio(originalData.bio? originalData.bio : "");
+    setBio(originalData.bio ? originalData.bio : "");
     setError("");
     setErrors({});
   };
@@ -69,7 +71,7 @@ export default function ProfilePage() {
       firstName: userQuery.data.first_name,
       lastName: userQuery.data.last_name,
       username: userQuery.data.username,
-      bio: userQuery.data.bio
+      bio: userQuery.data.bio,
     });
   }, [userQuery.data]);
 
@@ -89,35 +91,33 @@ export default function ProfilePage() {
     );
   }
 
-  const avatarContent = userQuery.data.avatar ? 
-  (
+  const avatarContent = userQuery.data.avatar ? (
     <img
       src={userQuery.data.avatar}
       alt={`${name} image`}
       className="w-full h-full object-cover"
     />
-  )
-  : (
+  ) : (
     <span className="text-white text-xl">
       {name.split(" ")[0][0].toUpperCase()}
       {name.split(" ")[1][0].toUpperCase()}
     </span>
   );
-  
+
   const renderContent = () => {
     switch (selectedTab) {
       case "Posts":
         return (
           <div className="p-1 md:p-4">
             <p>Ovdje ce ici objave korisnika</p>
-            <Feed posts={posts}/>
+            <Feed posts={posts} />
           </div>
         );
       case "Recipes":
         return (
           <div className="p-1 md:p-4">
             <p>Ovdje ce ici recepti korisnika</p>
-            <Feed posts={posts}/>
+            <Feed posts={posts} />
           </div>
         );
       default:
@@ -127,7 +127,7 @@ export default function ProfilePage() {
 
   const toggleEdit = (field: string) => {
     if (editingField === field) {
-      handleSave(field); 
+      handleSave(field);
     } else {
       resetFields();
       setEditingField(field);
@@ -138,25 +138,25 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
 
     if (!file) return;
-  
+
     const formData = new FormData();
     formData.append("user[avatar]", file);
-  
+
     try {
-      const data = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/registrations`, {
+      const data = await apiCall(`/registrations`, {
         method: "PATCH",
         body: formData,
       });
-  
+
       userQuery.refetch();
     } catch (error) {
       console.error("Error updating avatar:", error);
     }
   };
-  
+
   const handleSave = async (field: string) => {
     const formData = new FormData();
-  
+
     if (field === "firstName") {
       formData.append("user[first_name]", firstName);
     } else if (field === "lastName") {
@@ -166,38 +166,37 @@ export default function ProfilePage() {
     } else if (field === "bio") {
       formData.append("user[bio]", bio);
     }
-  
+
     try {
       // Validate first name with Zod
-      if(field === "firstName"){
+      if (field === "firstName") {
         profileSchema_first_name.parse({ first_name: firstName });
       } else if (field === "lastName") {
         profileSchema_last_name.parse({ last_name: lastName });
       } else if (field === "username") {
         profileSchema_username.parse({ username: username });
       }
-  
+
       // Reset errors if validation passes
       setErrors({});
-  
+
       // Make API call to update the profile
-      const [data, status] = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/registrations`, {
+      const [data, status] = await apiCall(`/registrations`, {
         method: "PATCH",
         body: formData,
       });
-  
+
       if (status === 422) {
         setError(data.error.username);
         return;
       }
-  
+
       console.log("Profile updated successfully:", data);
       userQuery.refetch();
       setName(data.first_name + " " + data.last_name);
       setError("");
 
       setEditingField(null);
-  
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors = error.errors.reduce((acc: any, curr) => {
@@ -208,15 +207,15 @@ export default function ProfilePage() {
       }
     }
   };
-  
+
   return (
     <div className="flex flex-col min-h-screen md:ml-16 lg:ml-36">
       <div className="p-10 mt-4">
         <div className="flex items-center space-x-4">
           <div
             className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-resedaGreen relative"
-            onMouseEnter={() => setIsHovered(true)} 
-            onMouseLeave={() => setIsHovered(false)}  
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
           >
             {avatarContent}
 
@@ -235,7 +234,7 @@ export default function ProfilePage() {
           </div>
           <h1 className="text-3xl text-textColor">{name}</h1>
         </div>
-        
+
         <p className="text-lg font-medium mt-4 ml-3">First name:</p>
 
         <div className="flex ml-3 text-gray-900">
@@ -261,7 +260,9 @@ export default function ProfilePage() {
             className="ml-3 p-2 w-32 sm:w-40 text-base rounded-full font-semibold bg-textColor text-white"
             onClick={() => toggleEdit("firstName")}
           >
-            {editingField === "firstName" ? "Save first name" : "Edit first name"}
+            {editingField === "firstName"
+              ? "Save first name"
+              : "Edit first name"}
           </button>
         </div>
 
@@ -272,7 +273,7 @@ export default function ProfilePage() {
         )}
 
         <p className="text-lg font-medium mt-4 ml-3">Last name:</p>
-        
+
         <div className="flex ml-3 text-gray-900">
           {editingField === "lastName" ? (
             <Input
@@ -306,7 +307,7 @@ export default function ProfilePage() {
           </div>
         )}
 
-    	  <p className="text-lg font-medium mt-4 ml-3">Username:</p>
+        <p className="text-lg font-medium mt-4 ml-3">Username:</p>
 
         <div className="flex ml-3 text-gray-900">
           {editingField === "username" ? (
@@ -334,18 +335,18 @@ export default function ProfilePage() {
             {editingField === "username" ? "Save username" : "Edit username"}
           </button>
         </div>
-        
 
         {errors.username ? (
           <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
             {errors.username}
           </div>
-        ) : error && (
-          <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
-            Username {error}.
-          </div>
+        ) : (
+          error && (
+            <div style={{ color: "red" }} className="lg:text-[15px] ml-4 mt-1">
+              Username {error}.
+            </div>
+          )
         )}
-
 
         <p className="text-lg font-medium mt-4 ml-3">Bio:</p>
 
@@ -379,7 +380,8 @@ export default function ProfilePage() {
         <p className="text-lg font-medium mt-4 ml-3">Gender:</p>
 
         <div className="ml-5 text-gray-900 text-base">
-          {userQuery.data.gender.charAt(0).toUpperCase() + userQuery.data.gender.slice(1)}
+          {userQuery.data.gender.charAt(0).toUpperCase() +
+            userQuery.data.gender.slice(1)}
         </div>
       </div>
 

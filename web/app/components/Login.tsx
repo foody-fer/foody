@@ -1,37 +1,31 @@
-const api = ""; //backend
-
 function Login({ disabled }: { disabled: boolean }) {
+  const urlBuilder = (provider: string) => {
+    return `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/${provider}?host=${process.env.NEXT_PUBLIC_FRONTEND_URL}`;
+  };
+
   return (
     <>
-      <button
-        onClick={() =>
-          (window.location.href = `${api}/oauth2/authorization/google`)
-        }
+      <a
+        href={!disabled ? urlBuilder("google") : undefined}
         className={`bg-midGreen text-textColor mt-5 rounded-full border-[3px] border-resedaGreen text-base sm:text-lg md:text-xl font-bold px-[0.7rem] sm:px-6 md:px-14 py-2.5
-                ${disabled ? "" : "cursor-pointer duration-200 hover:bg-[#a0b87e] hover:shadow-2xl  hover:scale-105"}`}
-        disabled={disabled}
-        role="button"
+                ${disabled ? "cursor-default" : "cursor-pointer duration-200 hover:bg-[#a0b87e] hover:shadow-2xl  hover:scale-105"}`}
       >
         <div className="flex justify-center space-x-3">
           <img src="/images/google-logo.png" alt="" className="w-8" />
           <div>Sign up with Google</div>
         </div>
-      </button>
+      </a>
 
-      <button
-        onClick={() =>
-          (window.location.href = `${api}/oauth2/authorization/github`)
-        }
+      <a
+        href={!disabled ? urlBuilder("github") : undefined}
         className={`login-buttons bg-midGreen text-textColor mt-[0.6rem] mb-2 rounded-full border-[3px] border-resedaGreen text-base sm:text-lg md:text-xl font-bold px-[0.7rem] sm:px-6 md:px-14 py-2.5 
-                    ${disabled ? "" : "cursor-pointer duration-200 hover:bg-[#a0b87e] hover:shadow-2xl  hover:scale-105"}`}
-        disabled={disabled}
-        role="button"
+                    ${disabled ? "cursor-default" : "cursor-pointer duration-200 hover:bg-[#a0b87e] hover:shadow-2xl  hover:scale-105"}`}
       >
         <div className="flex justify-center space-x-3">
           <img src="/images/github-logo.png" alt="" className="w-8" />
           <div>Sign up with GitHub</div>
         </div>
-      </button>
+      </a>
 
       <div className="flex ml-1.5 mt-1">
         <div className="w-[4.5rem] sm:w-[6rem] md:w-[8.5rem] bg-textColor h-[1px] mt-[0.8rem]"></div>

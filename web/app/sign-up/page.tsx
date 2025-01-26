@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
@@ -29,14 +29,27 @@ const signUpSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-function SignUpPage() {
+function SignUpPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    username?: string;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    avatar_url?: string;
+  }>;
+}) {
+  const params = use(searchParams);
   const [formData, setFormData] = useState({
-    email: "",
+    first_name: params.first_name || "",
+    last_name: params.last_name || "",
+    username: params.username || params.email?.split("@")[0] || "",
+    num: "",
+    email: params.email || "",
     password: "",
-    username: "",
-    first_name: "",
-    last_name: "",
     gender: "",
+    avatar_url: params.avatar_url || "",
     phone: "",
   });
 
@@ -60,17 +73,12 @@ function SignUpPage() {
       signUpSchema.parse(formData);
       setErrors({});
 
-      apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/registrations`, {
+      apiCall(`/registrations`, {
         method: "POST",
         body: JSON.stringify({
           user: {
-            email: formData.email,
-            password: formData.password,
-            username: formData.username,
-            first_name: formData.first_name,
-            last_name: formData.last_name,
+            ...formData,
             gender: formData.gender.toLowerCase(),
-            phone: formData.phone,
           },
         }),
         headers: {

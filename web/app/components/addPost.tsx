@@ -50,12 +50,12 @@ export default function AddPost({ posts }: any) {
 
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
-    const content = formData.get("post[content]");    
+    const content = formData.get("post[content]");
 
     setPostInfo({
       user: {
         username: userQuery.data.username,
-        avatar: userQuery.data.avatar
+        avatar: userQuery.data.avatar,
       },
       likes_count: 0,
       comments_count: 0,
@@ -72,7 +72,7 @@ export default function AddPost({ posts }: any) {
 
   const handleConfirm = async (e: any) => {
     // send data from data to backend and publish post
-    const response = await apiCall(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`, {
+    const response = await apiCall(`/posts`, {
       method: "POST",
       body: data,
     });

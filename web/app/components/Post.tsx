@@ -27,20 +27,14 @@ export default function Post({ info, preview, posts }: any) {
   const handleLikes = async () => {
     if (!preview) {
       if (info.liked_by_current_user) {
-        const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}/likes`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await apiCall(`/posts/${info.id}/likes`, {
+          method: "DELETE",
+        });
         console.log(response);
       } else {
-        const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}/likes`,
-          {
-            method: "POST",
-          }
-        );
+        const response = await apiCall(`/posts/${info.id}/likes`, {
+          method: "POST",
+        });
         console.log(response);
       }
       posts.refetch();
@@ -50,20 +44,14 @@ export default function Post({ info, preview, posts }: any) {
   const handleSaves = async () => {
     if (!preview) {
       if (info.saved_by_current_user) {
-        const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}/saves`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await apiCall(`/posts/${info.id}/saved_posts`, {
+          method: "DELETE",
+        });
         console.log(response);
       } else {
-        const response = await apiCall(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}/saves`,
-          {
-            method: "POST",
-          }
-        );
+        const response = await apiCall(`/posts/${info.id}/saved_posts`, {
+          method: "POST",
+        });
         console.log(response);
       }
       posts.refetch();
@@ -71,12 +59,9 @@ export default function Post({ info, preview, posts }: any) {
   };
 
   const handleDelete = async () => {
-    const response = await apiCall(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/${info.id}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await apiCall(`/posts/${info.id}`, {
+      method: "DELETE",
+    });
     console.log(response);
 
     posts.refetch();
@@ -210,29 +195,25 @@ export default function Post({ info, preview, posts }: any) {
         <div
           className={
             "text-textColor flex flex-row rounded-full p-1 transition duration-300" +
-            (info.saved_by_current_user ? " bg-green-400 text-white" : " bg-white")
+            (info.saved_by_current_user
+              ? " bg-green-400 text-white"
+              : " bg-white")
           }
         >
           {!info.saved_by_current_user ? (
             <BsSave
-              onClick={() => {
-                !preview && handleSaves;
-              }}
+              onClick={handleSaves}
               className="cursor-pointer text-resedaGreen h-3 w-4 mr-2 mt-[0.2rem] pl-1 ml-1 md:mr-1"
             />
           ) : (
             <BsSaveFill
-              onClick={() => {
-                !preview && handleSaves;
-              }}
+              onClick={handleSaves}
               className="cursor-pointer h-3 w-4 mr-2 mt-[0.2rem] pl-1 ml-1 md:mr-1"
             />
           )}
           <span
             className="pl-1 cursor-pointer hidden md:block"
-            onClick={() => {
-              !preview && handleSaves;
-            }}
+            onClick={handleSaves}
           >
             Saves
           </span>
