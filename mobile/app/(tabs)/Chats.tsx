@@ -30,7 +30,7 @@ const ChatScreen = () => {
   ];
 
   const handlePressGroup = () => {
-    router.push("/Chat");
+    router.push("../Chat");
   };
 
   return (
