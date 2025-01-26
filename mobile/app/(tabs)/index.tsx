@@ -116,7 +116,7 @@ const Post = ({
                   <Ionicons
                     name="chevron-back"
                     size={24}
-                    color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"}
+                    color={currentImageIndex === 0 ? "grey" : "white"}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -127,9 +127,7 @@ const Post = ({
                     name="chevron-forward"
                     size={24}
                     color={
-                      currentImageIndex === images.length - 1
-                        ? "#575A4B"
-                        : "#CFE1B9"
+                      currentImageIndex === images.length - 1 ? "grey" : "white"
                     }
                   />
                 </TouchableOpacity>
@@ -339,10 +337,10 @@ const styles = StyleSheet.create({
     margin: "5%",
     width: "90%",
     borderRadius: 10,
-    borderColor: "#575A4B",
+    borderColor: "white",
     borderWidth: 0.2,
     alignItems: "center",
-    backgroundColor: "#718355",
+    backgroundColor: "white",
   },
   topSection: {
     flexDirection: "row",
@@ -360,16 +358,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     borderColor: "#718355",
-    // backgroundColor: "#718355",
     borderRadius: 10,
-    //  borderWidth: 1,
+    position: "relative",
   },
   image: {
     width: 300,
     height: 300,
     borderRadius: 10,
-    borderColor: "#718355",
     borderWidth: 1,
+    borderColor: "white",
   },
   bottomSection: {
     flexDirection: "row",
@@ -421,11 +418,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   imageNavigation: {
+    position: "absolute", // Added for overlay
+    top: "50%", // Center vertically
+    width: "100%", // Stretch navigation container
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-between", // Space arrows at edges
     alignItems: "center",
-    width: "100%",
-    marginTop: 10,
+    paddingHorizontal: 10,
   },
   modalButtonContainer: {
     flexDirection: "row",
