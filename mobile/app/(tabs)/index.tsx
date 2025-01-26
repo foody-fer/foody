@@ -82,20 +82,30 @@ const Post = ({
   return (
     <View style={styles.postView}>
       <View style={styles.topSection}>
-        {user.avatar ? (
-          <Image
-            source={{ uri: user.avatar }}
-            style={{ width: 30, height: 30, borderRadius: 15 }}
-          />
-        ) : (
+        <View style={styles.userSection}>
+          {user.avatar ? (
+            <Image
+              source={{ uri: user.avatar }}
+              style={{ width: 30, height: 30, borderRadius: 15 }}
+            />
+          ) : (
+            <Ionicons
+              name="person-circle"
+              size={30}
+              color="#575A4B"
+              style={styles.iconLeft}
+            />
+          )}
+          <Text style={styles.modalText}>{user.username}</Text>
+        </View>
+
+        <TouchableOpacity>
           <Ionicons
-            name="person-circle"
+            name="ellipsis-horizontal"
             size={30}
             color="#575A4B"
-            style={styles.iconLeft}
-          />
-        )}
-        <Text style={styles.modalText}>{user.username}</Text>
+          ></Ionicons>
+        </TouchableOpacity>
       </View>
 
       <Text>{content}</Text>
@@ -361,10 +371,15 @@ const styles = StyleSheet.create({
   },
   topSection: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     width: "100%",
     paddingBottom: 2,
     paddingTop: "1%",
+    marginBottom: 10,
+  },
+  userSection: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   iconLeft: {
     marginLeft: 10,
@@ -424,7 +439,6 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 18,
-    marginBottom: 15,
     marginLeft: 10,
     textAlign: "center",
   },
