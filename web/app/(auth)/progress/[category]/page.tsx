@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,6 +11,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import Link from "next/link";
+import { apiCall } from "~/api";
+import { IoTrashBinOutline } from "react-icons/io5";
 
 ChartJS.register(
   CategoryScale,
@@ -32,19 +34,9 @@ export default function ProgressPage({
 
   const [selectedCategory, setSelectedCategory] = useState<any>(category);
 
-  const [data, setData] = useState<{ value: number; date: string }[]>([
-    { value: 33.9, date: "01.01.2025" },
-    { value: 35, date: "25.02.2025" },
-    { value: 36, date: "27.02.2025" },
-    { value: 40, date: "01.03.2025" },
-    { value: 45, date: "01.04.2025" },
-    { value: 50, date: "01.05.2025" },
-    { value: 55, date: "01.06.2025" },
-    { value: 60, date: "01.07.2025" },
-    { value: 65, date: "01.08.2025" },
-    { value: 70, date: "01.09.2025" },
-    { value: 75, date: "01.10.2025" },
-  ]);
+  const [data, setData] = useState<
+    { id: number; key: string; value: number; date: string }[]
+  >([]);
 
   const categories: Category[] = [
     "weight",
@@ -58,6 +50,37 @@ export default function ProgressPage({
   const handleCategoryChange = (category: Category) => {
     setSelectedCategory(category);
   };
+
+  const fetchMeasurements = async () => {
+    try {
+      const response = await apiCall(`/measurements`, {
+        method: "GET",
+      });
+
+      if (Array.isArray(response[0])) {
+        const transformedData = response[0]
+          .filter((item) => item.key === selectedCategory) // uzimamo iz response-a samo one koji su za selectedCategory
+          .map((item) => ({
+            id: item.id,
+            key: item.key,
+            value: item.value,
+            date: new Date(item.recorded_at)
+              .toLocaleDateString("en-GB")
+              .replace(/\//g, "."),
+          }));
+
+        setData(transformedData);
+      } else {
+        console.error("Unexpected response format:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching measurements:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMeasurements();
+  }, [selectedCategory]);
 
   const chartData = {
     labels: [
@@ -123,6 +146,23 @@ export default function ProgressPage({
     },
   };
 
+  const handleValueDelete = async (id: number): Promise<void> => {
+    try {
+      const [data, status] = await apiCall(`/measurements/${id}`, {
+        method: "DELETE",
+      });
+
+      if (status === 200) {
+        //uspjesno brisanje (status 200)
+        await fetchMeasurements(); // ponovo zovemo ovo da dobijemo fresh podatke
+      } else {
+        console.error("Failed to delete measurement");
+      }
+    } catch (error) {
+      console.error("Došlo je do pogreške:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen mt-5 mb-5">
       <p className="text-textColor font-semibold text-lg before:content-['•'] before:mr-2 ml-8 md:ml-32 lg:ml-48">
@@ -155,17 +195,28 @@ export default function ProgressPage({
         </div>
 
         <div className="mt-6 bg-white p-3 rounded-lg shadow-md w-52 md:ml-12 lg:ml-6 max-h-44 overflow-y-auto scrollbar-thin scrollbar-thumb-resedaGreen scrollbar-track-transparent">
-          {data.map((entry, index) => (
-            <div key={index} className="flex items-center mb-2">
-              <div className="w-2.5 h-2.5 bg-[#718355] rounded-full mr-2"></div>
-              <div>
-                <p className="text-sm font-bold text-[#373737]">
-                  {entry.value} {selectedCategory === "weight" ? "kg" : "cm"}
-                </p>
-                <p className="text-xs text-[#575A4B]">{entry.date}</p>
+          {data.length > 0 ? (
+            data.map((entry, index) => (
+              <div key={index} className="flex items-center mb-2">
+                <div className="w-2.5 h-2.5 bg-[#718355] rounded-full mr-2"></div>
+                <div>
+                  <p className="text-sm font-bold text-[#373737]">
+                    {entry.value} {selectedCategory === "weight" ? "kg" : "cm"}
+                  </p>
+                  <p className="text-xs text-[#575A4B]">{entry.date}</p>
+                </div>
+
+                <IoTrashBinOutline
+                  onClick={() => handleValueDelete(entry.id)}
+                  className="ml-16 w-5 h-5 text-red-500 hover:scale-125 transition duration-300 cursor-pointer"
+                />
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-sm text-red-500 text-center font-semibold">
+              No data available for this category yet.
+            </p>
+          )}
         </div>
 
         <Link

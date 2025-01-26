@@ -22,7 +22,7 @@ export default function LogProgressPage({
 
   const handleSubmit = async () => {
     if (!value || isNaN(Number(value)) || Number(value) <= 0) {
-      setError("Please enter a valid number.");
+      setError("Please enter a valid positive number.");
       return;
     }
 
@@ -77,7 +77,12 @@ export default function LogProgressPage({
           className="h-16 rounded-full px-4 w-80 sm:w-96 mb-4 bg-white text-xl text-center"
           placeholder="Enter value in kg"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            const inputValue = parseFloat(e.target.value);
+            if (inputValue >= 0 || e.target.value === "") {
+              setValue(e.target.value);
+            }
+          }}
         />
       ) : (
         <input
@@ -86,7 +91,12 @@ export default function LogProgressPage({
           className="h-16 rounded-full px-4 w-80 sm:w-96 mb-4 bg-white text-xl text-center"
           placeholder="Enter value in cm"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            const inputValue = parseFloat(e.target.value);
+            if (inputValue >= 0 || e.target.value === "") {
+              setValue(e.target.value);
+            }
+          }}
         />
       )}
 
