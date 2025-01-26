@@ -12,13 +12,11 @@ export default function RootLayout() {
         <StatusBar style="light" />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="LogProgress" options={{ headerShown: false }} />
           <Stack.Screen name="Login" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
           <Stack.Screen name="sign-in" />
           <Stack.Screen name="sign-up" />
           <Stack.Screen name="Chat" />
-          <Stack.Screen name="Groups" />
         </Stack>
       </GluestackUIProvider>
     </QueryClientProvider>

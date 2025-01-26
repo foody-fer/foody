@@ -20,6 +20,7 @@ import DateTimePicker, {
 import { useQuery } from "@tanstack/react-query";
 import { apiCall } from ".";
 type Category = "weight" | "waist" | "thighs" | "hips" | "arms" | "neck";
+import { useMemo } from "react";
 
 interface Measurement {
   key: string;
@@ -136,6 +137,41 @@ const ProgressScreen: React.FC = () => {
     return `${day}.${month}.${year}, ${hours}:${minutes}`;
   };
 
+  const getChartData = (
+    measurements: Measurement[],
+    selectedCategory: Category
+  ) => {
+    const filteredData = measurements
+      .filter((entry) => entry.key === selectedCategory)
+      .sort(
+        (a, b) =>
+          new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
+      );
+
+    const labels = filteredData.map((entry) => {
+      const date = new Date(entry.recorded_at.replace(" UTC", "Z")); // Pretvori datum u ispravan format
+      if (isNaN(date.getTime())) {
+        console.warn(`Invalid date format: ${entry.recorded_at}`);
+        return "Invalid Date";
+      }
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Mjeseci su 0-indeksirani
+      return `${day}.${month}`; // Format dd.mm
+    });
+
+    const data = filteredData.map((entry) => entry.value);
+
+    return {
+      labels,
+      datasets: [{ data }],
+    };
+  };
+
+  const chartData = useMemo(
+    () => getChartData(measurements, selectedCategory),
+    [measurements, selectedCategory]
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-[#CFE1B9]">
       <View className="flex-1 flex-col">
@@ -184,27 +220,26 @@ const ProgressScreen: React.FC = () => {
         {/* Graph Section */}
         <View className="h-[40%] items-center justify-center">
           <View className="bg-white p-4 rounded-xl shadow-lg">
-            <LineChart
-              data={{
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-                datasets: [
-                  {
-                    data: [30, 37, 40, 69, 70, 45, 90],
-                  },
-                ],
-              }}
-              width={300}
-              height={200}
-              chartConfig={{
-                backgroundColor: "#FFFFFF",
-                backgroundGradientFrom: "#FFFFFF",
-                backgroundGradientTo: "#FFFFFF",
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(113, 131, 85, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(55, 55, 55, ${opacity})`,
-              }}
-              style={{ borderRadius: 16 }}
-            />
+            {chartData.datasets[0].data.length > 0 ? (
+              <LineChart
+                data={chartData}
+                width={300}
+                height={200}
+                chartConfig={{
+                  backgroundColor: "#FFFFFF",
+                  backgroundGradientFrom: "#FFFFFF",
+                  backgroundGradientTo: "#FFFFFF",
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(113, 131, 85, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(55, 55, 55, ${opacity})`,
+                }}
+                style={{ borderRadius: 16 }}
+              />
+            ) : (
+              <Text className="text-[#575A4B] text-lg text-center">
+                No data available for this category.
+              </Text>
+            )}
           </View>
         </View>
 
