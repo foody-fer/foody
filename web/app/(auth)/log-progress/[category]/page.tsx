@@ -4,20 +4,51 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/airbnb.css";
 import { IoArrowBackCircleOutline, IoArrowBackCircle } from "react-icons/io5";
 import Link from "next/link";
+import { apiCall } from "~/api";
+import { useRouter } from "next/navigation";
 
 export default function LogProgressPage({
   params,
 }: {
   params: Promise<{ category: string }>;
 }) {
-  const { category } = React.use(params); // za dohvatiti koja kategorija se radi
+  const { category } = React.use(params);
   const flatpickrRef = useRef<any>(null);
 
   const [value, setValue] = useState("");
   const [date, setDate] = useState(new Date());
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubmit = () => {
-    // ovdje treba dovrsiti dio kada se popuni sta napraviti
+  const handleSubmit = async () => {
+    if (!value || isNaN(Number(value)) || Number(value) <= 0) {
+      setError("Please enter a valid number.");
+      return;
+    }
+
+    setError(null);
+
+    const data = {
+      measurement: {
+        key: category,
+        value: value,
+        recorded_at: date,
+      },
+    };
+
+    try {
+      const response = await apiCall(`/measurements`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      router.push(`/progress/${category}`);
+    } catch (error) {
+      console.error("Doslo je do greske:", error);
+    }
   };
 
   const openDatePicker = () => {
@@ -42,6 +73,7 @@ export default function LogProgressPage({
       {category === "weight" ? (
         <input
           type="number"
+          step="0.1"
           className="h-16 rounded-full px-4 w-80 sm:w-96 mb-4 bg-white text-xl text-center"
           placeholder="Enter value in kg"
           value={value}
@@ -50,6 +82,7 @@ export default function LogProgressPage({
       ) : (
         <input
           type="number"
+          step="0.1"
           className="h-16 rounded-full px-4 w-80 sm:w-96 mb-4 bg-white text-xl text-center"
           placeholder="Enter value in cm"
           value={value}
@@ -57,9 +90,13 @@ export default function LogProgressPage({
         />
       )}
 
+      {error && (
+        <p className="text-red-500 text-base mb-4 font-semibold">{error}</p>
+      )}
+
       <div className="flex flex-col text-lg">
         <Flatpickr
-          ref={flatpickrRef} // Attach ref to the Flatpickr instance
+          ref={flatpickrRef}
           value={date}
           onChange={(selectedDates: React.SetStateAction<Date>[]) =>
             setDate(selectedDates[0])
