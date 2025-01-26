@@ -138,25 +138,42 @@ const Post = ({
       </View>
 
       <View style={styles.bottomSection}>
-        <Text>{likes}</Text>
-        <TouchableOpacity onPress={likePost}>
-          <Ionicons
-            name="heart"
-            size={24}
-            color={likedByCurrentUser ? "#f51d5a" : "#718355"}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <Text>{comments_count}</Text>
-        <TouchableOpacity>
-          <Ionicons
-            name="chatbubble"
-            size={24}
-            color="#718355"
-            style={styles.icon}
-            onPress={() => setToggleComments(!toggleComments)}
-          />
-        </TouchableOpacity>
+        <View style={styles.likesContainer}>
+          <TouchableOpacity onPress={likePost}>
+            <Ionicons
+              name="heart"
+              size={24}
+              color={likedByCurrentUser ? "#f51d5a" : "#718355"}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text>{likes}</Text>
+        </View>
+
+        <View style={styles.commentsContainer}>
+          <TouchableOpacity>
+            <Ionicons
+              name="chatbox-outline"
+              size={24}
+              color="#718355"
+              style={styles.icon}
+              onPress={() => setToggleComments(!toggleComments)}
+            />
+          </TouchableOpacity>
+          <Text>{comments_count}</Text>
+        </View>
+
+        <View style={styles.saveContainer}>
+          <TouchableOpacity>
+            <Ionicons
+              name="download-outline"
+              size={24}
+              color="#718355"
+              style={styles.icon}
+            ></Ionicons>
+          </TouchableOpacity>
+          <Text>saves</Text>
+        </View>
       </View>
 
       {toggleComments === true && <Comments postInfo={id} />}
@@ -337,10 +354,10 @@ const styles = StyleSheet.create({
     margin: "5%",
     width: "90%",
     borderRadius: 10,
-    borderColor: "white",
+    borderColor: "#f3f4f6",
     borderWidth: 0.2,
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#f3f4f6",
   },
   topSection: {
     flexDirection: "row",
@@ -375,7 +392,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   icon: {
-    marginHorizontal: 5,
+    marginRight: 5,
   },
   cameraButton: {
     position: "absolute",
@@ -449,5 +466,35 @@ const styles = StyleSheet.create({
     backgroundColor: "#575A4B",
     padding: 8,
     borderRadius: 10,
+  },
+  likesContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
+  commentsContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 50,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  saveContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 5,
   },
 });
