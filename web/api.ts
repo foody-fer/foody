@@ -7,5 +7,15 @@ export const apiCall = (url: `/${string}`, options: RequestInit) => {
         ? { Authorization: `Bearer ${localStorage.getItem("token")}` }
         : {}),
     },
-  }).then(async (res) => [await res.json(), res.status] as const);
+  }).then(async (res) => {
+    let data = null;
+    if (res.status !== 204) {
+      try {
+        data = await res.json();
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
+    }
+    return [data, res.status] as const;
+  });
 };

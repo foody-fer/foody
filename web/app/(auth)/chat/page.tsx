@@ -129,7 +129,7 @@ export default function Chatpage() {
                       ? group.messages[0][0]?.content.length > 32
                         ? `${group.messages[0][0].content.slice(0, 32)}...`
                         : group.messages[0][0].content
-                      : "No messages in this group..."}
+                      : "No messages to show..."}
                   </p>
                 </div>
 

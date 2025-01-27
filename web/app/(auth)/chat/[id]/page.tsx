@@ -10,6 +10,7 @@ import { IoIosMore } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useGetUser } from "~/queries/getUser";
+import { IoTrashBinOutline } from "react-icons/io5";
 import {
   MenuRoot,
   MenuTrigger,
@@ -123,6 +124,32 @@ export default function GroupChat() {
     }
 
     setNewMessage("");
+  };
+
+  const handleMessageDelete = (messageId: number) => {
+    fetch(`/chat_groups/${id}/messages/${messageId}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to delete message");
+        }
+        console.log("Message deleted");
+
+        // Refetch messages after the deletion
+        chatMessages.refetch();
+      })
+      .catch((err) => {
+        console.error("Failed to delete message", err);
+      });
+  };
+
+  const handleDelete = async (messageId: number) => {
+    const response = await apiCall(`/chat_groups/${id}/messages/${messageId}`, {
+      method: "DELETE",
+    });
+
+    chatMessages.refetch();
   };
 
   if (chatMessages.isLoading) return <p>Loading...</p>;
@@ -257,15 +284,25 @@ export default function GroupChat() {
                         : "bg-[#cddcb4] text-black rounded-tl-lg rounded-tr-lg rounded-br-lg rounded-bl-none"
                     }`}
                   >
-                    <p
-                      className={`text-lg font-semibold ${
+                    <div
+                      className={`flex items-center ${
                         message.user.username === myUsername
-                          ? "text-right"
-                          : "text-left"
+                          ? "justify-end gap-2"
+                          : "justify-start"
                       }`}
                     >
-                      {message.user.first_name}
-                    </p>
+                      <p className="text-lg font-semibold">
+                        {message.user.first_name}
+                      </p>
+
+                      {/* Ikona kante za smeće, prikazuje se samo ako je poruka od trenutnog korisnika */}
+                      {message.user.username === myUsername && (
+                        <IoTrashBinOutline
+                          className="w-4 h-4 text-red-500 hover:scale-125 transition duration-300 cursor-pointer"
+                          onClick={() => handleDelete(message.id)}
+                        />
+                      )}
+                    </div>
 
                     {message.attachment_url && (
                       <div className="mt-2">
