@@ -397,7 +397,7 @@ export default function ProfilePage() {
           <ProfileFeed tab={selectedTab} />
         </div>
       ) : (
-        <div className="flex-1 mt-2 mx-10 mb-10 bg-navbarColor w-[88%] rounded"> 
+        <div className="flex-1 mt-4 ml-2 sm:ml-12 md:ml-15 mb-10 bg-navbarColor rounded w-[95%] sm:w-[86%] lg:w-[72%]"> 
           <MealPlanner/>
         </div>
       )}
