@@ -45,14 +45,14 @@ const useGetUser = () => {
 };
 
 const Post = ({
-  user,
-  content,
-  images,
-  likes,
-  likedByCurrentUser,
-  likePost,
+  user = { username: "Unknown", avatar: null },
+  content = "",
+  images = [],
+  likes = 0,
+  likedByCurrentUser = false,
+  likePost = () => {},
   id,
-  comments_count,
+  comments_count = "0",
 }: {
   user: { username: string; avatar: string | null };
   content: string;
@@ -100,7 +100,7 @@ const Post = ({
       <Text>{content}</Text>
 
       <View style={styles.middleSection}>
-        {images.length > 0 && (
+        {images.length > 0 ? (
           <>
             <Image
               source={{ uri: images[currentImageIndex].url }}
@@ -115,7 +115,7 @@ const Post = ({
                   <Ionicons
                     name="chevron-back"
                     size={24}
-                    color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"}
+                    color={currentImageIndex === 0 ? "grey" : "white"}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -126,15 +126,15 @@ const Post = ({
                     name="chevron-forward"
                     size={24}
                     color={
-                      currentImageIndex === images.length - 1
-                        ? "#575A4B"
-                        : "#CFE1B9"
+                      currentImageIndex === images.length - 1 ? "grey" : "white"
                     }
                   />
                 </TouchableOpacity>
               </View>
             )}
           </>
+        ) : (
+          <Text>No images available</Text>
         )}
       </View>
 
@@ -160,7 +160,7 @@ const Post = ({
         </TouchableOpacity>
       </View>
 
-      {toggleComments === true && <Comments postInfo={id} />}
+      {toggleComments && <Comments postInfo={id} />}
     </View>
   );
 };
@@ -237,6 +237,12 @@ export default function ProfileScreen() {
   const [errorMessage, setErrorMessage] = useState("");
   const [errors, setErrors] = useState<any>({});
   const [originalData, setOriginalData] = useState({});
+  const saved_posts = useQuery({
+    queryKey: ["saved_posts"],
+    queryFn: () => apiCall(`/saved_posts`, { method: "GET" }),
+    refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
+    staleTime: 0, // Podaci će biti uvijek svježi
+  });
 
   const { data: posts, isLoading: isPostsLoading } = usePosts();
   const { data: recipes, isLoading: isRecipesLoading } = useRecipes();
@@ -438,8 +444,47 @@ export default function ProfileScreen() {
     );
   };
 
+  const renderSavedPosts = () => {
+    if (saved_posts.isLoading) {
+      return <Spinner />;
+    }
+    if (!saved_posts.data || saved_posts.data.length === 0) {
+      return (
+        <Text className="text-center text-jet mt-5">No saved posts yet</Text>
+      );
+    }
+    return (
+      <SafeAreaView>
+        <FlatList
+          keyExtractor={(item) => item.id}
+          data={saved_posts.data}
+          renderItem={({ item }) => (
+            <Post
+              user={item.user}
+              content={item.content}
+              images={item.images}
+              likes={item.likes_count}
+              likedByCurrentUser={item.liked_by_current_user}
+              likePost={() => {
+                apiCall(`/posts/${item.id}/likes`, {
+                  method: item.liked_by_current_user ? "DELETE" : "POST",
+                }).then(() => {
+                  saved_posts.refetch(); // Refetch saved posts after liking/unliking
+                });
+              }}
+              id={item.id}
+              comments_count={item.comments_count}
+            />
+          )}
+        />
+      </SafeAreaView>
+    );
+  };
+
   const renderContent = () => {
-    return selectedTab === "Posts" ? renderPosts() : renderRecipes();
+    if (selectedTab === "Posts") return renderPosts();
+    if (selectedTab === "Recipes") return renderRecipes();
+    if (selectedTab === "Saved") return renderSavedPosts();
   };
 
   useEffect(() => {
@@ -611,39 +656,19 @@ export default function ProfileScreen() {
             </View>
 
             <View className="flex-row justify-center">
-              {selectedTab === "Posts" ? (
+              {["Posts", "Recipes", "Saved"].map((tab) => (
                 <Button
-                  className="bg-jet mr-3 rounded-full"
-                  onPress={() => setSelectedTab("Posts")}
+                  key={tab}
+                  className={
+                    selectedTab === tab
+                      ? "bg-jet mr-3 rounded-full"
+                      : "mr-3 rounded-full"
+                  }
+                  onPress={() => setSelectedTab(tab)}
                 >
-                  <ButtonText className="">Posts</ButtonText>
+                  <ButtonText>{tab}</ButtonText>
                 </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  className="mr-3 rounded-full"
-                  onPress={() => setSelectedTab("Posts")}
-                >
-                  <ButtonText className="">Posts</ButtonText>
-                </Button>
-              )}
-
-              {selectedTab === "Recipes" ? (
-                <Button
-                  className="bg-jet mr-3 rounded-full"
-                  onPress={() => setSelectedTab("Recipes")}
-                >
-                  <ButtonText className="">Recipes</ButtonText>
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  className="mr-3 rounded-full"
-                  onPress={() => setSelectedTab("Recipes")}
-                >
-                  <ButtonText className="">Recipes</ButtonText>
-                </Button>
-              )}
+              ))}
             </View>
           </View>
         }

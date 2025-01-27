@@ -4,7 +4,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  ScrollView,
   Image,
   FlatList,
   TextInput,
@@ -21,8 +20,7 @@ import { Text } from "@/components/ui/CustomText";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "expo-router";
-import Comments from "@/components/ui/Comments";
-import { setStatusBarBackgroundColor } from "expo-status-bar";
+import Post from "../Post";
 
 const queryClient = new QueryClient();
 
@@ -47,203 +45,13 @@ export const apiCall = async (url: string, options: RequestInit = {}) => {
   throw await res.text();
 };
 
-const Post = ({
-  user,
-  content,
-  images,
-  likes,
-  likedByCurrentUser,
-  likePost,
-  id,
-  comments_count,
-  savedByCurrentUser,
-  refetchPosts,
-}: {
-  user: { username: string; avatar: string | null };
-  content: string;
-  images: { id: number; url: string }[];
-  likes: number;
-  likedByCurrentUser: boolean;
-  likePost: () => void;
-  id: string;
-  comments_count: string;
-  savedByCurrentUser: boolean;
-  refetchPosts: () => void;
-}) => {
-  const [toggleComments, setToggleComments] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const handleNextImage = () => {
-    if (currentImageIndex < images.length - 1) {
-      setCurrentImageIndex(currentImageIndex + 1);
-    }
-  };
-
-  const handlePreviousImage = () => {
-    if (currentImageIndex > 0) {
-      setCurrentImageIndex(currentImageIndex - 1);
-    }
-  };
-
-  const handleSaves = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        alert("Molimo prijavite se kako biste spremili objavu.");
-        return;
-      }
-
-      const method = savedByCurrentUser ? "DELETE" : "POST";
-      const response = await fetch(
-        `https://foody-backend.zeko.run/api/v1/posts/${id}/saves`,
-        {
-          method,
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        alert(
-          `Objava ${
-            savedByCurrentUser ? "je uklonjena iz spremljenih" : "je spremljena"
-          }.`
-        );
-        refetchPosts(); // Ponovno učitaj podatke
-      } else {
-        const errorText = await response.text();
-        console.error(errorText);
-        alert("Dogodila se pogreška prilikom spremanja objave.");
-      }
-    } catch (error) {
-      console.error("Greška prilikom spremanja objave:", error);
-      alert("Dogodila se pogreška. Pokušajte ponovno.");
-    }
-  };
-
-  return (
-    <View style={styles.postView}>
-      <View style={styles.topSection}>
-        <View style={styles.userSection}>
-          {user.avatar ? (
-            <Image
-              source={{ uri: user.avatar }}
-              style={{ width: 30, height: 30, borderRadius: 15 }}
-            />
-          ) : (
-            <Ionicons
-              name="person-circle"
-              size={30}
-              color="#575A4B"
-              style={styles.iconLeft}
-            />
-          )}
-          <Text style={styles.modalText}>{user.username}</Text>
-        </View>
-
-        <TouchableOpacity>
-          <Ionicons
-            name="ellipsis-horizontal"
-            size={30}
-            color="#575A4B"
-          ></Ionicons>
-        </TouchableOpacity>
-      </View>
-
-      <Text>{content}</Text>
-
-      <View style={styles.middleSection}>
-        {images.length > 0 && (
-          <>
-            <Image
-              source={{ uri: images[currentImageIndex].url }}
-              style={styles.image}
-            />
-            {images.length > 1 && (
-              <View style={styles.imageNavigation}>
-                <TouchableOpacity
-                  onPress={handlePreviousImage}
-                  disabled={currentImageIndex === 0}
-                >
-                  <Ionicons
-                    name="chevron-back"
-                    size={24}
-                    color={currentImageIndex === 0 ? "grey" : "white"}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleNextImage}
-                  disabled={currentImageIndex === images.length - 1}
-                >
-                  <Ionicons
-                    name="chevron-forward"
-                    size={24}
-                    color={
-                      currentImageIndex === images.length - 1 ? "grey" : "white"
-                    }
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
-        )}
-      </View>
-
-      <View style={styles.bottomSection}>
-        <View style={styles.likesContainer}>
-          <TouchableOpacity onPress={likePost}>
-            <Ionicons
-              name="heart"
-              size={24}
-              color={likedByCurrentUser ? "#f51d5a" : "#718355"}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <Text>{likes}</Text>
-        </View>
-
-        <View style={styles.commentsContainer}>
-          <TouchableOpacity>
-            <Ionicons
-              name="chatbox-outline"
-              size={24}
-              color="#718355"
-              style={styles.icon}
-              onPress={() => setToggleComments(!toggleComments)}
-            />
-          </TouchableOpacity>
-          <Text>{comments_count}</Text>
-        </View>
-
-        <View style={styles.saveContainer}>
-          <TouchableOpacity onPress={handleSaves}>
-            <Ionicons
-              name={savedByCurrentUser ? "download" : "download-outline"}
-              size={24}
-              color={"#718355"}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <Text>{savedByCurrentUser ? "Saved" : "Save"}</Text>
-        </View>
-      </View>
-
-      {toggleComments === true && <Comments postInfo={id} />}
-    </View>
-  );
-};
-
 export default function Index() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [ideaModalVisible, setIdeaModalVisible] = useState(false);
   const [ideaContent, setIdeaContent] = useState("");
-  const [heartColor, setHeartColor] = useState("#575A4B");
   const [postContent, setPostContent] = useState("");
-  const [commentColor, setCommentColor] = useState("#575A4B");
 
   const postsQuery = useQuery({
     queryKey: ["posts"],
@@ -264,10 +72,6 @@ export default function Index() {
     }
   };
 
-  const openIdeaModal = async () => {
-    setIdeaModalVisible(true);
-  };
-
   const handlePost = async () => {
     if (!selectedImage || !postContent) {
       alert("Please add content and an image.");
@@ -275,7 +79,6 @@ export default function Index() {
     }
 
     try {
-      // Convert the selected image (URI) to a Blob
       const response = await fetch(selectedImage);
       const blob = await response.blob();
 
@@ -283,7 +86,7 @@ export default function Index() {
       formData.append("post[content]", postContent);
       formData.append("post[images][]", blob, "upload.jpg");
 
-      const result = await apiCall("/posts", {
+      await apiCall("/posts", {
         method: "POST",
         body: formData,
         headers: {
@@ -293,14 +96,11 @@ export default function Index() {
       setModalVisible(false);
       setPostContent("");
       setSelectedImage(null);
-      postsQuery.refetch(); // Refresh the list of posts
+      postsQuery.refetch();
     } catch (err) {
       console.error(err);
     }
   };
-
-  //if (postsQuery.isLoading) return <Spinner />;
-  // return <Text>Error loading posts</Text>;
 
   if (postsQuery.error) {
     return (
@@ -344,29 +144,6 @@ export default function Index() {
         </View>
       </View>
 
-      {/*<ScrollView>
-        {postsQuery.isLoading && <Spinner />}
-        {postsQuery.data &&
-          postsQuery.data.map((post) => (
-            <Post
-              key={post.id}
-              user={post.user}
-              content={post.content}
-              images={post.images}
-              likes={post.likes_count}
-              likedByCurrentUser={post.liked_by_current_user}
-              likePost={() => {
-                apiCall(`/posts/${post.id}/likes`, {
-                  method: post.liked_by_current_user ? "DELETE" : "POST",
-                }).then(() => {
-                  postsQuery.refetch();
-                });
-              }}
-              id={post.id}
-            />
-          ))}
-      </ScrollView>*/}
-
       <FlatList
         data={postsQuery.data || []}
         keyExtractor={(item) => item.id.toString()}
@@ -377,7 +154,7 @@ export default function Index() {
             images={item.images}
             likes={item.likes_count}
             likedByCurrentUser={item.liked_by_current_user}
-            savedByCurrentUser={item.saved_by_current_user} // Dodano svojstvo
+            savedByCurrentUser={item.saved_by_current_user}
             likePost={() => {
               apiCall(`/posts/${item.id}/likes`, {
                 method: item.liked_by_current_user ? "DELETE" : "POST",
@@ -385,7 +162,7 @@ export default function Index() {
             }}
             id={item.id}
             comments_count={item.comments_count}
-            refetchPosts={postsQuery.refetch} // Prosljeđivanje funkcije
+            refetchPosts={postsQuery.refetch}
           />
         )}
         ListEmptyComponent={<Text>Loading posts or no posts available...</Text>}
@@ -445,7 +222,6 @@ export default function Index() {
             <View style={styles.modalButtonContainer}>
               <Button
                 onPress={() => {
-                  // Handle the submission of the idea
                   console.log("Idea submitted:", ideaContent);
                   setIdeaModalVisible(false);
                   setIdeaContent("");
@@ -492,57 +268,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 70,
     color: "lightgrey",
   },
-  postView: {
-    marginTop: 10,
-    padding: "5%",
-    margin: "5%",
-    width: "90%",
-    borderRadius: 10,
-    borderColor: "#f3f4f6",
-    borderWidth: 0.2,
-    alignItems: "center",
-    backgroundColor: "#f3f4f6",
-  },
-  topSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingBottom: 2,
-    paddingTop: "1%",
-    marginBottom: 10,
-  },
-  userSection: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconLeft: {
-    marginLeft: 10,
-  },
-  middleSection: {
-    width: "100%",
-    paddingTop: 20,
-    alignItems: "center",
-    marginVertical: 10,
-    borderColor: "#718355",
-    borderRadius: 10,
-    position: "relative",
-  },
-  image: {
-    width: 300,
-    height: 300,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "white",
-  },
-  bottomSection: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginTop: 10,
-  },
-  icon: {
-    marginRight: 5,
-  },
   cameraButton: {
     position: "absolute",
     top: "18%",
@@ -583,69 +308,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 10,
   },
-  imageNavigation: {
-    position: "absolute", // Added for overlay
-    top: "50%", // Center vertically
-    width: "100%", // Stretch navigation container
-    flexDirection: "row",
-    justifyContent: "space-between", // Space arrows at edges
-    alignItems: "center",
-    paddingHorizontal: 10,
-  },
   modalButtonContainer: {
     borderRadius: 25,
-    //backgroundColor: "#718355",
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-  },
-  closeButton: {
-    backgroundColor: "#575A4B",
-    borderRadius: 10,
-    padding: 10,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  closeButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  logoutButton: {
-    alignSelf: "flex-start",
-    margin: 5,
-    backgroundColor: "#575A4B",
-    padding: 8,
-    borderRadius: 10,
-  },
-  likesContainer: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 50,
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-  },
-  commentsContainer: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 50,
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-  },
-  saveContainer: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 50,
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 5,
   },
 });
