@@ -26,7 +26,6 @@ import { setStatusBarBackgroundColor } from "expo-status-bar";
 
 const queryClient = new QueryClient();
 
-
 export const apiCall = async (url: string, options: RequestInit = {}) => {
   const token = await AsyncStorage.getItem("token");
   const res = await fetch(`https://foody-backend.zeko.run/api/v1${url}`, {
@@ -57,6 +56,8 @@ const Post = ({
   likePost,
   id,
   comments_count,
+  savedByCurrentUser,
+  refetchPosts,
 }: {
   user: { username: string; avatar: string | null };
   content: string;
@@ -66,17 +67,59 @@ const Post = ({
   likePost: () => void;
   id: string;
   comments_count: string;
+  savedByCurrentUser: boolean;
+  refetchPosts: () => void;
 }) => {
   const [toggleComments, setToggleComments] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const handleNextImage = () => {
     if (currentImageIndex < images.length - 1) {
       setCurrentImageIndex(currentImageIndex + 1);
     }
   };
+
   const handlePreviousImage = () => {
     if (currentImageIndex > 0) {
       setCurrentImageIndex(currentImageIndex - 1);
+    }
+  };
+
+  const handleSaves = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        alert("Molimo prijavite se kako biste spremili objavu.");
+        return;
+      }
+
+      const method = savedByCurrentUser ? "DELETE" : "POST";
+      const response = await fetch(
+        `https://foody-backend.zeko.run/api/v1/posts/${id}/saves`,
+        {
+          method,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        alert(
+          `Objava ${
+            savedByCurrentUser ? "je uklonjena iz spremljenih" : "je spremljena"
+          }.`
+        );
+        refetchPosts(); // Ponovno učitaj podatke
+      } else {
+        const errorText = await response.text();
+        console.error(errorText);
+        alert("Dogodila se pogreška prilikom spremanja objave.");
+      }
+    } catch (error) {
+      console.error("Greška prilikom spremanja objave:", error);
+      alert("Dogodila se pogreška. Pokušajte ponovno.");
     }
   };
 
@@ -110,7 +153,7 @@ const Post = ({
       </View>
 
       <Text>{content}</Text>
-     
+
       <View style={styles.middleSection}>
         {images.length > 0 && (
           <>
@@ -175,15 +218,15 @@ const Post = ({
         </View>
 
         <View style={styles.saveContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleSaves}>
             <Ionicons
-              name="download-outline"
+              name={savedByCurrentUser ? "download" : "download-outline"}
               size={24}
-              color="#718355"
+              color={"#718355"}
               style={styles.icon}
-            ></Ionicons>
+            />
           </TouchableOpacity>
-          <Text>saves</Text>
+          <Text>{savedByCurrentUser ? "Saved" : "Save"}</Text>
         </View>
       </View>
 
@@ -208,7 +251,6 @@ export default function Index() {
     retry: false,
   });
 
-
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -224,9 +266,8 @@ export default function Index() {
 
   const openIdeaModal = async () => {
     setIdeaModalVisible(true);
-};
+  };
 
-  
   const handlePost = async () => {
     if (!selectedImage || !postContent) {
       alert("Please add content and an image.");
@@ -237,10 +278,10 @@ export default function Index() {
       // Convert the selected image (URI) to a Blob
       const response = await fetch(selectedImage);
       const blob = await response.blob();
-  
+
       const formData = new FormData();
       formData.append("post[content]", postContent);
-    formData.append("post[images][]", blob, "upload.jpg");
+      formData.append("post[images][]", blob, "upload.jpg");
 
       const result = await apiCall("/posts", {
         method: "POST",
@@ -255,14 +296,11 @@ export default function Index() {
       postsQuery.refetch(); // Refresh the list of posts
     } catch (err) {
       console.error(err);
-      
     }
   };
 
-
   //if (postsQuery.isLoading) return <Spinner />;
   // return <Text>Error loading posts</Text>;
-
 
   if (postsQuery.error) {
     return (
@@ -329,96 +367,100 @@ export default function Index() {
           ))}
       </ScrollView>*/}
 
-            <FlatList
-              data={postsQuery.data || []}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <Post
-                user={item.user}
-                content={item.content}
-                images={item.images}
-                likes={item.likes_count}
-                likedByCurrentUser={item.liked_by_current_user}
-                likePost={() => {
-                  apiCall(`/posts/${item.id}/likes`, {
-                    method: item.liked_by_current_user ? "DELETE" : "POST",
-                  }).then(() => postsQuery.refetch());
-                }}
-                id={item.id}
-                comments_count={item.comments_count}
-              />
-            )}
-            ListEmptyComponent={<Text>Loading posts or no posts available...</Text>}
+      <FlatList
+        data={postsQuery.data || []}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <Post
+            user={item.user}
+            content={item.content}
+            images={item.images}
+            likes={item.likes_count}
+            likedByCurrentUser={item.liked_by_current_user}
+            savedByCurrentUser={item.saved_by_current_user} // Dodano svojstvo
+            likePost={() => {
+              apiCall(`/posts/${item.id}/likes`, {
+                method: item.liked_by_current_user ? "DELETE" : "POST",
+              }).then(() => postsQuery.refetch());
+            }}
+            id={item.id}
+            comments_count={item.comments_count}
+            refetchPosts={postsQuery.refetch} // Prosljeđivanje funkcije
           />
-            <Modal
-              animationType="slide"
-              transparent={true} 
-              visible={modalVisible}
-              onRequestClose={() => setModalVisible(false)}
-            >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  {selectedImage ? (
-                    <Image
-                      source={{ uri: selectedImage }}
-                      style={styles.modalImage}
-                    />
-                  ) : (
-                    <Text style={styles.modalText}>
-                      Choose a new image from your gallery!
-                    </Text>
-                  )}
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Write your post..."
-                    value={postContent}
-                    onChangeText={setPostContent}
-                  />
+        )}
+        ListEmptyComponent={<Text>Loading posts or no posts available...</Text>}
+      />
 
-                  <View style={styles.modalButtonContainer}>            
-                      <Button onPress={handlePost}>
-                        <Text>Post</Text>
-                      </Button>
-                      <Button onPress={() => setModalVisible(false)}>
-                        <Text>Dismiss</Text>
-                      </Button>
-                  </View>
-                </View>
-              </View>
-            </Modal>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={ideaModalVisible}
-              onRequestClose={() => setIdeaModalVisible(false)}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {selectedImage ? (
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.modalImage}
+              />
+            ) : (
+              <Text style={styles.modalText}>
+                Choose a new image from your gallery!
+              </Text>
+            )}
+            <TextInput
+              style={styles.input}
+              placeholder="Write your post..."
+              value={postContent}
+              onChangeText={setPostContent}
+            />
 
-                  <View style={styles.modalContainer}>
-                      <View style={styles.modalContent}>
-                          <Text style={styles.modalText}>Post your idea</Text>
-                          <TextInput
-                              style={styles.input}
-                              placeholder="Write your idea here..."
-                              value={ideaContent}
-                              onChangeText={setIdeaContent}
-                          />
-                          <View style={styles.modalButtonContainer}>
-                              <Button onPress={() => {
-                                  // Handle the submission of the idea
-                                  console.log("Idea submitted:", ideaContent);
-                                  setIdeaModalVisible(false);
-                                  setIdeaContent("");
-                              }}>
-                                  <Text>Post</Text>
-                              </Button>
-                              <Button onPress={() => setIdeaModalVisible(false)}>
-                                  <Text>Dismiss</Text>
-                              </Button>
-                          </View>
-                      </View>
-                  </View>
-            </Modal>
-
-      </View>
+            <View style={styles.modalButtonContainer}>
+              <Button onPress={handlePost}>
+                <Text>Post</Text>
+              </Button>
+              <Button onPress={() => setModalVisible(false)}>
+                <Text>Dismiss</Text>
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={ideaModalVisible}
+        onRequestClose={() => setIdeaModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Post your idea</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Write your idea here..."
+              value={ideaContent}
+              onChangeText={setIdeaContent}
+            />
+            <View style={styles.modalButtonContainer}>
+              <Button
+                onPress={() => {
+                  // Handle the submission of the idea
+                  console.log("Idea submitted:", ideaContent);
+                  setIdeaModalVisible(false);
+                  setIdeaContent("");
+                }}
+              >
+                <Text>Post</Text>
+              </Button>
+              <Button onPress={() => setIdeaModalVisible(false)}>
+                <Text>Dismiss</Text>
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 }
 
@@ -429,7 +471,6 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "#b0ca91",
-
   },
   topView: {
     backgroundColor: "#b0ca91",
