@@ -357,9 +357,9 @@ export default function ProfilePage() {
             userQuery.data.gender.slice(1)}
         </div>
       </div>
-          
+
       {/* TABS OPTIONS ON PROFILE */}
-      <div className="flex mt-4 ml-12 space-x-3">
+      <div className="flex mt-4 space-x-3 justify-center">
         <button
           className={`p-2 px-4 rounded-full font-semibold ${
             selectedTab === "My posts"
@@ -393,12 +393,14 @@ export default function ProfilePage() {
       </div>
 
       {selectedTab !== "Meal planner" ? (
-        <div className="flex-1 mt-2 mx-10 mb-10">
+        <div className="flex mt-2 mb-10 justify-center">
           <ProfileFeed tab={selectedTab} />
         </div>
       ) : (
-        <div className="flex-1 mt-4 ml-2 sm:ml-12 md:ml-15 mb-10 bg-navbarColor rounded w-[95%] sm:w-[86%] lg:w-[72%]"> 
-          <MealPlanner/>
+        <div className="flex justify-center">
+          <div className="mt-4 mb-10 bg-[#dce8cd] rounded w-[95%] sm:w-[86%] lg:w-[72%] shadow-lg">
+            <MealPlanner />
+          </div>
         </div>
       )}
     </div>

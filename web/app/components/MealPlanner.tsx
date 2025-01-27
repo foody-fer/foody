@@ -1,7 +1,4 @@
-const meals = {
-
-}
-
+const meals = {};
 
 import { useState } from "react";
 import {
@@ -48,13 +45,13 @@ export default function MealPlanner() {
   return (
     <div className="flex flex-col gap-3 p-3">
       {/* SELECTS */}
-      <div className="flex gap-2 group">
+      <div className="flex gap-2 group justify-center">
         <button
           className={
-            "rounded-full w-[10rem] py-[6px] text-sm text-white font-semibold " +
+            "rounded-full w-[10rem] py-[6px] text-sm text-textColor font-semibold " +
             (option === "Generate"
-              ? "bg-textColor border-none"
-              : "bg-navbarGreen border-1 border-white transition duration-300 hover:scale-105")
+              ? "bg-textColor border-none text-white"
+              : "bg-navbarGreen border-1 border-textColor transition duration-300 hover:scale-105")
           }
           onClick={() => {
             setOption("Generate");
@@ -64,10 +61,10 @@ export default function MealPlanner() {
         </button>
         <button
           className={
-            "rounded-full w-[10rem] py-[6px] text-sm text-white font-semibold " +
+            "rounded-full w-[10rem] py-[6px] text-sm text-textColor font-semibold " +
             (option === "View"
-              ? "bg-textColor border-none"
-              : "bg-navbarGreen border-1 border-white transition duration-300 hover:scale-105")
+              ? "bg-textColor border-none text-white"
+              : "bg-navbarGreen border-1 border-textColor transition duration-300 hover:scale-105")
           }
           onClick={() => {
             setOption("View");
@@ -255,10 +252,10 @@ export default function MealPlanner() {
             <div className="border-1 border-textColor mt-2 w-full"></div>
             {/* MEALS IN DAY */}
             <div>
-                <MealCard meal={meals}/>
-                <MealCard meal={meals}/>
-                <MealCard meal={meals}/>
-                <MealCard meal={meals}/>
+              <MealCard meal={meals} />
+              <MealCard meal={meals} />
+              <MealCard meal={meals} />
+              <MealCard meal={meals} />
             </div>
           </div>
         )}
