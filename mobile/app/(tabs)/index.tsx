@@ -83,20 +83,30 @@ const Post = ({
   return (
     <View style={styles.postView}>
       <View style={styles.topSection}>
-        {user.avatar ? (
-          <Image
-            source={{ uri: user.avatar }}
-            style={{ width: 30, height: 30, borderRadius: 15 }}
-          />
-        ) : (
+        <View style={styles.userSection}>
+          {user.avatar ? (
+            <Image
+              source={{ uri: user.avatar }}
+              style={{ width: 30, height: 30, borderRadius: 15 }}
+            />
+          ) : (
+            <Ionicons
+              name="person-circle"
+              size={30}
+              color="#575A4B"
+              style={styles.iconLeft}
+            />
+          )}
+          <Text style={styles.modalText}>{user.username}</Text>
+        </View>
+
+        <TouchableOpacity>
           <Ionicons
-            name="person-circle"
+            name="ellipsis-horizontal"
             size={30}
             color="#575A4B"
-            style={styles.iconLeft}
-          />
-        )}
-        <Text style={styles.modalText}>{user.username}</Text>
+          ></Ionicons>
+        </TouchableOpacity>
       </View>
 
       <Text>{content}</Text>
@@ -117,7 +127,7 @@ const Post = ({
                   <Ionicons
                     name="chevron-back"
                     size={24}
-                    color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"}
+                    color={currentImageIndex === 0 ? "grey" : "white"}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -128,9 +138,7 @@ const Post = ({
                     name="chevron-forward"
                     size={24}
                     color={
-                      currentImageIndex === images.length - 1
-                        ? "#575A4B"
-                        : "#CFE1B9"
+                      currentImageIndex === images.length - 1 ? "grey" : "white"
                     }
                   />
                 </TouchableOpacity>
@@ -141,25 +149,42 @@ const Post = ({
       </View>
 
       <View style={styles.bottomSection}>
-        <Text>{likes}</Text>
-        <TouchableOpacity onPress={likePost}>
-          <Ionicons
-            name="heart"
-            size={24}
-            color={likedByCurrentUser ? "red" : "#575A4B"}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <Text>{comments_count}</Text>
-        <TouchableOpacity>
-          <Ionicons
-            name="chatbubble"
-            size={24}
-            color="#575A4B"
-            style={styles.icon}
-            onPress={() => setToggleComments(!toggleComments)}
-          />
-        </TouchableOpacity>
+        <View style={styles.likesContainer}>
+          <TouchableOpacity onPress={likePost}>
+            <Ionicons
+              name="heart"
+              size={24}
+              color={likedByCurrentUser ? "#f51d5a" : "#718355"}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <Text>{likes}</Text>
+        </View>
+
+        <View style={styles.commentsContainer}>
+          <TouchableOpacity>
+            <Ionicons
+              name="chatbox-outline"
+              size={24}
+              color="#718355"
+              style={styles.icon}
+              onPress={() => setToggleComments(!toggleComments)}
+            />
+          </TouchableOpacity>
+          <Text>{comments_count}</Text>
+        </View>
+
+        <View style={styles.saveContainer}>
+          <TouchableOpacity>
+            <Ionicons
+              name="download-outline"
+              size={24}
+              color="#718355"
+              style={styles.icon}
+            ></Ionicons>
+          </TouchableOpacity>
+          <Text>saves</Text>
+        </View>
       </View>
 
       {toggleComments === true && <Comments postInfo={id} />}
@@ -397,17 +422,22 @@ const styles = StyleSheet.create({
     margin: "5%",
     width: "90%",
     borderRadius: 10,
-    borderColor: "#575A4B",
+    borderColor: "#f3f4f6",
     borderWidth: 0.2,
     alignItems: "center",
-    backgroundColor: "#718355",
+    backgroundColor: "#f3f4f6",
   },
   topSection: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     width: "100%",
     paddingBottom: 2,
     paddingTop: "1%",
+    marginBottom: 10,
+  },
+  userSection: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   iconLeft: {
     marginLeft: 10,
@@ -418,16 +448,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     borderColor: "#718355",
-    // backgroundColor: "#718355",
     borderRadius: 10,
-    //  borderWidth: 1,
+    position: "relative",
   },
   image: {
     width: 300,
     height: 300,
     borderRadius: 10,
-    borderColor: "#718355",
     borderWidth: 1,
+    borderColor: "white",
   },
   bottomSection: {
     flexDirection: "row",
@@ -436,7 +465,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   icon: {
-    marginHorizontal: 5,
+    marginRight: 5,
   },
   noteButton: {
     position: "absolute", // Ensures the button is positioned absolutely relative to its closest positioned ancestor
@@ -480,7 +509,6 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 18,
-    marginBottom: 15,
     marginLeft: 10,
     textAlign: "center",
   },
@@ -491,11 +519,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   imageNavigation: {
+    position: "absolute", // Added for overlay
+    top: "50%", // Center vertically
+    width: "100%", // Stretch navigation container
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-between", // Space arrows at edges
     alignItems: "center",
-    width: "100%",
-    marginTop: 10,
+    paddingHorizontal: 10,
   },
   modalButtonContainer: {
     borderRadius: 25,
@@ -530,5 +560,35 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 10,
+  },
+  likesContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
+  commentsContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 50,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  saveContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 5,
   },
 });
