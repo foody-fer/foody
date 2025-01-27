@@ -1,3 +1,8 @@
+const meals = {
+
+}
+
+
 import { useState } from "react";
 import {
   IoIosArrowDropleft,
@@ -5,6 +10,7 @@ import {
   IoIosArrowDroprightCircle,
   IoIosArrowDropright,
 } from "react-icons/io";
+import MealCard from "./MealCard";
 
 const getCurrentDay = (date: any) => {
   const daysOfWeek = [
@@ -40,7 +46,7 @@ export default function MealPlanner() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-3 p-3">
+    <div className="flex flex-col gap-3 p-3">
       {/* SELECTS */}
       <div className="flex gap-2 group">
         <button
@@ -71,27 +77,28 @@ export default function MealPlanner() {
         </button>
       </div>
       {/* TABS */}
-      <div className="bg-resedaGreen px-4 py-3 rounded w-[]">
+      <div className="bg-[#f4ffe6] text-textColor px-4 py-3 rounded">
         {/* GENERATE FORM */}
         {option === "Generate" && (
           <div>
             <form onSubmit={handleSubmit}>
-              <label htmlFor="text" className="text-gray-100 mb-1">
+              <label htmlFor="text" className="mb-1">
                 My preferences:{" "}
               </label>{" "}
               <br />
               <textarea
                 name="my_preferences"
                 id="text"
-                className="rounded p-1 bg-gray-200 text-sm w-[75%]"
+                className="rounded p-1 bg-white border-1 border-textColor text-sm w-full"
                 placeholder="Describe what you like..."
+                required
               />{" "}
               <br />
-              <div className="flex gap-24 mt-3">
+              <div className="flex gap-2 md:gap-6 mt-3">
                 <div>
-                  <label className="mb-1 text-gray-100">My goal: </label>
+                  <label className="mb-1">My goal: </label>
                   <div className="flex flex-col gap-1 text-gray-700 text-sm ">
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
@@ -102,7 +109,7 @@ export default function MealPlanner() {
                       Weight loss
                     </label>
 
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
@@ -113,7 +120,7 @@ export default function MealPlanner() {
                       Be more active
                     </label>
 
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
@@ -124,7 +131,7 @@ export default function MealPlanner() {
                       ...
                     </label>
 
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor  rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
@@ -135,7 +142,7 @@ export default function MealPlanner() {
                       ...
                     </label>
 
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
@@ -148,63 +155,66 @@ export default function MealPlanner() {
                   </div>
                 </div>
                 <div>
-                  <label className="mb-1 text-gray-100">Meals per day: </label>
+                  <label className="mb-1">Meals per day: </label>
                   <div className="flex flex-col gap-1">
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
+                        name="option"
                         value="Post"
-                        required
                       />
                       Breakfast
                     </label>
 
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
+                        name="option"
                         value="Post"
-                        required
                       />
                       AM Snack
                     </label>
 
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
+                        name="option"
                         value="Post"
-                        required
                       />
                       Lunch
                     </label>
 
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
+                        name="option"
                         value="Post"
-                        required
                       />
                       PM Snack
                     </label>
 
-                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-gray-100 border-1 border-gray-100 text-gray-100 rounded-full w-[10rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
+                    <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
+                        name="option"
                         value="Post"
-                        required
                       />
                       Dinner
                     </label>
                   </div>
+                </div>
+                <div className="flex justify-end items-end w-full">
+                  <button
+                    type="submit"
+                    className="rounded-full font-semibold px-3 py-2 text-sm bg-textColor text-gray-100 hover:scale-110 transition duration-300"
+                  >
+                    Generate
+                  </button>
                 </div>
               </div>
             </form>
@@ -214,9 +224,8 @@ export default function MealPlanner() {
         {/* VIEW MEALS */}
         {option === "View" && (
           <div>
-            <div
-              className="flex items-center justify-between text-gray-100"
-            >
+            {/* SPECIFIC DAY */}
+            <div className="flex items-center justify-between text-textColor">
               <div className="flex items-center gap-3">
                 <p className="text-xl w-[7rem] font-semibold">
                   {getCurrentDay(date)}
@@ -241,6 +250,15 @@ export default function MealPlanner() {
                   />
                 </div>
               </div>
+            </div>
+            {/* SEPARATOR */}
+            <div className="border-1 border-textColor mt-2 w-full"></div>
+            {/* MEALS IN DAY */}
+            <div>
+                <MealCard meal={meals}/>
+                <MealCard meal={meals}/>
+                <MealCard meal={meals}/>
+                <MealCard meal={meals}/>
             </div>
           </div>
         )}
