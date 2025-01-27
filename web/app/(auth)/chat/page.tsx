@@ -1,83 +1,69 @@
 "use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { BsPlusCircle, BsFillPlusCircleFill } from "react-icons/bs";
 import { FaChevronRight } from "react-icons/fa";
+import { HiUserGroup } from "react-icons/hi";
+import { apiCall } from "~/api";
+
+interface User {
+  id: any;
+  avatar: string | null;
+  bio: string | null;
+  first_name: string;
+  gender: string;
+  last_name: string;
+  username: string;
+}
+
+interface Group {
+  id: number;
+  name: string;
+  image: string | null;
+  is_dm: boolean;
+  members: User[];
+  created_at: string;
+  updated_at: string;
+}
 
 export default function Chatpage() {
-  const groups = [
-    {
-      id: 1,
-      name: "Tech Enthusiasts",
-      lastMessage: "Discuss the latest in tech. Bok kako si?",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 2,
-      name: "Music Lovers",
-      lastMessage: "Share your favorite tunes.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 3,
-      name: "Fitness Freaks",
-      lastMessage: "Tips and tricks for staying fit.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 4,
-      name: "Foodies",
-      lastMessage: "Explore recipes and food trends.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 5,
-      name: "Travel Diaries",
-      lastMessage: "Share your travel experiences.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 6,
-      name: "Photography Club",
-      lastMessage: "Capture and share moments.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 7,
-      name: "Book Readers",
-      lastMessage: "Discuss your favorite books.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 8,
-      name: "Book Readers",
-      lastMessage: "Discuss your favorite books.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 9,
-      name: "Book Readers",
-      lastMessage: "Discuss your favorite books.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 10,
-      name: "Book Readers",
-      lastMessage: "Discuss your favorite books.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 11,
-      name: "Book Readers",
-      lastMessage: "Discuss your favorite books.",
-      image: "/images/google-logo.png",
-    },
-    {
-      id: 12,
-      name: "Book Readers",
-      lastMessage: "Discuss your favorite books.",
-      image: "/images/google-logo.png",
-    },
-  ];
+  const [groups, setGroups] = useState<Group[]>([]);
+
+  console.log("GRUPE: ", groups);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await apiCall(`/chat_groups`, {
+          method: "GET",
+        });
+
+        const formattedGroups = response[0]
+          .map((group: any) => ({
+            id: group.id,
+            name: group.name,
+            image: group.image,
+            is_dm: group.is_dm,
+            members: group.members,
+            created_at: group.created_at,
+            updated_at: group.updated_at,
+          }))
+          .sort(
+            (a: Group, b: Group) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          );
+
+        setGroups(formattedGroups);
+
+        console.log(response);
+      } catch (err) {
+        console.error("Failed to fetch chat groups", err);
+      }
+    };
+
+    fetchGroups();
+  }, []);
 
   return (
     <div className="text-textColor flex">
@@ -99,19 +85,35 @@ export default function Chatpage() {
             <Link href={`/chat/${group.id}`} key={group.id}>
               <div className="flex items-center justify-between bg-navbarColor rounded-lg p-4 hover:bg-[#93a970] transition duration-200 cursor-pointer">
                 {/* Group Picture */}
-                <img
-                  src={group.image}
-                  alt={group.name}
-                  className="w-12 h-12 rounded-full object-cover mr-4"
-                />
+                {group.image ? (
+                  <img
+                    src={group.image}
+                    alt={group.name}
+                    className="w-12 h-12 rounded-full object-cover mr-4"
+                  />
+                ) : group.is_dm ? (
+                  <div className="w-12 h-12 rounded-full bg-resedaGreen flex items-center justify-center mr-4">
+                    {(() => {
+                      const initials = group.name
+                        .split(" ")
+                        .map((word) => word[0])
+                        .join("")
+                        .toUpperCase();
+                      return (
+                        <span className="text-lg text-white">{initials}</span>
+                      );
+                    })()}
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mr-4">
+                    <HiUserGroup className="w-8 h-8 text-gray-700" />
+                  </div>
+                )}
+
                 {/* Group Info */}
                 <div className="flex-1">
                   <p className="text-[19px] font-semibold">{group.name}</p>
-                  <p className="text-sm text-gray-700">
-                    {group.lastMessage.length > 30
-                      ? `${group.lastMessage.slice(0, 30)}...`
-                      : group.lastMessage}
-                  </p>
+                  <p className="text-sm text-gray-700">poruka</p>
                 </div>
                 {/* Chevron Icon */}
                 <FaChevronRight className="w-5 h-5 text-textColor" />
