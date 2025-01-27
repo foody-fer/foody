@@ -164,7 +164,7 @@ export default function ProgressPage({
   };
 
   return (
-    <div className="flex flex-col min-h-screen mt-5 mb-5">
+    <div className="flex flex-col min-h-screen mt-5 mb-5 pb-20 md:pb-0">
       <p className="text-textColor font-semibold text-lg before:content-['•'] before:mr-2 ml-8 md:ml-32 lg:ml-48">
         Select the category:
       </p>

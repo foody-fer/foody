@@ -68,7 +68,7 @@ export default function Post({ info, preview, posts }: any) {
   };
 
   return (
-    <div className="h-auto w-[93%] bg-gray-100 flex flex-col gap-3 mb-4 p-2 rounded-lg">
+    <div className="h-auto w-full bg-gray-100 flex flex-col gap-3 mb-4 p-2 rounded-lg">
       {/* USER */}
       <div className="flex flex-row justify-between">
         <div className="flex flex-row gap-2">

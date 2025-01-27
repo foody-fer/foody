@@ -77,7 +77,7 @@ export default function Chatpage() {
   }, []);
 
   return (
-    <div className="text-textColor flex">
+    <div className="text-textColor flex pb-20 md:pb-0">
       <div className="flex flex-col ml-[3%] sm:ml-[5%] md:ml-[15%] pt-3 w-full">
         {/* Header */}
         <div className="bg-navbarColor rounded-t-lg w-[97%] sm:w-[95%] md:w-[90%] flex items-center justify-between p-3">

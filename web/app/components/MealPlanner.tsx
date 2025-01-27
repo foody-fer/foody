@@ -79,7 +79,7 @@ export default function MealPlanner() {
         {option === "Generate" && (
           <div>
             <form onSubmit={handleSubmit}>
-              <label htmlFor="text" className="mb-1">
+              <label htmlFor="text" className="mb-1 font-semibold">
                 My preferences:{" "}
               </label>{" "}
               <br />
@@ -93,7 +93,7 @@ export default function MealPlanner() {
               <br />
               <div className="flex gap-2 md:gap-6 mt-3">
                 <div>
-                  <label className="mb-1">My goal: </label>
+                  <label className="mb-1 font-semibold">My goal: </label>
                   <div className="flex flex-col gap-1 text-gray-700 text-sm ">
                     <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
@@ -152,7 +152,7 @@ export default function MealPlanner() {
                   </div>
                 </div>
                 <div>
-                  <label className="mb-1">Meals per day: </label>
+                  <label className="mb-1 font-semibold">Meals per day: </label>
                   <div className="flex flex-col gap-1">
                     <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input

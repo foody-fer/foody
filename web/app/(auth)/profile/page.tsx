@@ -182,7 +182,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen md:ml-16 lg:ml-36">
+    <div className="flex flex-col min-h-screen md:ml-16 lg:ml-36 pb-20 md:pb-0">
       <div className="p-10 mt-4">
         <div className="flex items-center space-x-4">
           <div
@@ -361,7 +361,7 @@ export default function ProfilePage() {
       {/* TABS OPTIONS ON PROFILE */}
       <div className="flex mt-4 space-x-3 justify-center">
         <button
-          className={`p-2 px-4 rounded-full font-semibold ${
+          className={`p-2 w-[8rem] rounded-full font-semibold ${
             selectedTab === "My posts"
               ? "bg-textColor text-white"
               : "border border-black text-textColor"
@@ -371,7 +371,7 @@ export default function ProfilePage() {
           My posts
         </button>
         <button
-          className={`p-2 px-4 rounded-full font-semibold ${
+          className={`p-2 w-[8rem] rounded-full font-semibold ${
             selectedTab === "Saved posts"
               ? "bg-textColor text-white"
               : "border border-black text-textColor"
@@ -381,7 +381,7 @@ export default function ProfilePage() {
           Saved posts
         </button>
         <button
-          className={`p-2 px-4 rounded-full font-semibold ${
+          className={`p-2 w-[8rem] rounded-full font-semibold ${
             selectedTab === "Meal planner"
               ? "bg-textColor text-white"
               : "border border-black text-textColor"

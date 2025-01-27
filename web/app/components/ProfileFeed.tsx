@@ -25,7 +25,7 @@ export default function ProfileFeed({ tab }: any) {
   });
 
   return (
-    <div className="w-[94%] sm:w-[70%] md:w-[62%] lg:w-[50%] h-auto rounded-lg flex flex-col justify-center items-center pt-3 mb-3">
+    <div className="w-[94%] sm:w-[70%] md:w-[70%] lg:w-[60%] h-auto rounded-lg flex flex-col justify-center items-center pt-3 mb-3">
       {tab === "My posts" &&
         (user_posts.data?.length > 0 ? (
           user_posts.data?.map((post: any) => (

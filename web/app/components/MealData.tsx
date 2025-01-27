@@ -11,7 +11,7 @@ export default function MealData({ meal, remove }: any) {
             className="cursor-pointer group-hover:hidden h-6 w-6"
           />
           <IoCloseCircle
-            onClick={remove}
+            onClick={() => remove(false)}
             className="cursor-pointer h-6 w-6 hidden text-red-500 group-hover:block"
           />
         </div>
@@ -41,9 +41,9 @@ export default function MealData({ meal, remove }: any) {
         />
       </div>
       {/* description */}
-      <div className="mt-3">
+      <div className="mt-4">
         <p className="font-semibold">Description:</p>
-        <p className="text-sm">
+        <p className="text-sm text-justify mr-2">
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi
           quia recusandae doloremque quod minus, repellat tempore, facere
           voluptas repudiandae quis minima maxime perspiciatis. Exercitationem

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { IoIosMore } from "react-icons/io";
-import { GrSend } from "react-icons/gr";
+import { VscSend } from "react-icons/vsc";
 import { FaCheck } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import {
@@ -86,7 +86,7 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
           <img
             src={userQuery.data.avatar}
             alt={userQuery.data.username + " profile picture"}
-            className="rounded-full w-[2rem] h-[1.7rem] mt-1 object-cover"
+            className="rounded-full w-[1.7rem] h-[1.7rem] mt-1 object-cover"
           />
         ) : (
           <FaUserCircle
@@ -104,7 +104,7 @@ export default function Comments({ bool, postInfo, preview, posts }: any) {
             readOnly={!preview ? undefined : true}
           />
           <button type="submit" className="flex justify-center items-center">
-            <GrSend className="bg-gray-200 hover:bg-gray-300 transition duration-300 p-1 rounded w-5 h-5 flex-1" />
+            <VscSend className="bg-gray-200 hover:bg-gray-300 transition duration-300 p-1 rounded w-7 h-7 flex-1" />
           </button>
         </form>
       </div>

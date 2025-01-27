@@ -30,9 +30,8 @@ export default function MealCard({ meal }: any) {
           "fixed inset-0 bg-black/50 backdrop-blur-sm z-50 " +
           (open ? "flex justify-center items-center" : "hidden")
         }
-        onClick={() => setOpen(false)}
       >
-        <MealData meal={meal} remove={setOpen}/>
+        <MealData meal={meal} remove={setOpen} />
       </div>
     </>
   );

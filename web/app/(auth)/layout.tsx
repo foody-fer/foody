@@ -143,7 +143,7 @@ export default function AuthLayout({
         </nav>
       </aside>
 
-      <nav className="md:hidden w-full z-50 fixed bottom-0 flex flex-row gap-12 sm:gap-16 bg-navbarColor justify-center items-center h-24">
+      <nav className="md:hidden w-full z-30 fixed bottom-0 flex flex-row gap-12 sm:gap-16 bg-navbarColor justify-center items-center h-24">
         <div>
           <Link
             href={"/homepage"}
@@ -239,7 +239,7 @@ export default function AuthLayout({
         </div>
       </nav>
 
-      <main className="w-full md:ml-[10rem] lg:ml-[15rem] overflow-x-hidden pb-20 md:pb-0">
+      <main className="w-full md:ml-[10rem] lg:ml-[15rem] overflow-x-hidden md:pb-0">
         {children}
       </main>
     </div>

@@ -87,7 +87,7 @@ export default function GroupChat() {
     const file = e.target.files?.[0];
 
     if (file) {
-      setImageSend(file);
+      setImageSend(file);      
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
     }
