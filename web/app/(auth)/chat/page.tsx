@@ -24,13 +24,13 @@ interface Group {
   members: User[];
   created_at: string;
   updated_at: string;
+  messages: any;
 }
 
 export default function Chatpage() {
   const [groups, setGroups] = useState<Group[]>([]);
 
-  console.log("GRUPE: ", groups);
-
+  console.log(groups);
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -38,27 +38,38 @@ export default function Chatpage() {
           method: "GET",
         });
 
-        const formattedGroups = response[0]
-          .map((group: any) => ({
-            id: group.id,
-            name: group.name,
-            image: group.image,
-            is_dm: group.is_dm,
-            members: group.members,
-            created_at: group.created_at,
-            updated_at: group.updated_at,
-          }))
-          .sort(
-            (a: Group, b: Group) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
-          );
+        const groupsWithMessages = await Promise.all(
+          response[0].map(async (group: any) => {
+            const messagesResponse = await apiCall(
+              `/chat_groups/${group.id}/messages`,
+              {
+                method: "GET",
+              }
+            );
+
+            return {
+              id: group.id,
+              name: group.name,
+              image: group.image,
+              is_dm: group.is_dm,
+              members: group.members,
+              created_at: group.created_at,
+              updated_at: group.updated_at,
+              messages: messagesResponse || [], // Dodaj poruke u grupu
+            };
+          })
+        );
+
+        const formattedGroups = groupsWithMessages.sort(
+          (a: Group, b: Group) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
 
         setGroups(formattedGroups);
 
-        console.log(response);
+        console.log(formattedGroups); // Provjera podataka
       } catch (err) {
-        console.error("Failed to fetch chat groups", err);
+        console.error("Failed to fetch chat groups or messages", err);
       }
     };
 
@@ -113,8 +124,15 @@ export default function Chatpage() {
                 {/* Group Info */}
                 <div className="flex-1">
                   <p className="text-[19px] font-semibold">{group.name}</p>
-                  <p className="text-sm text-gray-700">poruka</p>
+                  <p className="text-sm text-gray-700">
+                    {group.messages[0]?.length > 0
+                      ? group.messages[0][0]?.content.length > 32
+                        ? `${group.messages[0][0].content.slice(0, 32)}...`
+                        : group.messages[0][0].content
+                      : "No messages in this group..."}
+                  </p>
                 </div>
+
                 {/* Chevron Icon */}
                 <FaChevronRight className="w-5 h-5 text-textColor" />
               </div>

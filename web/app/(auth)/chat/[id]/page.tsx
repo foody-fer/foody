@@ -5,8 +5,11 @@ import Link from "next/link";
 import { IoArrowBackCircle, IoArrowBackCircleOutline } from "react-icons/io5";
 import { apiCall } from "~/api";
 import { HiUserGroup } from "react-icons/hi";
+import { FiPaperclip } from "react-icons/fi";
 import { IoIosMore } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { useGetUser } from "~/queries/getUser";
 import {
   MenuRoot,
   MenuTrigger,
@@ -36,98 +39,27 @@ interface Group {
 }
 
 export default function GroupChat() {
-  const params = useParams(); // Koristimo useParams za dohvat ID-a
-  const { id } = params; // ID grupe
-  const [groupaaa, setGroup] = useState<Group>();
-  const [newMessage, setNewMessage] = useState("");
+  const userQuery = useGetUser();
   const router = useRouter();
 
-  console.log("aa", groupaaa);
+  const params = useParams(); // Koristimo useParams za dohvat ID-a
+  const { id } = params; // ID grupe
+  const [group, setGroup] = useState<Group>();
+  const [newMessage, setNewMessage] = useState("");
+  const [myUsername, setmyUsername] = useState(userQuery.data.username);
+  const [image, setImage] = useState<any>(null);
+  const [imageSend, setImageSend] = useState<File>();
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
-  const group = {
-    id: id,
-    name: `Group ${id}`,
-    messages: [
-      {
-        id: 1,
-        user: "Ana",
-        profilePicture: "/images/google-logo.png",
-        text: "Hej ekipa, jeste vidjeli novi AI alat od OpenAI?",
-        time: "09:45",
-      },
-      {
-        id: 2,
-        user: "Marko",
-        profilePicture: "/images/google-logo.png",
-        text: "Da, ChatGPT 5 izgleda stvarno impresivno!",
-        time: "09:46",
-      },
-      {
-        id: 3,
-        user: "Luka",
-        profilePicture: "/images/google-logo.png",
-        text: "To je onaj alat koji može generirati kod? Koristio sam ga neki dan.",
-        time: "09:47",
-      },
-      {
-        id: 4,
-        user: "Ana",
-        profilePicture: "/images/google-logo.png",
-        text: "Da, upravo taj! Baš pomaže u razvoju projekata.",
-        time: "09:48",
-      },
-      {
-        id: 5,
-        user: "Marko",
-        profilePicture: "/images/google-logo.png",
-        text: "Ja sam s njim optimizirao SQL upite. Uštedio mi je sate rada.",
-        time: "09:50",
-      },
-      {
-        id: 6,
-        user: "Ivana",
-        profilePicture: "/images/google-logo.png",
-        text: "Zadnjih nekoliko tjedana intenzivno istražujem nove AI alate i kako ih možemo implementirati u našim projektima. Postoji nekoliko opcija koje su već vrlo moćne, ali OpenAI se definitivno izdvaja po svojoj svestranosti i sposobnosti za generiranje koda, pisanje tekstova, pa čak i obavljanja složenih zadataka poput prepoznavanja slika. Mislim da će budućnost umjetničke inteligencije biti nevjerojatno uzbudljiva, s velikim potencijalom za sve industrije, od software developmenta do marketinga i obrazovanja. A najbolji dio je što nam je AI alat postao pristupačan, a za nas developere to je nevjerojatna prilika za unapređenje naših radnih procesa i smanjenje vremena potrebnog za razvoj novih aplikacija i rješenja. S obzirom na to da smo već sada svjesni koliko je AI moćan, vjerujem da će u budućnosti doći do još većih inovacija, a s njima i bolje mogućnosti za korištenje u realnom vremenu, čime će se povećati naš produktivnost.",
-        time: "09:52",
-      },
-      {
-        id: 7,
-        user: "Ana",
-        profilePicture: "/images/google-logo.png",
-        text: "Zadnjih nekoliko tjedana intenzivno istražujem nove AI alate i kako ih možemo implementirati u našim projektima. Postoji nekoliko opcija koje su već vrlo moćne, ali OpenAI se definitivno izdvaja po svojoj svestranosti i sposobnosti za generiranje koda, pisanje tekstova, pa čak i obavljanja složenih zadataka poput prepoznavanja slika. Mislim da će budućnost umjetničke inteligencije biti nevjerojatno uzbudljiva, s velikim potencijalom za sve industrije, od software developmenta do marketinga i obrazovanja. A najbolji dio je što nam je AI alat postao pristupačan, a za nas developere to je nevjerojatna prilika za unapređenje naših radnih procesa i smanjenje vremena potrebnog za razvoj novih aplikacija i rješenja. S obzirom na to da smo već sada svjesni koliko je AI moćan, vjerujem da će u budućnosti doći do još većih inovacija, a s njima i bolje mogućnosti za korištenje u realnom vremenu, čime će se povećati naš produktivnost.",
-        time: "09:52",
-      },
-      {
-        id: 8,
-        user: "Luka",
-        profilePicture: "/images/google-logo.png",
-        text: "Baš me zanima kako će se nositi s OpenAI-jem. Konkurencija uvijek donese nešto dobro.",
-        time: "09:53",
-      },
-      {
-        id: 9,
-        user: "Ana",
-        profilePicture: "/images/google-logo.png",
-        text: "Definitivno! A i cijene će vjerojatno postati pristupačnije za nas developere.",
-        time: "09:55",
-      },
-      {
-        id: 10,
-        user: "Marko",
-        profilePicture: "/images/google-logo.png",
-        text: "Slažem se. Nadam se da će dodati i više podrške za naše jezike.",
-        time: "09:57",
-      },
-      {
-        id: 11,
-        user: "Ivana",
-        profilePicture: "/images/google-logo.png",
-        text: "Da, to bi bilo odlično! Trenutno moram koristiti engleski za većinu projekata.",
-        time: "09:59",
-      },
-    ],
-  };
+  const chatMessages = useQuery({
+    queryKey: ["chatMessages"],
+    queryFn: () => apiCall(`/chat_groups/${id}/messages`, { method: "GET" }),
+    refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
+    staleTime: 0, // Podaci će biti uvijek svježi
+    refetchInterval: 1000,
+  });
 
+  console.log(chatMessages);
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -146,13 +78,54 @@ export default function GroupChat() {
     fetchGroups();
   }, []);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      console.log(`Sending message to group ${id}: ${newMessage}`);
-      // Dodaj novu poruku u grupu ili pošaljite na server
-      setNewMessage("");
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages.data]);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setImageSend(file);
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
     }
   };
+
+  const handleSendMessage = async () => {
+    if (newMessage.trim()) {
+      console.log(newMessage.trim());
+      console.log(`Sending message to group ${id}: ${newMessage}`);
+
+      try {
+        const formData = new FormData();
+
+        formData.append("message[content]", newMessage);
+
+        if (imageSend) {
+          formData.append("message[attachment]", imageSend);
+        }
+
+        const [data, status] = await apiCall(`/chat_groups/${id}/messages`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (status === 201) {
+          chatMessages.refetch();
+          console.log(data);
+          setImage(null);
+          setImageSend(undefined);
+        }
+      } catch (err) {
+        console.error("Failed to update group name", err);
+      }
+    }
+
+    setNewMessage("");
+  };
+
+  if (chatMessages.isLoading) return <p>Loading...</p>;
 
   if (!id) return <p>Loading...</p>;
 
@@ -174,16 +147,16 @@ export default function GroupChat() {
         </Link>
         <div className="flex items-center">
           {/* Group Picture */}
-          {groupaaa?.image ? (
+          {group?.image ? (
             <img
-              src={groupaaa.image}
-              alt={groupaaa.name}
+              src={group.image}
+              alt={group.name}
               className="w-12 h-12 rounded-full object-cover"
             />
-          ) : groupaaa?.is_dm ? (
+          ) : group?.is_dm ? (
             <div className="w-12 h-12 rounded-full bg-resedaGreen flex items-center justify-center">
               {(() => {
-                const initials = groupaaa.name
+                const initials = group.name
                   .split(" ")
                   .map((word) => word[0])
                   .join("")
@@ -197,11 +170,11 @@ export default function GroupChat() {
             </div>
           )}
           <p className="font-semibold ml-3 text-xl sm:text-2xl lg:text-3xl">
-            {groupaaa?.name}
+            {group?.name}
           </p>
         </div>
 
-        {groupaaa?.id && !groupaaa?.is_dm && (
+        {group?.id && !group?.is_dm && (
           <div className="ml-auto">
             <MenuRoot positioning={{ placement: "bottom-start" }}>
               <MenuTrigger asChild>
@@ -235,67 +208,159 @@ export default function GroupChat() {
       </div>
 
       <div className="flex flex-col p-4 w-full h-full overflow-y-auto gap-4 bg-[#f4ffe6] scrollbar scrollbar-thumb-navbarColor scrollbar-track-transparent scrollbar-w-4">
-        {group.messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex gap-2 flex-row items-center ${message.user === "Ana" ? "justify-end" : "justify-start"}`}
-          >
-            {message.user !== "Ana" && (
-              <img
-                src={message.profilePicture}
-                alt={message.user}
-                className="w-10 h-10 rounded-full"
-              />
-            )}
+        {chatMessages.data?.[0]?.length > 0 ? (
+          [...chatMessages.data?.[0]]
+            .sort(
+              (a, b) =>
+                new Date(a.created_at).getTime() -
+                new Date(b.created_at).getTime()
+            )
+            .map((message: any) => {
+              const formatDateTime = (dateTime: string) => {
+                const date = new Date(dateTime);
+                const day = String(date.getDate()).padStart(2, "0");
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, "0");
+                const minutes = String(date.getMinutes()).padStart(2, "0");
 
-            <div
-              className={`max-w-[45%] p-3 relative ${
-                message.user === "Ana"
-                  ? "bg-[#8d9f6f] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg rounded-br-none"
-                  : "bg-[#cddcb4] text-black rounded-tl-lg rounded-tr-lg rounded-br-lg rounded-bl-none"
-              }`}
-            >
-              <p
-                className={`text-lg font-semibold ${
-                  message.user === "Ana" ? "text-right" : "text-left"
-                }`}
-              >
-                {message.user}
-              </p>
-              <p className="text-base">{message.text}</p>
-              <p
-                className={`text-xs ${message.user === "Ana" ? "text-right" : "text-left"}`}
-              >
-                {message.time}
-              </p>
-            </div>
+                return `${day}.${month}.${year} ${hours}:${minutes}`;
+              };
 
-            {message.user === "Ana" && (
-              <img
-                src={message.profilePicture}
-                alt={message.user}
-                className="w-10 h-10 rounded-full"
-              />
-            )}
+              return (
+                <div
+                  key={message.id}
+                  className={`flex gap-2 flex-row items-center ${
+                    message.user.username === myUsername
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                >
+                  {message.user.username !== myUsername &&
+                    (message.user.avatar ? (
+                      <img
+                        src={message.user.avatar}
+                        alt={message.user.username}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-resedaGreen flex items-center justify-center text-white">
+                        {message.user.first_name[0]}
+                        {message.user.last_name[0]}
+                      </div>
+                    ))}
+
+                  <div
+                    className={`max-w-[45%] p-3 relative ${
+                      message.user.username === myUsername
+                        ? "bg-[#8d9f6f] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg rounded-br-none"
+                        : "bg-[#cddcb4] text-black rounded-tl-lg rounded-tr-lg rounded-br-lg rounded-bl-none"
+                    }`}
+                  >
+                    <p
+                      className={`text-lg font-semibold ${
+                        message.user.username === myUsername
+                          ? "text-right"
+                          : "text-left"
+                      }`}
+                    >
+                      {message.user.first_name}
+                    </p>
+
+                    {message.attachment_url && (
+                      <div className="mt-2">
+                        <p>{message.attachment_url}</p>
+                        <img
+                          src={message.attachment_url}
+                          alt="Attachment"
+                          className="max-w-[200px] max-h-[200px] rounded-lg shadow-md"
+                        />
+                      </div>
+                    )}
+
+                    <p
+                      className={`text-base ${
+                        message.user.username === myUsername
+                          ? "text-right"
+                          : "text-left"
+                      }`}
+                    >
+                      {message.content}
+                    </p>
+                    <p
+                      className={`text-xs mt-1 ${
+                        message.user.username === myUsername
+                          ? "text-right"
+                          : "text-left"
+                      }`}
+                    >
+                      {formatDateTime(message.created_at)}
+                    </p>
+                  </div>
+
+                  {message.user.username === myUsername &&
+                    (message.user.avatar ? (
+                      <img
+                        src={message.user.avatar}
+                        alt={message.user.username}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-resedaGreen flex items-center justify-center text-white">
+                        {message.user.first_name[0]}
+                        {message.user.last_name[0]}
+                      </div>
+                    ))}
+                </div>
+              );
+            })
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-lg text-gray-500">No messages to show</p>
           </div>
-        ))}
+        )}
+        <div ref={messagesEndRef}></div>
       </div>
 
-      <div className="bg-[#c4cbb9] w-full p-4 flex items-center rounded-b-lg">
-        <input
-          type="text"
-          placeholder="Write a message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1 p-2 ring-1 ring-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-resedaGreen text-textColor"
-        />
+      <div className="bg-[#c4cbb9] w-full p-4 flex items-center flex-col rounded-b-lg">
+        <div className="flex w-full items-center">
+          <input
+            type="text"
+            placeholder="Write a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            className="flex-1 p-2 ring-1 ring-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-resedaGreen text-textColor"
+          />
 
-        <button
-          onClick={handleSendMessage}
-          className="ml-2 bg-resedaGreen text-white p-2 rounded-full"
-        >
-          Send
-        </button>
+          <label htmlFor="file-upload">
+            <FiPaperclip className="w-6 h-6 ml-2 cursor-pointer transform hover:scale-125 transition-transform duration-200 ease-in-out" />
+          </label>
+
+          <input
+            id="file-upload"
+            type="file"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
+
+          <button
+            onClick={handleSendMessage}
+            className="ml-2 bg-resedaGreen text-white p-2 rounded-full"
+          >
+            Send
+          </button>
+        </div>
+
+        {/* Prikaz slike ispod svega */}
+        {image && (
+          <div className="mt-2">
+            <img
+              src={image}
+              alt="Preview"
+              className="h-12 w-auto border border-gray-400 rounded-lg"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
