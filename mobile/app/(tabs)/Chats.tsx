@@ -1,71 +1,89 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
   SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { apiCall } from ".";
+import { useQuery } from "@tanstack/react-query";
 
 const ChatScreen = () => {
-  const router = useRouter();
-  const chats = [
-    {
-      id: 1,
-      name: "Grupa 1",
-      lastMessage: "Zadnja porukaaaa",
-    },
-    {
-      id: 2,
-      name: "Random Group",
-      lastMessage: "Zadnja poruka",
-    },
-    {
-      id: 3,
-      name: "Random Group",
-      lastMessage: "Zadnja poruka bla bla bla bla",
-    },
-  ];
+  const [lastMessages, setLastMessages] = useState({});
 
-  const handlePressGroup = () => {
-    router.push("../Chat");
+  const chatsQuery = useQuery({
+    queryKey: ["chats"],
+    queryFn: () => apiCall("/chat_groups"),
+    retry: false,
+  });
+  const router = useRouter();
+
+  const handlePressGroup = (id) => {
+    router.push({
+      pathname: "../Chat",
+      params: { id },
+    });
   };
+
+  const fetchLastMessages = async (id) => {
+    try {
+      const response = await apiCall(`/chat_groups/${id}/messages`, {
+        method: "GET",
+      });
+
+      const lastMessage = response[0]?.content || "No messages yet";
+      setLastMessages((prev) => ({ ...prev, [id]: lastMessage }));
+    } catch (error) {
+      console.error("Error sending message: ", error);
+    }
+  };
+
+  useEffect(() => {
+    if (chatsQuery.data) {
+      chatsQuery.data.forEach((chat) => {
+        fetchLastMessages(chat.id);
+      });
+    }
+  }, [chatsQuery.data]);
 
   return (
     <SafeAreaView className="flex-1 bg-[#CFE1B9]">
-      {/* Header */}
-      <View className="flex-row justify-between items-center px-4 py-2 bg-[#718355]">
-        <Text className="text-white text-2xl font-bold">Chats</Text>
-        <TouchableOpacity>
-          <Ionicons name="add-circle-outline" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Chats List */}
-      <ScrollView
+      <FlatList
         contentContainerStyle={{ paddingVertical: 10 }}
         className="flex-1 px-4"
-      >
-        {chats.map((chat) => (
+        data={chatsQuery.data || []}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
           <TouchableOpacity
-            key={chat.id}
-            onPress={handlePressGroup}
+            key={item.id}
+            onPress={() => handlePressGroup(item.id)}
             className="flex-row items-center p-4 mb-2 bg-[#F8FBEF] rounded-xl shadow"
           >
-            {/* Chat Icon */}
             <View className="w-12 h-12 bg-[#CFE1B9] rounded-full mr-4" />
-            {/* Chat Info */}
             <View>
               <Text className="text-[#575A4B] font-bold text-lg">
-                {chat.name}
+                {item.name}
               </Text>
-              <Text className="text-[#718355] text-sm">{chat.lastMessage}</Text>
+              <Text className="text-[#718355] text-sm">
+                {lastMessages[item.id] || "Loading..."}
+              </Text>
+              {/* probati napraviti last message */}
             </View>
           </TouchableOpacity>
-        ))}
-      </ScrollView>
+        )}
+      />
+
+      <TouchableOpacity className="absolute bottom-5 left-3/4 bg-[#718355] rounded-full">
+        <Ionicons
+          name="add-circle-outline"
+          size={50}
+          color="#FFFFFF"
+          className="p-2"
+        />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
