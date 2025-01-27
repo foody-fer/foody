@@ -254,7 +254,9 @@ export default function Index() {
         <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        <Text>Post your meal! </Text>
+        <View style={styles.topViewWhite}>
+          <Text>Post your meal! </Text>
+        </View>
       </View>
 
       {/*<ScrollView>
@@ -351,12 +353,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#CFE1B9",
   },
   topView: {
-    backgroundColor: "#718355",
+    backgroundColor: "#b0ca91",
     borderRadius: 15,
     padding: 16,
     borderWidth: 0.2,
     marginBottom: 10,
     alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    width: "90%",
+    margin: "5%",
+    borderColor: "#b0ca91",
+  },
+  topViewWhite: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 20,
+    paddingHorizontal: 70,
+    color: "lightgrey",
   },
   postView: {
     marginTop: 10,
