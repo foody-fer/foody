@@ -11,6 +11,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { apiCall } from ".";
 import { useQuery } from "@tanstack/react-query";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallbackText,
+} from "@/components/ui/avatar";
 
 const ChatScreen = () => {
   const [lastMessages, setLastMessages] = useState({});
@@ -27,6 +32,10 @@ const ChatScreen = () => {
       pathname: "../Chat",
       params: { id },
     });
+  };
+
+  const handlePlus = () => {
+    router.push("../New-chat");
   };
 
   const fetchLastMessages = async (id) => {
@@ -63,20 +72,33 @@ const ChatScreen = () => {
             onPress={() => handlePressGroup(item.id)}
             className="flex-row items-center p-4 mb-2 bg-[#F8FBEF] rounded-xl shadow"
           >
-            <View className="w-12 h-12 bg-[#CFE1B9] rounded-full mr-4">
-              {item.is_dm === true && (
-                <Image
-                  source={{ uri: item.members[1]?.avatar }}
-                  className="w-12 h-12 rounded-full"
-                />
-              )}
-              {item.image && (
-                <Image
-                  source={{ uri: item.image }}
-                  className="w-12 h-12 rounded-full"
-                />
-              )}
-            </View>
+            {item.is_dm === true ? (
+              <Avatar className="bg-resedagreen mr-4">
+                {item?.avatar ? (
+                  <AvatarImage
+                    source={{ uri: item?.avatar }}
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <AvatarFallbackText className="font-quicksand">
+                    {item?.members[1].user.username}
+                  </AvatarFallbackText>
+                )}
+              </Avatar>
+            ) : (
+              <Avatar className="bg-resedagreen mr-4">
+                {item?.image ? (
+                  <AvatarImage
+                    source={{ uri: item?.image }}
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <AvatarFallbackText className="font-quicksand">
+                    {item?.name}
+                  </AvatarFallbackText>
+                )}
+              </Avatar>
+            )}
             <View>
               <Text className="text-[#575A4B] font-bold text-lg">
                 {item.name}
@@ -95,6 +117,7 @@ const ChatScreen = () => {
           size={50}
           color="#FFFFFF"
           className="p-2"
+          onPress={handlePlus}
         />
       </TouchableOpacity>
     </SafeAreaView>
