@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,13 +7,17 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from "react-native";
 import { apiCall } from "./(tabs)";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import { Spinner } from "@/components/ui/spinner";
+import { Menu, MenuItem, MenuItemLabel } from "@/components/ui/menu";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useRouter } from "expo-router";
+import { useFocusEffect } from "expo-router";
 
 const useUser = () => {
   return useQuery({
@@ -22,6 +26,8 @@ const useUser = () => {
   });
 };
 const Chat = () => {
+  const router = useRouter();
+  const [chat, setChat] = useState<any>();
   const { data: user, isLoading, error } = useUser();
 
   {
@@ -33,10 +39,29 @@ const Chat = () => {
   }
 
   const { id } = useLocalSearchParams();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchGroups = async () => {
+        try {
+          const response = await apiCall(`/chat_groups/${id}`, {
+            method: "GET",
+          });
+          setChat(response);
+        } catch (error) {
+          console.error("Error in fetchGroups: ", error);
+        }
+      };
+
+      fetchGroups();
+    }, [id])
+  );
+
   const messagesQuery = useQuery({
     queryKey: ["messages"],
     queryFn: () => apiCall(`/chat_groups/${id}/messages`),
     retry: false,
+    refetchOnWindowFocus: true,
   });
 
   {
@@ -97,14 +122,85 @@ const Chat = () => {
     }
   };
 
+  const handleEditGroup = (id) => {
+    router.push({
+      pathname: "../EditGroup",
+      params: { id },
+    });
+  };
+
+  const handleViewMembers = (id) => {
+    router.push({
+      pathname: "../ViewMembers",
+      params: { id },
+    });
+  };
+
   return (
     <View className="flex-1 bg-[#CFE1B9]">
+      <View className="flex-row pt-10 items-center justify-between pl-5 pr-5 pb-5 bg-[#718355] drop-shadow-md">
+        <View className="flex-row items-center">
+          {/* PROBATI DODATI FALLBACK IMAGE*/}
+          <View className="w-12 h-12 bg-[#CFE1B9] rounded-full mr-4">
+            {chat?.is_dm === true && (
+              <Image
+                source={{ uri: chat?.members[1]?.avatar }}
+                className="w-12 h-12 rounded-full"
+              />
+            )}
+            {chat?.image && (
+              <Image
+                source={{ uri: chat?.image }}
+                className="w-12 h-12 rounded-full"
+              />
+            )}
+          </View>
+          <View>
+            {chat?.is_dm === true ? (
+              <Text className="text-xl">
+                {chat?.members[1].user.first_name}{" "}
+                {chat?.members[1].user.last_name}
+              </Text>
+            ) : (
+              <Text className="text-xl">{chat?.name}</Text>
+            )}
+          </View>
+        </View>
+        {chat?.is_dm === false && (
+          <Menu
+            placement="bottom"
+            offset={5}
+            trigger={({ ...triggerProps }) => {
+              return (
+                <TouchableOpacity {...triggerProps}>
+                  <Ionicons name="ellipsis-horizontal" size={30}></Ionicons>
+                </TouchableOpacity>
+              );
+            }}
+          >
+            <MenuItem
+              key="Edit group"
+              textValue="Edit group"
+              onPress={() => handleEditGroup(chat.id)}
+            >
+              <MenuItemLabel size="sm">Edit group</MenuItemLabel>
+            </MenuItem>
+            <MenuItem
+              key="View members"
+              textValue="View members"
+              onPress={() => handleViewMembers(chat.id)}
+            >
+              <MenuItemLabel size="sm">View members</MenuItemLabel>
+            </MenuItem>
+          </Menu>
+        )}
+      </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
         <FlatList
-          className="flex-1 mt-10"
+          className="flex-1"
           contentContainerStyle={{ flexGrow: 1, justifyContent: "flex-end" }}
           data={messagesQuery.data || []}
           keyExtractor={(item) => item.id.toString()}
@@ -115,17 +211,29 @@ const Chat = () => {
                 item.user?.username === user.username
                   ? "bg-[#F8FBEF] self-end"
                   : "bg-white self-start"
-              } shadow-md mr-4`}
+              } shadow-md mr-4 ml-4`}
             >
-              <Text
-                className={`text-sm font-quicksand ${
-                  item.user?.username === user.username
-                    ? "text-[#575A4B]"
-                    : "text-[#373737]"
-                }`}
-              >
-                {item.content}
-              </Text>
+              {chat?.is_dm === false &&
+              item.user?.username !== user.username ? (
+                <View>
+                  <Text className="text-sm font-quicksand text-[#718355]">
+                    {item.user?.username}
+                  </Text>
+                  <Text className="text-md font-quicksand text-[#373737]">
+                    {item.content}
+                  </Text>
+                </View>
+              ) : (
+                <Text
+                  className={`text-md font-quicksand ${
+                    item.user?.username === user.username
+                      ? "text-[#575A4B]"
+                      : "text-[#373737]"
+                  }`}
+                >
+                  {item.content}
+                </Text>
+              )}
             </View>
           )}
           inverted

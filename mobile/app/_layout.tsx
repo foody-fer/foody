@@ -17,6 +17,9 @@ export default function RootLayout() {
           <Stack.Screen name="sign-in" />
           <Stack.Screen name="sign-up" />
           <Stack.Screen name="Chat" />
+          <Stack.Screen name="New-chat" />
+          <Stack.Screen name="EditGroup" />
+          <Stack.Screen name="ViewMembers" />
         </Stack>
       </GluestackUIProvider>
     </QueryClientProvider>
