@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -62,7 +63,20 @@ const ChatScreen = () => {
             onPress={() => handlePressGroup(item.id)}
             className="flex-row items-center p-4 mb-2 bg-[#F8FBEF] rounded-xl shadow"
           >
-            <View className="w-12 h-12 bg-[#CFE1B9] rounded-full mr-4" />
+            <View className="w-12 h-12 bg-[#CFE1B9] rounded-full mr-4">
+              {item.is_dm === true && (
+                <Image
+                  source={{ uri: item.members[1]?.avatar }}
+                  className="w-12 h-12 rounded-full"
+                />
+              )}
+              {item.image && (
+                <Image
+                  source={{ uri: item.image }}
+                  className="w-12 h-12 rounded-full"
+                />
+              )}
+            </View>
             <View>
               <Text className="text-[#575A4B] font-bold text-lg">
                 {item.name}
@@ -70,7 +84,6 @@ const ChatScreen = () => {
               <Text className="text-[#718355] text-sm">
                 {lastMessages[item.id] || "Loading..."}
               </Text>
-              {/* probati napraviti last message */}
             </View>
           </TouchableOpacity>
         )}
