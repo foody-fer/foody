@@ -4,7 +4,7 @@
 #
 #  id          :integer          not null, primary key
 #  key         :string
-#  recorded_at :datetime
+#  recorded_at :date
 #  value       :float
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
@@ -27,4 +27,6 @@ class Measurement < ApplicationRecord
 
   validates :key, presence: true, inclusion: { in: MEASUREMENT_TYPES }
   validates :value, presence: true
+
+  validates :recorded_at, uniqueness: { scope: [:user_id, :key] }
 end
