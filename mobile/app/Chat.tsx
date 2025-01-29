@@ -18,6 +18,11 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "expo-router";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallbackText,
+} from "@/components/ui/avatar";
 
 const useUser = () => {
   return useQuery({
@@ -179,18 +184,18 @@ const Chat = () => {
             }}
           >
             <MenuItem
-              key="Edit group"
-              textValue="Edit group"
-              onPress={() => handleEditGroup(chat.id)}
-            >
-              <MenuItemLabel size="sm">Edit group</MenuItemLabel>
-            </MenuItem>
-            <MenuItem
               key="View members"
               textValue="View members"
               onPress={() => handleViewMembers(chat.id)}
             >
               <MenuItemLabel size="sm">View members</MenuItemLabel>
+            </MenuItem>
+            <MenuItem
+              key="Edit group"
+              textValue="Edit group"
+              onPress={() => handleEditGroup(chat.id)}
+            >
+              <MenuItemLabel size="sm">Edit group</MenuItemLabel>
             </MenuItem>
           </Menu>
         )}
@@ -207,15 +212,29 @@ const Chat = () => {
           renderItem={({ item }) => (
             <View
               key={item.id}
-              className={`mb-2 p-3 rounded-xl ${
-                item.user?.username === user.username
-                  ? "bg-[#F8FBEF] self-end"
-                  : "bg-white self-start"
-              } shadow-md mr-4 ml-4`}
+              className={`mb-2 rounded-xl ${
+                item.user?.username === user?.username
+                  ? "self-end"
+                  : "self-start"
+              } mr-2 ml-2 flex-row items-center`}
             >
+              {item.user?.username !== user?.username && (
+                <Avatar className="bg-resedagreen mr-2">
+                  {item.user?.avatar ? (
+                    <AvatarImage
+                      source={{ uri: item.user?.avatar }}
+                      className="w-full h-full"
+                    />
+                  ) : (
+                    <AvatarFallbackText className="font-quicksand">
+                      {item.user?.username}
+                    </AvatarFallbackText>
+                  )}
+                </Avatar>
+              )}
               {chat?.is_dm === false &&
-              item.user?.username !== user.username ? (
-                <View>
+              item.user?.username !== user?.username ? (
+                <View className="shadow-md bg-[#F8FBEF] p-3 rounded-xl">
                   <Text className="text-sm font-quicksand text-[#718355]">
                     {item.user?.username}
                   </Text>
@@ -226,9 +245,9 @@ const Chat = () => {
               ) : (
                 <Text
                   className={`text-md font-quicksand ${
-                    item.user?.username === user.username
-                      ? "text-[#575A4B]"
-                      : "text-[#373737]"
+                    item.user?.username === user?.username
+                      ? "text-[#575A4B] bg-white shadow-md p-3 rounded-xl"
+                      : "text-[#373737] bg-[#F8FBEF] shadow-md"
                   }`}
                 >
                   {item.content}
