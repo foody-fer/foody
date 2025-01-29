@@ -30,7 +30,7 @@ class PostSerializer
     post.images.map do |image|
       {
         id: image.id,
-        url: image_url_for(image)
+        url: image_url_for(image, size: 1000)
       }
     end
   end
@@ -39,7 +39,7 @@ class PostSerializer
     {
       id: post.user.id,
       username: post.user.username,
-      avatar: image_url_for(post.user.avatar)
+      avatar: image_url_for(post.user.avatar, size: 100)
     }
   end
 end

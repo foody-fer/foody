@@ -26,6 +26,6 @@ class UserSerializer
   attributes :id, :username, :first_name, :last_name, :gender, :bio
 
   attribute :avatar do |user|
-    image_url_for(user.avatar)
+    image_url_for(user.avatar, size: 100)
   end
 end

@@ -29,7 +29,7 @@ class CommentSerializer
     {
       id: comment.user.id,
       username: comment.user.username,
-      avatar: image_url_for(comment.user.avatar)
+      avatar: image_url_for(comment.user.avatar, size: 100)
     }
   end
 end
