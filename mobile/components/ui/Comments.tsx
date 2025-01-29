@@ -21,7 +21,7 @@ const useUser = () => {
   });
 };
 
-const Comments = ({ postInfo }: any) => {
+const Comments = ({ postInfo, refetchPosts }: any) => {
   const { data: user, isLoading, error } = useUser();
 
   {
@@ -67,6 +67,7 @@ const Comments = ({ postInfo }: any) => {
 
       setTriger(!triger); // Trigger re-fetch
       setNewComment(""); // Clear input
+      refetchPosts();
     } catch (error) {
       console.error("Failed to add comment:", error);
     }
@@ -96,6 +97,7 @@ const Comments = ({ postInfo }: any) => {
       });
 
       setTriger(!triger); // Trigger re-fetch
+      refetchPosts();
     } catch (error) {
       console.error("Failed to delete comment:", error);
     }

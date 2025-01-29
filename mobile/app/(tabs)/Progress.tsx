@@ -23,6 +23,7 @@ type Category = "weight" | "waist" | "thighs" | "hips" | "arms" | "neck";
 import { useMemo } from "react";
 
 interface Measurement {
+  id: number;
   key: string;
   value: number;
   recorded_at: string;
@@ -118,6 +119,18 @@ const ProgressScreen: React.FC = () => {
     } catch (error) {
       setModalVisible(false);
       console.error("Doslo je do greske:", error);
+    }
+  };
+
+  const handleDeleteMeasurement = async (measurementId: number) => {
+    try {
+      await apiCall(`/measurements/${measurementId}`, {
+        method: "DELETE",
+      });
+
+      await fetchLogs();
+    } catch (error) {
+      console.error("Failed to delete measurement:", error);
     }
   };
 
@@ -256,7 +269,7 @@ const ProgressScreen: React.FC = () => {
             }}
             showsVerticalScrollIndicator={false}
           >
-            <View className="bg-white w-[130px] py-4 rounded-lg items-center">
+            <View className="bg-white w-[200px] py-4 rounded-lg items-center">
               {measurements
                 .filter((entry) => entry.key === selectedCategory) // Filter entries based on the selected category
                 .map((entry, index) => (
@@ -275,6 +288,12 @@ const ProgressScreen: React.FC = () => {
                         {formatDate(entry.recorded_at)}{" "}
                       </Text>
                     </View>
+
+                    <TouchableOpacity
+                      onPress={() => handleDeleteMeasurement(entry.id)}
+                    >
+                      <Text>Delete</Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               {measurements.filter((entry) => entry.key === selectedCategory)

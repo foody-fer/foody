@@ -42,7 +42,10 @@ export const apiCall = async (url: string, options: RequestInit = {}) => {
     return res.json();
   }
 
-  throw await res.text();
+  const error = await res.text();
+  console.error(error, res.status);
+
+  throw error;
 };
 
 export default function Index() {
@@ -72,19 +75,42 @@ export default function Index() {
     }
   };
 
-  const handlePost = async () => {
-    if (!selectedImage || !postContent) {
+  const handlePost = () => {
+    handlePostMethod(postContent, selectedImage).then(() => {
+      setPostContent("");
+      setSelectedImage(null);
+      setModalVisible(false);
+    });
+  };
+
+  const handleIdeaPost = () => {
+    handlePostMethod(ideaContent, null).then(() => {
+      setIdeaContent("");
+      setIdeaModalVisible(false);
+    });
+  };
+
+  const handlePostMethod = async (text: string, image: string | null) => {
+    if (!text) {
       alert("Please add content and an image.");
       return;
     }
 
     try {
-      const response = await fetch(selectedImage);
-      const blob = await response.blob();
-
       const formData = new FormData();
-      formData.append("post[content]", postContent);
-      formData.append("post[images][]", blob, "upload.jpg");
+      formData.append("post[title]", "mobile post");
+      formData.append("post[content]", text);
+
+      if (image) {
+        // const response = await fetch(image);
+        // const blob = await response.blob();
+        // @ts-ignore
+        formData.append("post[images][]", {
+          uri: image,
+          type: "image/jpeg",
+          name: "photo.jpg",
+        });
+      }
 
       await apiCall("/posts", {
         method: "POST",
@@ -93,9 +119,7 @@ export default function Index() {
           "Content-Type": "multipart/form-data",
         },
       });
-      setModalVisible(false);
-      setPostContent("");
-      setSelectedImage(null);
+
       postsQuery.refetch();
     } catch (err) {
       console.error(err);
@@ -140,7 +164,9 @@ export default function Index() {
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <View style={styles.topViewWhite}>
-          <Text>Post your meal! </Text>
+          <TouchableOpacity onPress={() => setIdeaModalVisible(true)}>
+            <Text>Post your meal! </Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -220,13 +246,7 @@ export default function Index() {
               onChangeText={setIdeaContent}
             />
             <View style={styles.modalButtonContainer}>
-              <Button
-                onPress={() => {
-                  console.log("Idea submitted:", ideaContent);
-                  setIdeaModalVisible(false);
-                  setIdeaContent("");
-                }}
-              >
+              <Button onPress={handleIdeaPost}>
                 <Text>Post</Text>
               </Button>
               <Button onPress={() => setIdeaModalVisible(false)}>

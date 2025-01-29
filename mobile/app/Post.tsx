@@ -176,20 +176,22 @@ const Post = ({
           <Text>{comments_count}</Text>
         </View>
 
-        <View style={styles.saveContainer}>
-          <TouchableOpacity onPress={handleSaves}>
+        <TouchableOpacity onPress={handleSaves}>
+          <View style={styles.saveContainer}>
             <Ionicons
               name={savedByCurrentUser ? "download" : "download-outline"}
               size={24}
               color={"#718355"}
               style={styles.icon}
             />
-          </TouchableOpacity>
-          <Text>{savedByCurrentUser ? "Saved" : "Save"}</Text>
-        </View>
+            <Text>{savedByCurrentUser ? "Saved" : "Save"}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
-      {toggleComments === true && <Comments postInfo={id} />}
+      {toggleComments === true && (
+        <Comments postInfo={id} refetchPosts={refetchPosts} />
+      )}
     </View>
   );
 };
