@@ -1,10 +1,11 @@
 // post.tsx
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text } from "@/components/ui/CustomText";
 import Comments from "@/components/ui/Comments";
+import { apiCall } from "@/api";
 
 const Post = ({
   user,
@@ -82,6 +83,22 @@ const Post = ({
     }
   };
 
+  const handleDeletePost = async () => {
+    Alert.alert("Delete post", "Are you sure you want to delete this post?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        onPress: () => {
+          apiCall(`/posts/${id}`, { method: "DELETE" })
+            .then(() => {
+              refetchPosts();
+            })
+            .catch(() => Alert.alert("Error", "Error deleting"));
+        },
+      },
+    ]);
+  };
+
   return (
     <View style={styles.postView}>
       <View style={styles.topSection}>
@@ -102,12 +119,8 @@ const Post = ({
           <Text style={styles.modalText}>{user.username}</Text>
         </View>
 
-        <TouchableOpacity>
-          <Ionicons
-            name="ellipsis-horizontal"
-            size={30}
-            color="#575A4B"
-          ></Ionicons>
+        <TouchableOpacity onPress={handleDeletePost}>
+          <Ionicons name="trash" size={24} color="#575A4B"></Ionicons>
         </TouchableOpacity>
       </View>
 
