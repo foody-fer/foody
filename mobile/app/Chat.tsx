@@ -212,7 +212,7 @@ const Chat = () => {
           renderItem={({ item }) => (
             <View
               key={item.id}
-              className={`mb-2 p-3 rounded-xl ${
+              className={`mb-2 rounded-xl ${
                 item.user?.username === user?.username
                   ? "self-end"
                   : "self-start"

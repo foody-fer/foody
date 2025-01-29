@@ -49,6 +49,7 @@ const NewChat = () => {
   const [noSelectedError, setNoSelectedError] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const { data: user, isLoading, error } = useUser();
 
@@ -91,31 +92,16 @@ const NewChat = () => {
   };
 
   const pickImageAsync = async () => {
-    /*try {
-        const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ["images"],
-          allowsEditing: true,
-          quality: 1,
-        });
-  
-        if (!result.canceled && result.assets.length > 0) {
-          const fileUri = result.assets[0].uri;
-  
-          const response = await fetch(fileUri);
-          const blob = await response.blob();
-  
-          const formData = new FormData();
-          formData.append("message[attachment]", blob);
-          console.log(formData);
-  
-          const data = await apiCall(`/chat_groups/${id}/messages`, {
-            method: "POST",
-            body: formData,
-          });
-        }
-      } catch (error) {
-        console.error("Error sending image: ", error);
-      }*/
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      setSelectedImage(result.assets[0].uri);
+      console.log(selectedImage);
+    }
   };
 
   const handleCreate = async () => {
@@ -152,11 +138,11 @@ const NewChat = () => {
         formData.append("chat_group[user_ids][]", user.id);
       });
 
-      /*if (pickImageAsync) {
+      /*if (selectedImage) {
         formData.append("chat_group[image]", {
-          uri: pickImageAsync.uri,
-          type: pickImageAsync.type,
-          name: pickImageAsync.fileName,
+          uri: selectedImage.uri,
+          type: selectedImage.type,
+          name: selectedImage.fileName,
         });
       }*/
 
@@ -356,6 +342,18 @@ const NewChat = () => {
                 <View className="mb-2">
                   <Text className="text-base mb-2 font-bold">Group image:</Text>
                   <View className="flex-row items-center">
+                    <Avatar className="bg-resedagreen">
+                      {selectedImage ? (
+                        <AvatarImage
+                          source={{ uri: selectedImage }}
+                          className="w-full h-full"
+                        />
+                      ) : (
+                        <AvatarFallbackText className="font-quicksand">
+                          {groupName}
+                        </AvatarFallbackText>
+                      )}
+                    </Avatar>
                     <TouchableOpacity
                       className="ml-2 bg-jet px-4 py-2 rounded-full"
                       onPress={pickImageAsync}
