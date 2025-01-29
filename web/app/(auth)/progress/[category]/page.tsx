@@ -13,6 +13,8 @@ import { Line } from "react-chartjs-2";
 import Link from "next/link";
 import { apiCall } from "~/api";
 import { IoTrashBinOutline } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
+import { SiTicktick } from "react-icons/si";
 
 ChartJS.register(
   CategoryScale,
@@ -25,18 +27,44 @@ ChartJS.register(
 
 type Category = "weight" | "waist" | "thighs" | "hips" | "arms" | "neck";
 
+type Measurement = {
+  id: number;
+  key: string;
+  value: number;
+  date: string;
+  month: string;
+  year: string;
+  timestamp: number;
+};
+
 export default function ProgressPage({
   params,
 }: {
   params: Promise<{ category: string }>;
 }) {
   const { category } = React.use(params);
-
   const [selectedCategory, setSelectedCategory] = useState<any>(category);
+  const [data, setData] = useState<Measurement[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [months, setMonths] = useState<string[]>([]);
+  const [years, setYears] = useState<string[]>([]);
+  const [showWholeYear, setShowWholeYear] = useState<boolean>(false);
+  const mediaQuery = window.matchMedia("(max-width: 767px)"); // Sve ekrane manja od 768px(md)
+  const [isSmallScreen, setIsSmallScreen] = useState(mediaQuery.matches);
 
-  const [data, setData] = useState<
-    { id: number; key: string; value: number; date: string }[]
-  >([]);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(mediaQuery.matches);
+    };
+
+    mediaQuery.addListener(handleResize);
+    return () => {
+      mediaQuery.removeListener(handleResize);
+    };
+  }, []);
+
+  const displayTicks = isSmallScreen ? false : showWholeYear ? false : true;
 
   const categories: Category[] = [
     "weight",
@@ -53,13 +81,10 @@ export default function ProgressPage({
 
   const fetchMeasurements = async () => {
     try {
-      const response = await apiCall(`/measurements`, {
-        method: "GET",
-      });
-
+      const response = await apiCall(`/measurements`, { method: "GET" });
       if (Array.isArray(response[0])) {
         const transformedData = response[0]
-          .filter((item) => item.key === selectedCategory) // uzimamo iz response-a samo one koji su za selectedCategory
+          .filter((item) => item.key === selectedCategory)
           .map((item) => ({
             id: item.id,
             key: item.key,
@@ -67,9 +92,33 @@ export default function ProgressPage({
             date: new Date(item.recorded_at)
               .toLocaleDateString("en-GB")
               .replace(/\//g, "."),
-          }));
+            month: new Date(item.recorded_at).toLocaleString("en-GB", {
+              month: "long",
+            }),
+            year: new Date(item.recorded_at).getFullYear().toString(),
+            timestamp: new Date(item.recorded_at).getTime(),
+          }))
+          .sort((a, b) => a.timestamp - b.timestamp);
 
         setData(transformedData);
+        const uniqueMonths = [
+          ...new Set(transformedData.map((item) => item.month)),
+        ];
+        const uniqueYears = [
+          ...new Set(transformedData.map((item) => item.year)),
+        ];
+        setMonths(uniqueMonths);
+
+        if (uniqueYears.length > 0) {
+          setYears(uniqueYears);
+          setSelectedYear(uniqueYears[0] || "");
+        } else {
+          const currentYear = new Date().getFullYear().toString();
+          setYears([currentYear]);
+          setSelectedYear(currentYear);
+        }
+
+        setSelectedMonth(uniqueMonths[0] || "");
       } else {
         console.error("Unexpected response format:", response);
       }
@@ -82,25 +131,18 @@ export default function ProgressPage({
     fetchMeasurements();
   }, [selectedCategory]);
 
+  const filteredData = showWholeYear
+    ? data.filter((entry) => entry.year === selectedYear)
+    : data.filter(
+        (entry) => entry.month === selectedMonth && entry.year === selectedYear
+      );
+
   const chartData = {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
+    labels: filteredData.map((entry) => entry.date),
     datasets: [
       {
         label: "Progress",
-        data: data.map((entry) => entry.value),
+        data: filteredData.map((entry) => entry.value),
         backgroundColor: "rgba(113, 131, 85, 0.2)",
         borderColor: "rgba(113, 131, 85, 1)",
         borderWidth: 2,
@@ -115,6 +157,9 @@ export default function ProgressPage({
       x: {
         grid: {
           display: false,
+        },
+        ticks: {
+          display: displayTicks,
         },
       },
       y: {
@@ -185,45 +230,111 @@ export default function ProgressPage({
         ))}
       </div>
 
-      <div className="flex flex-col items-center">
-        <div className="w-5/6 mt-12 md:ml-20 lg:ml-28">
-          <div className="bg-white p-4 rounded-xl shadow-lg">
-            <div className="h-80">
-              <Line data={chartData} options={chartOptions} />
-            </div>
-          </div>
+      <div className="flex flex-col items-center mt-4">
+        <div className="flex gap-4 flex-col lg:flex-row items-center md:ml-14 lg:ml-28">
+          {!showWholeYear && (
+            <>
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="p-2 border rounded-full bg-white shadow-md w-32"
+              >
+                {[
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ].map((month, index) => (
+                  <option key={index} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="p-2 border rounded-full bg-white shadow-md w-32 lg:w-24"
+              >
+                {years.map((year, index) => (
+                  <option key={index} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+
+          <button
+            onClick={() => setShowWholeYear(!showWholeYear)}
+            className={`p-2 px-3 border-1 bg-white rounded-full shadow-md font-semibold ${
+              showWholeYear
+                ? "border-green-500 text-green-500"
+                : "border-red-500 text-red-500"
+            } flex items-center justify-center`}
+          >
+            Show progress for whole year {selectedYear}
+            {showWholeYear ? (
+              <SiTicktick className="w-5 h-5 ml-2" />
+            ) : (
+              <RxCross2 className="w-5 h-5 ml-2" />
+            )}
+          </button>
         </div>
 
-        <div className="mt-6 bg-white p-3 rounded-lg shadow-md w-52 md:ml-12 lg:ml-6 max-h-44 overflow-y-auto scrollbar-thin scrollbar-thumb-resedaGreen scrollbar-track-transparent">
-          {data.length > 0 ? (
-            data.map((entry, index) => (
-              <div key={index} className="flex items-center mb-2">
-                <div className="w-2.5 h-2.5 bg-[#718355] rounded-full mr-2"></div>
-                <div>
-                  <p className="text-sm font-bold text-[#373737]">
-                    {entry.value} {selectedCategory === "weight" ? "kg" : "cm"}
-                  </p>
-                  <p className="text-xs text-[#575A4B]">{entry.date}</p>
-                </div>
-
-                <IoTrashBinOutline
-                  onClick={() => handleValueDelete(entry.id)}
-                  className="ml-16 w-5 h-5 text-red-500 hover:scale-125 transition duration-300 cursor-pointer"
-                />
+        {filteredData.length > 0 ? (
+          <div className="w-5/6 mt-3 md:ml-20 lg:ml-28">
+            <div className="bg-white p-4 rounded-xl shadow-lg">
+              <div className="h-80">
+                <Line data={chartData} options={chartOptions} />
               </div>
-            ))
+            </div>
+          </div>
+        ) : (
+          <div />
+        )}
+
+        <div className="mt-6 bg-white p-3 rounded-lg shadow-md w-52 max-h-44 overflow-y-auto scrollbar-thin scrollbar-thumb-resedaGreen scrollbar-track-transparent md:ml-20">
+          {filteredData.length > 0 ? (
+            filteredData
+              .slice()
+              .reverse()
+              .map((entry, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <div className="w-2.5 h-2.5 bg-[#718355] rounded-full mr-2"></div>
+                  <div>
+                    <p className="text-sm font-bold text-[#373737]">
+                      {entry.value}{" "}
+                      {selectedCategory === "weight" ? "kg" : "cm"}
+                    </p>
+                    <p className="text-xs text-[#575A4B]">{entry.date}</p>
+                  </div>
+                  <IoTrashBinOutline
+                    onClick={() => handleValueDelete(entry.id)}
+                    className="ml-16 w-5 h-5 text-red-500 hover:scale-125 transition duration-300 cursor-pointer"
+                  />
+                </div>
+              ))
           ) : (
             <p className="text-sm text-red-500 text-center font-semibold">
-              No data available for this category yet.
+              No data available for {selectedMonth} in {selectedYear}.
             </p>
           )}
         </div>
 
         <Link
           href={`/log-progress/${selectedCategory}`}
-          className="no-underline md:ml-12 lg:ml-6"
+          className="no-underline"
         >
-          <button className="mt-6 py-3 w-80 rounded-full bg-[#718355] text-white font-bold">
+          <button className="mt-6 py-3 w-80 rounded-full bg-[#718355] text-white font-bold md:ml-20">
             Log Progress
           </button>
         </Link>
