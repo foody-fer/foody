@@ -4,8 +4,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  ScrollView,
   Image,
+  FlatList,
+  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -19,128 +20,47 @@ import { Text } from "@/components/ui/CustomText";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "expo-router";
-import { apiCall, queryClient } from "@/api/index";
+import Post from "../Post";
 
-const Post = ({
-  user,
-  content,
-  images,
-  likes,
-  likedByCurrentUser,
-  likePost,
-}: {
-  user: { username: string; avatar: string | null };
-  content: string;
-  images: { id: number; url: string }[];
-  likes: number;
-  likedByCurrentUser: boolean;
-  likePost: () => void;
-}) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const router = useRouter();
+const queryClient = new QueryClient();
 
-  const handleNextImage = () => {
-    if (currentImageIndex < images.length - 1) {
-      setCurrentImageIndex(currentImageIndex + 1);
-    }
-  };
+export const apiCall = async (url: string, options: RequestInit = {}) => {
+  const token = await AsyncStorage.getItem("token");
+  const res = await fetch(`https://foody-backend.zeko.run/api/v1${url}`, {
+    ...options,
+    headers: {
+      ...options?.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  const handlePreviousImage = () => {
-    if (currentImageIndex > 0) {
-      setCurrentImageIndex(currentImageIndex - 1);
-    }
-  };
+  if (res.status === 401) {
+    await AsyncStorage.removeItem("token");
+  }
 
-  return (
-    <View style={styles.postView}>
-      <View style={styles.topSection}>
-        {user.avatar ? (
-          <Image
-            source={{ uri: user.avatar }}
-            style={{ width: 30, height: 30, borderRadius: 15 }}
-          />
-        ) : (
-          <Ionicons
-            name="person-circle"
-            size={30}
-            color="#575A4B"
-            style={styles.iconLeft}
-          />
-        )}
-        <Text style={styles.modalText}>{user.username}</Text>
-      </View>
+  if (res.ok) {
+    return res.json();
+  }
 
-      <Text>{content}</Text>
+  const error = await res.text();
+  console.error(error, res.status);
 
-      <View style={styles.middleSection}>
-        {images.length > 0 && (
-          <>
-            <Image
-              source={{ uri: images[currentImageIndex].url }}
-              style={styles.image}
-            />
-            {images.length > 1 && (
-              <View style={styles.imageNavigation}>
-                <TouchableOpacity
-                  onPress={handlePreviousImage}
-                  disabled={currentImageIndex === 0}
-                >
-                  <Ionicons
-                    name="chevron-back"
-                    size={24}
-                    color={currentImageIndex === 0 ? "#575A4B" : "#CFE1B9"}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleNextImage}
-                  disabled={currentImageIndex === images.length - 1}
-                >
-                  <Ionicons
-                    name="chevron-forward"
-                    size={24}
-                    color={
-                      currentImageIndex === images.length - 1
-                        ? "#575A4B"
-                        : "#CFE1B9"
-                    }
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
-        )}
-      </View>
-
-      <View style={styles.bottomSection}>
-        <Text>{likes}</Text>
-        <TouchableOpacity onPress={likePost}>
-          <Ionicons
-            name="heart"
-            size={24}
-            color={likedByCurrentUser ? "red" : "#575A4B"}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Ionicons
-            name="chatbubble"
-            size={24}
-            color="#575A4B"
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  throw error;
 };
 
 export default function Index() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [heartColor, setHeartColor] = useState("#575A4B");
-  const [commentColor, setCommentColor] = useState("#575A4B");
+  const [ideaModalVisible, setIdeaModalVisible] = useState(false);
+  const [ideaContent, setIdeaContent] = useState("");
+  const [postContent, setPostContent] = useState("");
+
+  const postsQuery = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => apiCall("/posts"),
+    retry: false,
+  });
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -155,11 +75,56 @@ export default function Index() {
     }
   };
 
-  const postsQuery = useQuery({
-    queryKey: ["posts"],
-    queryFn: () => apiCall("/posts"),
-    retry: false,
-  });
+  const handlePost = () => {
+    handlePostMethod(postContent, selectedImage).then(() => {
+      setPostContent("");
+      setSelectedImage(null);
+      setModalVisible(false);
+    });
+  };
+
+  const handleIdeaPost = () => {
+    handlePostMethod(ideaContent, null).then(() => {
+      setIdeaContent("");
+      setIdeaModalVisible(false);
+    });
+  };
+
+  const handlePostMethod = async (text: string, image: string | null) => {
+    if (!text) {
+      alert("Please add content and an image.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("post[title]", "mobile post");
+      formData.append("post[content]", text);
+
+      if (image) {
+        // const response = await fetch(image);
+        // const blob = await response.blob();
+        // @ts-ignore
+        formData.append("post[images][]", {
+          uri: image,
+          type: "image/jpeg",
+          name: "photo.jpg",
+        });
+      }
+
+      await apiCall("/posts", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      postsQuery.refetch();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (postsQuery.error) {
     return (
@@ -194,44 +159,40 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      {/* <Button
-        onPress={() => {
-          AsyncStorage.removeItem("token");
-          router.push("/Login");
-        }}
-        style={styles.logoutButton}
-      >
-        <Text style={{ color: "white" }}>Logout</Text>
-      </Button> */}
-
       <View style={styles.topView}>
         <TouchableOpacity onPress={pickImage} style={styles.cameraButton}>
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        <Text>Post your meal! </Text>
+        <View style={styles.topViewWhite}>
+          <TouchableOpacity onPress={() => setIdeaModalVisible(true)}>
+            <Text>Post your meal! </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView>
-        {postsQuery.isLoading && <Spinner />}
-        {postsQuery.data &&
-          postsQuery.data.map((post) => (
-            <Post
-              key={post.id}
-              user={post.user}
-              content={post.content}
-              images={post.images}
-              likes={post.likes_count}
-              likedByCurrentUser={post.liked_by_current_user}
-              likePost={() => {
-                apiCall(`/posts/${post.id}/likes`, {
-                  method: post.liked_by_current_user ? "DELETE" : "POST",
-                }).then(() => {
-                  postsQuery.refetch();
-                });
-              }}
-            />
-          ))}
-      </ScrollView>
+      <FlatList
+        data={postsQuery.data || []}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <Post
+            user={item.user}
+            content={item.content}
+            images={item.images}
+            likes={item.likes_count}
+            likedByCurrentUser={item.liked_by_current_user}
+            savedByCurrentUser={item.saved_by_current_user}
+            likePost={() => {
+              apiCall(`/posts/${item.id}/likes`, {
+                method: item.liked_by_current_user ? "DELETE" : "POST",
+              }).then(() => postsQuery.refetch());
+            }}
+            id={item.id}
+            comments_count={item.comments_count}
+            refetchPosts={postsQuery.refetch}
+          />
+        )}
+        ListEmptyComponent={<Text>Loading posts or no posts available...</Text>}
+      />
 
       <Modal
         animationType="slide"
@@ -251,20 +212,46 @@ export default function Index() {
                 Choose a new image from your gallery!
               </Text>
             )}
+            <TextInput
+              style={styles.input}
+              placeholder="Write your post..."
+              value={postContent}
+              onChangeText={setPostContent}
+            />
 
             <View style={styles.modalButtonContainer}>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>Choose</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>Dismiss</Text>
-              </TouchableOpacity>
+              <Button onPress={handlePost}>
+                <Text>Post</Text>
+              </Button>
+              <Button onPress={() => setModalVisible(false)}>
+                <Text>Dismiss</Text>
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={ideaModalVisible}
+        onRequestClose={() => setIdeaModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Post your idea</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Write your idea here..."
+              value={ideaContent}
+              onChangeText={setIdeaContent}
+            />
+            <View style={styles.modalButtonContainer}>
+              <Button onPress={handleIdeaPost}>
+                <Text>Post</Text>
+              </Button>
+              <Button onPress={() => setIdeaModalVisible(false)}>
+                <Text>Dismiss</Text>
+              </Button>
             </View>
           </View>
         </View>
@@ -278,65 +265,34 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#CFE1B9",
   },
+  input: {
+    backgroundColor: "#b0ca91",
+  },
   topView: {
-    backgroundColor: "#718355",
+    backgroundColor: "#b0ca91",
     borderRadius: 15,
     padding: 16,
     borderWidth: 0.2,
     marginBottom: 10,
     alignItems: "center",
-  },
-  postView: {
-    marginTop: 10,
-    padding: "5%",
-    margin: "5%",
+    justifyContent: "center",
+    flexDirection: "row",
     width: "90%",
-    borderRadius: 10,
-    borderColor: "#575A4B",
-    borderWidth: 0.2,
-    alignItems: "center",
-    backgroundColor: "#718355",
+    margin: "5%",
+    borderColor: "#b0ca91",
   },
-  topSection: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    width: "100%",
-    paddingBottom: 2,
-    paddingTop: "1%",
-  },
-  iconLeft: {
-    marginLeft: 10,
-  },
-  middleSection: {
-    width: "100%",
-    paddingTop: 20,
-    alignItems: "center",
-    marginVertical: 10,
-    borderColor: "#718355",
-    // backgroundColor: "#718355",
-    borderRadius: 10,
-    //  borderWidth: 1,
-  },
-  image: {
-    width: 300,
-    height: 300,
-    borderRadius: 10,
-    borderColor: "#718355",
-    borderWidth: 1,
-  },
-  bottomSection: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginTop: 10,
-  },
-  icon: {
-    marginHorizontal: 5,
+  topViewWhite: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 20,
+    paddingHorizontal: 70,
+    color: "lightgrey",
   },
   cameraButton: {
     position: "absolute",
     top: "18%",
     right: "3%",
+    marginTop: 1,
     backgroundColor: "#575A4B",
     borderRadius: 20,
     padding: 8,
@@ -351,7 +307,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "80%",
-    backgroundColor: "#FFF",
+    backgroundColor: "#CFE1B9",
     borderRadius: 20,
     padding: 20,
     alignItems: "center",
@@ -363,7 +319,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 18,
-    marginBottom: 15,
+    marginLeft: 10,
     textAlign: "center",
   },
   modalImage: {
@@ -372,35 +328,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 10,
   },
-  imageNavigation: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    marginTop: 10,
-  },
   modalButtonContainer: {
+    borderRadius: 25,
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-  },
-  closeButton: {
-    backgroundColor: "#575A4B",
-    borderRadius: 10,
-    padding: 10,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  closeButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  logoutButton: {
-    alignSelf: "flex-start",
-    margin: 5,
-    backgroundColor: "#575A4B",
-    padding: 8,
-    borderRadius: 10,
   },
 });

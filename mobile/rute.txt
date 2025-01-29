@@ -5,14 +5,20 @@
 
 
 
-                    api_v1_registrations POST   /api/v1/registrations(.:format)                                                                   api/v1/registrations#create
-                       api_v1_auth_index GET    /api/v1/auth(.:format)                                                                            api/v1/auth#index
-                                         POST   /api/v1/auth(.:format)                                                                            api/v1/auth#create
-                       api_v1_post_likes DELETE /api/v1/posts/:post_id/likes(.:format)                                                            api/v1/posts_likes#destroy
-                                         POST   /api/v1/posts/:post_id/likes(.:format)                                                            api/v1/posts_likes#create
                             api_v1_posts GET    /api/v1/posts(.:format)                                                                           api/v1/posts#index
                                          POST   /api/v1/posts(.:format)                                                                           api/v1/posts#create
                              api_v1_post GET    /api/v1/posts/:id(.:format)                                                                       api/v1/posts#show
                                          PATCH  /api/v1/posts/:id(.:format)                                                                       api/v1/posts#update
                                          PUT    /api/v1/posts/:id(.:format)                                                                       api/v1/posts#update
                                          DELETE /api/v1/posts/:id(.:format)                                                                       api/v1/posts#destroy
+GET /api/v1/posts/:post_id/saved_posts
+-Vraća sve koji su saveali post
+
+GET /api/v1/saved_posts
+-Vraće sve saveane postove trenutnog korisnika
+
+POST /api/v1/posts/:post_id/saved_posts
+-Saveanje posta 
+
+DELETE /api/v1/posts/:post_id/saved_posts
+-Brisanje savea

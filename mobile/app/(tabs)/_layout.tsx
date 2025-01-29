@@ -86,6 +86,19 @@ export default function Layout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="Chats"
+        options={{
+          title: "Chats",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "chatbox-ellipses" : "chatbox-ellipses-outline"}
+              size={25}
+              color={color}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
