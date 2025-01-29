@@ -42,7 +42,6 @@ interface Group {
 export default function GroupChat() {
   const userQuery = useGetUser();
   const router = useRouter();
-
   const params = useParams(); // Koristimo useParams za dohvat ID-a
   const { id } = params; // ID grupe
   const [group, setGroup] = useState<Group>();
@@ -60,7 +59,8 @@ export default function GroupChat() {
     refetchInterval: 1000,
   });
 
-  console.log(chatMessages);
+  console.log(imageSend);
+
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -94,54 +94,31 @@ export default function GroupChat() {
   };
 
   const handleSendMessage = async () => {
-    if (newMessage.trim()) {
-      console.log(newMessage.trim());
-      console.log(`Sending message to group ${id}: ${newMessage}`);
+    try {
+      const formData = new FormData();
 
-      try {
-        const formData = new FormData();
+      formData.append("message[content]", newMessage);
 
-        formData.append("message[content]", newMessage);
-
-        if (imageSend) {
-          formData.append("message[attachment]", imageSend);
-        }
-
-        const [data, status] = await apiCall(`/chat_groups/${id}/messages`, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (status === 201) {
-          chatMessages.refetch();
-          console.log(data);
-          setImage(null);
-          setImageSend(undefined);
-        }
-      } catch (err) {
-        console.error("Failed to update group name", err);
+      if (imageSend) {
+        formData.append("message[attachment]", imageSend);
       }
+
+      const [data, status] = await apiCall(`/chat_groups/${id}/messages`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (status === 201) {
+        chatMessages.refetch();
+        console.log(data);
+        setImage(null);
+        setImageSend(undefined);
+      }
+    } catch (err) {
+      console.error("Failed to update group name", err);
     }
 
     setNewMessage("");
-  };
-
-  const handleMessageDelete = (messageId: number) => {
-    fetch(`/chat_groups/${id}/messages/${messageId}`, {
-      method: "DELETE",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to delete message");
-        }
-        console.log("Message deleted");
-
-        // Refetch messages after the deletion
-        chatMessages.refetch();
-      })
-      .catch((err) => {
-        console.error("Failed to delete message", err);
-      });
   };
 
   const handleDelete = async (messageId: number) => {
@@ -309,26 +286,18 @@ export default function GroupChat() {
                     </div>
 
                     {message.attachment_url && (
-                      <div className="mt-2">
+                      <div className="mt-2 flex justify-center">
                         <img
                           src={message.attachment_url}
                           alt="Attachment"
-                          className="max-w-[200px] max-h-[200px] rounded-lg shadow-md"
+                          className="max-w-[150px] max-h-[150px] sm:max-w-[200px] sm:max-h-[200px] md:max-w-[170px] md:max-h-[200px] lg:max-w-[240px] lg:max-h-[300px] rounded-lg shadow-md mx-auto"
                         />
                       </div>
                     )}
 
+                    <p className="text-base mt-2">{message.content}</p>
                     <p
-                      className={`text-base mt-2 ${
-                        message.user.username === myUsername
-                          ? "text-right"
-                          : "text-left"
-                      }`}
-                    >
-                      {message.content}
-                    </p>
-                    <p
-                      className={`text-xs mt-1 ${
+                      className={`text-xs mt-2 font-semibold ${
                         message.user.username === myUsername
                           ? "text-right"
                           : "text-left"
