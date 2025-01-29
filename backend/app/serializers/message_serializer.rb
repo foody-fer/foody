@@ -20,13 +20,14 @@
 #  user_id        (user_id => users.id)
 #
 class MessageSerializer
-    include Alba::Resource
-    include ImageHelper
-    attributes :id, :content, :created_at, :updated_at, :chat_group_id, :user_id
-  
-    attribute :attachment_url do |object|
-          Rails.application.routes.url_helpers.rails_blob_url(object.attachment, only_path: true) if object.attachment.attached?
-    end
-  
-    one :user, serializer: UserSerializer
+  include Alba::Resource
+  include ImageHelper
+
+  attributes :id, :content, :created_at, :updated_at, :chat_group_id, :user_id
+
+  attribute :attachment_url do |object|
+    image_url_for(object.attachment)
   end
+
+  one :user, serializer: UserSerializer
+end
