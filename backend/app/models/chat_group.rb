@@ -12,7 +12,7 @@ class ChatGroup < ApplicationRecord
   has_many :members, dependent: :destroy
   has_many :users, through: :members
   has_many :messages, -> { order(created_at: :desc) }, dependent: :destroy
-  
+
   has_one_attached :image
 
   validates :name, presence: true, unless: :is_dm
@@ -34,8 +34,7 @@ class ChatGroup < ApplicationRecord
   end
 
   def only_one_dm
-    chat_groups = ChatGroup.dm
-    chat_groups.each do |chat_group|
+    ChatGroup.dm.each do |chat_group|
       if chat_group.members.pluck(:user_id).sort == members.map(&:user_id).sort
         return errors.add(:base, "DM already exists")
       end
