@@ -50,6 +50,7 @@ const NewChat = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [alreadyDmError, setalreadyDmError] = useState<string>("");
 
   const { data: user, isLoading, error } = useUser();
 
@@ -177,7 +178,11 @@ const NewChat = () => {
         console.log("DM created successfully:", response);
         router.push("./(tabs)/Chats");
       } catch (error) {
-        console.error("Error creating direct message chat:", error);
+        if (error === JSON.stringify({ errors: ["DM already exists"] })) {
+          setalreadyDmError("DM with this user already exists!");
+        } else {
+          console.error("Error creating chat group:", error);
+        }
       }
     }
   };
@@ -387,6 +392,11 @@ const NewChat = () => {
                     {noUserError}
                   </Text>
                 ) : null}
+                {alreadyDmError && (
+                  <Text className="text-red-500 mt-2 ml-12 font-semibold">
+                    {alreadyDmError}
+                  </Text>
+                )}
 
                 <FlatList
                   className="mt-2"

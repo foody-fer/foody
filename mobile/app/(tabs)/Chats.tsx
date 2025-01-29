@@ -104,7 +104,11 @@ const ChatScreen = () => {
                 {item.name}
               </Text>
               <Text className="text-[#718355] text-sm">
-                {lastMessages[item.id] || "Loading..."}
+                {lastMessages[item.id]
+                  ? lastMessages[item.id].length > 32
+                    ? lastMessages[item.id].slice(0, 32) + "..."
+                    : lastMessages[item.id]
+                  : "Loading..."}
               </Text>
             </View>
           </TouchableOpacity>

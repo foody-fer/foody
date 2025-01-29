@@ -67,9 +67,9 @@ const Chat = () => {
     queryFn: () => apiCall(`/chat_groups/${id}/messages`),
     retry: false,
     refetchOnWindowFocus: true,
+    staleTime: 0, // Podaci će biti uvijek svježi
+    refetchInterval: 1000,
   });
-
-  console.log(messagesQuery.data);
 
   {
     isLoading && <Spinner />;
@@ -110,13 +110,11 @@ const Chat = () => {
       if (!result.canceled && result.assets.length > 0) {
         const fileUri = result.assets[0].uri;
 
+        const response = await fetch(fileUri);
+        const blob = await response.blob();
+
         const formData = new FormData();
-        // @ts-ignore
-        formData.append("message[attachment]", {
-          uri: fileUri,
-          type: "image/jpeg",
-          name: "image.jpg",
-        });
+        formData.append("message[attachment]", blob);
         console.log(formData);
 
         const data = await apiCall(`/chat_groups/${id}/messages`, {
@@ -129,6 +127,14 @@ const Chat = () => {
     } catch (error) {
       console.error("Error sending image: ", error);
     }
+  };
+
+  const handleDelete = async (messageId: number) => {
+    const response = await apiCall(`/chat_groups/${id}/messages/${messageId}`, {
+      method: "DELETE",
+    });
+
+    messagesQuery.refetch();
   };
 
   const handleEditGroup = (id) => {
@@ -149,19 +155,34 @@ const Chat = () => {
     <View className="flex-1 bg-[#CFE1B9]">
       <View className="flex-row pt-10 items-center justify-between pl-5 pr-5 pb-5 bg-[#718355] drop-shadow-md">
         <View className="flex-row items-center">
-          {/* PROBATI DODATI FALLBACK IMAGE*/}
           <View className="w-12 h-12 bg-[#CFE1B9] rounded-full mr-4">
             {chat?.is_dm === true && (
-              <Image
-                source={{ uri: chat?.members[1]?.avatar }}
-                className="w-12 h-12 rounded-full"
-              />
+              <Avatar className="bg-[#CFE1B9] mr-4">
+                {chat?.members[1].user.avatar ? (
+                  <AvatarImage
+                    source={{ uri: chat?.members[1].user.avatar }}
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <AvatarFallbackText className="font-quicksand">
+                    {chat?.members[1].user.username}
+                  </AvatarFallbackText>
+                )}
+              </Avatar>
             )}
-            {chat?.image && (
-              <Image
-                source={{ uri: chat?.image }}
-                className="w-12 h-12 rounded-full"
-              />
+            {chat?.is_dm === false && (
+              <Avatar className="bg-[#CFE1B9] mr-4">
+                {chat?.image ? (
+                  <AvatarImage
+                    source={{ uri: chat?.image }}
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <AvatarFallbackText className="font-quicksand">
+                    {chat?.name}
+                  </AvatarFallbackText>
+                )}
+              </Avatar>
             )}
           </View>
           <View>
@@ -236,36 +257,31 @@ const Chat = () => {
                   )}
                 </Avatar>
               )}
-
-              {item.attachment_url ? (
-                <Image
-                  source={{ uri: item.attachment_url }}
-                  className="w-64 h-64"
-                />
+              {chat?.is_dm === false &&
+              item.user?.username !== user?.username ? (
+                <View className="shadow-md bg-[#F8FBEF] p-3 rounded-xl">
+                  <Text className="text-sm font-quicksand text-[#718355]">
+                    {item.user?.username}
+                  </Text>
+                  <Text className="text-md font-quicksand text-[#373737]">
+                    {item.content}
+                  </Text>
+                </View>
               ) : (
-                <>
-                  {chat?.is_dm === false &&
-                  item.user?.username !== user?.username ? (
-                    <View className="shadow-md bg-[#F8FBEF] p-3 rounded-xl">
-                      <Text className="text-sm font-quicksand text-[#718355]">
-                        {item.user?.username}
-                      </Text>
-                      <Text className="text-md font-quicksand text-[#373737]">
-                        {item.content}
-                      </Text>
-                    </View>
-                  ) : (
-                    <Text
-                      className={`text-md font-quicksand ${
-                        item.user?.username === user?.username
-                          ? "text-[#575A4B] bg-white shadow-md p-3 rounded-xl"
-                          : "text-[#373737] bg-[#F8FBEF] shadow-md"
-                      }`}
-                    >
-                      {item.content}
-                    </Text>
-                  )}
-                </>
+                <Text
+                  className={`text-md font-quicksand ${
+                    item.user?.username === user?.username
+                      ? "text-[#575A4B] bg-white shadow-md p-3 rounded-xl max-w-[80%]"
+                      : "text-[#373737] bg-[#F8FBEF] shadow-md max-w-[80%]"
+                  }`}
+                >
+                  {item.content}
+                </Text>
+              )}
+              {item.user?.username === user?.username && (
+                <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                  <Ionicons name="trash" size={20} color="#718355" />
+                </TouchableOpacity>
               )}
             </View>
           )}
