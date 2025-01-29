@@ -8,6 +8,7 @@ import {
   Modal,
 } from "react-native";
 import MealData from "../MealData";
+import { useRouter } from "expo-router";
 
 interface MealCardProps {
   meal: any;
@@ -15,9 +16,16 @@ interface MealCardProps {
 
 export default function MealCard({ meal }: MealCardProps) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
+      <View>
+        <TouchableOpacity onPress={() => router.push("/MealConfig")}>
+          <Text>Config</Text>
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity style={styles.card} onPress={() => setOpen(true)}>
         <View>
           <Text style={styles.cardTime}>Breakfast 9-11AM</Text>

@@ -2,7 +2,7 @@ class GenerateMealJob < ApplicationJob
   BASE_PROMPT = <<~PROMPT
     You're a helpful assistant that generates meal plans for a given meal in the dal
     A user will give you their goals and preferences, and you will generate a meal plan for them.
-    The meal should include a name, description, and all the macros (in grams).
+    The meal should include a name, description, and all the macros (in grams) + calories in kcal.
     You should also include any relevant information about the user's dietary restrictions or preferences in description.
     Format meal as JSON.
   PROMPT
@@ -19,15 +19,16 @@ class GenerateMealJob < ApplicationJob
           protein: { type: :integer },
           carbs: { type: :integer },
           fat: { type: :integer },
+          calories: { type: :integer },
         },
-        required: [:protein, :carbs, :fat]
+        required: [:protein, :carbs, :fat, :calories]
       }
     },
     additionalProperties: false,
     required: [:title, :description, :macros]
   }
 
-  def perform(meal: nil, time_of_day:, week_plan:)
+  def perform(meal: nil, time_of_day:, week_plan:, day:)
     response = client.chat(
       parameters: {
         model: "gpt-4o-mini",
@@ -76,7 +77,7 @@ class GenerateMealJob < ApplicationJob
       )
     else
       meal = week_plan.planned_meals.create!(
-        date: week_plan.monday + 0.days,
+        date: week_plan.monday + day.days,
         title: res['title'],
         meal_time: time_of_day,
         description: res['description'],

@@ -26,8 +26,8 @@ class WeekPlanSerializer
   STATE_TO_PROGRESS_MAP = { "pending" => 0, "failed" => -1, "generated" => 1 }
 
   attribute :progress do |week_plan|
-    STATE_TO_PROGRESS_MAP[week_plan.status] || (
-      week_plan.planned_meals.count / (week_plan.planner_config.meal_time_config.values.compact.count * 7)
+    STATE_TO_PROGRESS_MAP[week_plan.status].presence || (
+      week_plan.planned_meals.count.to_f / (week_plan.planner_config.meal_time_config.values.compact.count * 7)
     )
   end
 end

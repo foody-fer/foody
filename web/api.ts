@@ -1,5 +1,5 @@
-export const apiCall = (url: `/${string}`, options: RequestInit) => {
-  return fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/${url}`, {
+export const apiCall = (url: `/${string}`, options: RequestInit = {}) => {
+  return fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1${url}`, {
     ...options,
     headers: {
       ...options.headers,

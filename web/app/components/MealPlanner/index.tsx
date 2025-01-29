@@ -1,45 +1,52 @@
-const meals = {};
-
-import { useState } from "react";
-import {
-  IoIosArrowDropleft,
-  IoIosArrowDropleftCircle,
-  IoIosArrowDroprightCircle,
-  IoIosArrowDropright,
-} from "react-icons/io";
-import MealCard from "./MealCard";
-
-const getCurrentDay = (date: any) => {
-  const daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  return daysOfWeek[date.getDay()];
-};
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { apiCall } from "~/api";
+import { WeeklyPlan } from "./plan";
 
 export default function MealPlanner() {
-  const [option, setOption] = useState("Generate");
-  const [date, setDate] = useState(new Date());
+  const [option, setOption] = useState("View");
 
-  const handleSubmit = () => {
-    // slanje podataka na backend
-  };
+  const plannerConfigQuery = useQuery({
+    queryKey: ["planner_config"],
+    queryFn: () => apiCall("/planner"),
+  });
 
-  const addOneDay = (date: any) => {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + 1);
-    setDate(newDate);
-  };
+  useEffect(() => {
+    if (option === "View" && plannerConfigQuery.data?.[1] === 404) {
+      setOption("Generate");
+    }
+  }, [plannerConfigQuery.data]);
 
-  const RemoveOneDay = (date: any) => {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() - 1);
-    setDate(newDate);
+  if (plannerConfigQuery.isLoading) return <div>Loading...</div>;
+  if (plannerConfigQuery.isError || !plannerConfigQuery.data) {
+    return <div>Error</div>;
+  }
+
+  const [data, status] = plannerConfigQuery.data;
+  const showPlanner = status !== 404;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = {
+      base_prompt: formData.get("my_preferences"),
+      goals: [formData.get("primary_goal")],
+      meal_time_config: Object.fromEntries(
+        formData.getAll("meals_per_day").map((meal) => [meal, true])
+      ),
+    };
+
+    const res = await apiCall("/planner", {
+      method: "PATCH",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    plannerConfigQuery.refetch();
+    setOption("View");
   };
 
   return (
@@ -59,19 +66,21 @@ export default function MealPlanner() {
         >
           Generate weekly plan
         </button>
-        <button
-          className={
-            "rounded-full w-[10rem] py-[6px] text-sm text-textColor font-semibold " +
-            (option === "View"
-              ? "bg-textColor border-none text-white"
-              : "bg-navbarGreen border-1 border-textColor transition duration-300 hover:scale-105")
-          }
-          onClick={() => {
-            setOption("View");
-          }}
-        >
-          View weekly plan
-        </button>
+        {showPlanner && (
+          <button
+            className={
+              "rounded-full w-[10rem] py-[6px] text-sm text-textColor font-semibold " +
+              (option === "View"
+                ? "bg-textColor border-none text-white"
+                : "bg-navbarGreen border-1 border-textColor transition duration-300 hover:scale-105")
+            }
+            onClick={() => {
+              setOption("View");
+            }}
+          >
+            View weekly plan
+          </button>
+        )}
       </div>
       {/* TABS */}
       <div className="bg-[#f4ffe6] text-textColor px-4 py-3 rounded">
@@ -89,19 +98,23 @@ export default function MealPlanner() {
                 className="rounded p-1 bg-white border-1 border-textColor text-sm w-full"
                 placeholder="Describe what you like..."
                 required
+                defaultValue={data.base_prompt}
               />{" "}
               <br />
               <div className="flex gap-2 md:gap-6 mt-3">
                 <div>
-                  <label className="mb-1 font-semibold">My goal: </label>
+                  <label className="mb-1 font-semibold">
+                    My primary goal:{" "}
+                  </label>
                   <div className="flex flex-col gap-1 text-gray-700 text-sm ">
                     <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
-                        value="Post"
+                        name="primary_goal"
+                        value="Weight loss"
                         required
+                        defaultChecked={data.goals.includes("Weight loss")}
                       />
                       Weight loss
                     </label>
@@ -110,44 +123,48 @@ export default function MealPlanner() {
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
-                        value="Post"
+                        name="primary_goal"
+                        value="Weight gain"
                         required
+                        defaultChecked={data.goals.includes("Weight gain")}
                       />
-                      Be more active
+                      Weight gain
                     </label>
 
                     <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
-                        value="Post"
+                        name="primary_goal"
+                        value="Have more energy"
                         required
+                        defaultChecked={data.goals.includes("Have more energy")}
                       />
-                      ...
+                      Have more energy
                     </label>
 
                     <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor  rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
-                        value="Post"
+                        name="primary_goal"
+                        value="Gain muscle"
                         required
+                        defaultChecked={data.goals.includes("Gain muscle")}
                       />
-                      ...
+                      Gain muscle
                     </label>
 
                     <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="radio"
                         className="opacity-0 absolute cursor-pointer"
-                        name="title"
-                        value="Post"
+                        name="primary_goal"
+                        value="Be healthier"
                         required
+                        defaultChecked={data.goals.includes("Be healthier")}
                       />
-                      Gain muscle
+                      Be healthier
                     </label>
                   </div>
                 </div>
@@ -158,8 +175,9 @@ export default function MealPlanner() {
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="option"
-                        value="Post"
+                        name="meals_per_day"
+                        value="breakfast"
+                        defaultChecked={data.meal_time_config.breakfast}
                       />
                       Breakfast
                     </label>
@@ -168,18 +186,20 @@ export default function MealPlanner() {
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="option"
-                        value="Post"
+                        name="meals_per_day"
+                        value="morning_snack"
+                        defaultChecked={data.meal_time_config.morning_snack}
                       />
-                      AM Snack
+                      Morning snack
                     </label>
 
                     <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="option"
-                        value="Post"
+                        name="meals_per_day"
+                        value="lunch"
+                        defaultChecked={data.meal_time_config.lunch}
                       />
                       Lunch
                     </label>
@@ -188,18 +208,20 @@ export default function MealPlanner() {
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="option"
-                        value="Post"
+                        name="meals_per_day"
+                        value="afternoon_snack"
+                        defaultChecked={data.meal_time_config.afternoon_snack}
                       />
-                      PM Snack
+                      Afternoon snack
                     </label>
 
                     <label className="has-[:checked]:bg-[#afc2baba] has-[:checked]:text-textColor border-1 border-textColor rounded-full w-[9rem] h-7 flex justify-center items-center cursor-pointer transition duration-300 hover:scale-105">
                       <input
                         type="checkbox"
                         className="opacity-0 absolute cursor-pointer"
-                        name="option"
-                        value="Post"
+                        name="meals_per_day"
+                        value="dinner"
+                        defaultChecked={data.meal_time_config.dinner}
                       />
                       Dinner
                     </label>
@@ -210,7 +232,7 @@ export default function MealPlanner() {
                     type="submit"
                     className="rounded-full font-semibold px-3 py-2 text-sm bg-textColor text-gray-100 hover:scale-110 transition duration-300"
                   >
-                    Generate
+                    Save
                   </button>
                 </div>
               </div>
@@ -219,46 +241,7 @@ export default function MealPlanner() {
         )}
 
         {/* VIEW MEALS */}
-        {option === "View" && (
-          <div>
-            {/* SPECIFIC DAY */}
-            <div className="flex items-center justify-between text-textColor">
-              <div className="flex items-center gap-3">
-                <p className="text-xl w-[7rem] font-semibold">
-                  {getCurrentDay(date)}
-                </p>
-                <p className="text-base w-[6rem] font-semibold">
-                  {date.getDate()}. {date.getMonth() + 1}. {date.getFullYear()}.
-                </p>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="group">
-                  <IoIosArrowDropleft className="h-6 w-6 flex group-hover:hidden" />
-                  <IoIosArrowDropleftCircle
-                    className="h-6 w-6 hidden group-hover:block"
-                    onClick={() => RemoveOneDay(date)}
-                  />
-                </div>
-                <div className="group">
-                  <IoIosArrowDropright className="h-6 w-6 flex group-hover:hidden" />
-                  <IoIosArrowDroprightCircle
-                    className="h-6 w-6 hidden group-hover:block"
-                    onClick={() => addOneDay(date)}
-                  />
-                </div>
-              </div>
-            </div>
-            {/* SEPARATOR */}
-            <div className="border-1 border-textColor mt-2 w-full"></div>
-            {/* MEALS IN DAY */}
-            <div>
-              <MealCard meal={meals} />
-              <MealCard meal={meals} />
-              <MealCard meal={meals} />
-              <MealCard meal={meals} />
-            </div>
-          </div>
-        )}
+        {option === "View" && <WeeklyPlan />}
       </div>
     </div>
   );

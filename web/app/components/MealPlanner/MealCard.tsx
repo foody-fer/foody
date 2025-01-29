@@ -1,5 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MealData from "./MealData";
+
+const MEAL_TIME_CONFIG = {
+  breakfast: "Breakfast 9-11AM",
+  morning_snack: "Morning Snack 11AM-1PM",
+  lunch: "Lunch 1-3PM",
+  afternoon_snack: "Afternoon Snack 3-5PM",
+  dinner: "Dinner 5-7PM",
+};
 
 export default function MealCard({ meal }: any) {
   const [open, setOpen] = useState(false);
@@ -11,15 +19,20 @@ export default function MealCard({ meal }: any) {
         onClick={() => setOpen(true)}
       >
         <div className="mt-2 ml-2">
-          <div className="text-sm">Breakfast 9-11AM</div>
+          <div className="text-sm">
+            {
+              // @ts-ignore
+              MEAL_TIME_CONFIG[meal.meal_time]
+            }
+          </div>
           <div className="text-xl font-semibold ml-2 mb-2 mt-2">
-            Burger - GRMILICA
+            {meal.title}
           </div>
         </div>
         <div className="rounded-xl">
           <img
-            src="https://images.pexels.com/photos/1199957/pexels-photo-1199957.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="burger"
+            src={meal.image}
+            alt={meal.title}
             className="w-20 h-20 object-cover rounded-tr-xl rounded-br-xl"
           />
         </div>

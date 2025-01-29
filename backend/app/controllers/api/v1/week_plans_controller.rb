@@ -38,7 +38,11 @@ module Api::V1
     end
 
     def set_week_plan
-      @week_plan = Current.user.week_plans.find(params[:week_plan_id] || params[:id])
+      @week_plan = if params[:week_monday].present?
+                     Current.user.week_plans.find_by!(monday: params[:week_monday])
+                   else
+                     Current.user.week_plans.find(params[:week_plan_id] || params[:id])
+                   end
     end
   end
 end

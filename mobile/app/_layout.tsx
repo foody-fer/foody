@@ -15,6 +15,7 @@ export default function RootLayout() {
           <Stack.Screen name="Login" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
           <Stack.Screen name="sign-in" />
+          <Stack.Screen name="MealConfig" />
           <Stack.Screen name="sign-up" />
           <Stack.Screen name="Chat" />
           <Stack.Screen name="New-chat" />
