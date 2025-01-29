@@ -138,13 +138,14 @@ const NewChat = () => {
         formData.append("chat_group[user_ids][]", user.id);
       });
 
-      /*if (selectedImage) {
+      if (selectedImage) {
+        // @ts-ignore
         formData.append("chat_group[image]", {
-          uri: selectedImage.uri,
-          type: selectedImage.type,
-          name: selectedImage.fileName,
+          uri: selectedImage,
+          type: "image/jpeg",
+          name: "image.jpg",
         });
-      }*/
+      }
 
       console.log("Form data: ", formData);
 

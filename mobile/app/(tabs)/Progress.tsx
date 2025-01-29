@@ -11,6 +11,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Platform,
+  Alert,
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { Text } from "../../components/ui/CustomText";
@@ -117,8 +118,7 @@ const ProgressScreen: React.FC = () => {
       setModalVisible(false);
       await fetchLogs();
     } catch (error) {
-      setModalVisible(false);
-      console.error("Doslo je do greske:", error);
+      Alert.alert("Error", "Invalid data");
     }
   };
 
@@ -316,11 +316,11 @@ const ProgressScreen: React.FC = () => {
       >
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <View className="flex-1 justify-center items-center p-5 bg-black/50 bg-opacity-50 text-center">
-            <View className="bg-white rounded-3xl p-6 w-4/5">
-              <Text className="text-2xl mb-4 font-bold text-[#575a4b] text-center">
+            <View className="bg-white rounded-3xl p-6 w-4/5 flex flex-col items-center gap-4">
+              <Text className="text-2xl font-bold text-[#575a4b] text-center">
                 {selectedCategory}
               </Text>
-              <View className="flex-row items-center h-10 border border-[#718355] rounded-full px-4 bg-white mb-4">
+              <View className="flex-row items-center h-10 border border-[#718355] rounded-full px-4 bg-white">
                 <TextInput
                   className="flex-1 h-full pr-2"
                   placeholder="Enter value"
@@ -332,7 +332,7 @@ const ProgressScreen: React.FC = () => {
                   {selectedCategory === "weight" ? "kg" : "cm"}
                 </Text>
               </View>
-              <View className="items-center mb-4 w-full h-10">
+              {/* <View className="items-center mb-4 w-full h-10">
                 <TouchableOpacity
                   onPress={() => setShowDatePicker(true)}
                   className="w-full"
@@ -341,21 +341,19 @@ const ProgressScreen: React.FC = () => {
                     {date.toLocaleDateString()}
                   </Text>
                 </TouchableOpacity>
-              </View>
-              {showDatePicker && (
-                <DateTimePicker
-                  key={
-                    Platform.OS === "android" ? date.toISOString() : undefined
-                  }
-                  value={date}
-                  mode="date"
-                  display="default" // Default display to show as a modal
-                  onChange={(event, selectedDate) => {
-                    setShowDatePicker(false); // Hide picker after selection
-                    if (selectedDate) setDate(selectedDate); // Set the selected date
-                  }}
-                />
-              )}
+              </View> */}
+              {/* {showDatePicker && ( */}
+              <DateTimePicker
+                key={Platform.OS === "android" ? date.toISOString() : undefined}
+                value={date}
+                mode="date"
+                display="default" // Default display to show as a modal
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false); // Hide picker after selection
+                  if (selectedDate) setDate(selectedDate); // Set the selected date
+                }}
+              />
+              {/* )} */}
 
               <TouchableOpacity
                 className="bg-[#718355] py-2 px-4 rounded-full items-center w-3/4 self-center"

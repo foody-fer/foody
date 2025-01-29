@@ -29,7 +29,7 @@ export const apiCall = async (url: string, options: RequestInit = {}) => {
   const res = await fetch(`https://foody-backend.zeko.run/api/v1${url}`, {
     ...options,
     headers: {
-      ...options.headers,
+      ...options?.headers,
       Authorization: `Bearer ${token}`,
     },
   });

@@ -73,7 +73,7 @@ const SignUpPage = () => {
       await AsyncStorage.setItem("token", res.token);
 
       queryClient.invalidateQueries({ queryKey: ["auth"] });
-      router.push("/");
+      router.dismissTo("/");
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors = error.errors.reduce((acc: any, curr) => {

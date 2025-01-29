@@ -83,15 +83,16 @@ const EditGroup = () => {
       if (!result.canceled && result.assets.length > 0) {
         const fileUri = result.assets[0].uri;
 
-        const response = await fetch(fileUri);
-        const blob = await response.blob();
-
         const formData = new FormData();
-        formData.append("message[attachment]", blob);
-        console.log(formData);
+        // @ts-ignore
+        formData.append("chat_group[image]", {
+          uri: fileUri,
+          type: "image/jpeg",
+          name: "image.jpg",
+        });
 
-        const data = await apiCall(`/chat_groups/${id}/messages`, {
-          method: "POST",
+        const data = await apiCall(`/chat_groups/${id}`, {
+          method: "PATCH",
           body: formData,
         });
       }

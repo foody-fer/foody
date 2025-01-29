@@ -24,8 +24,9 @@ import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { z } from "zod";
-import Comments from "@/components/ui/Comments";
+import Post from "../Post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { queryClient } from "@/api";
 
 const useGetUser = () => {
   const router = useRouter();
@@ -33,136 +34,15 @@ const useGetUser = () => {
     queryKey: ["user"],
     retry: false,
     queryFn: async () => {
-      const [data, status] = await apiCall("/auth", { method: "GET" });
-      if (status !== 200) {
+      try {
+        const data = await apiCall("/auth", { method: "GET" });
+        return data;
+      } catch (error) {
         router.push("/Login");
         return null;
       }
-
-      return data;
     },
   });
-};
-
-const Post = ({
-  user = { username: "Unknown", avatar: null },
-  content = "",
-  images = [],
-  likes = 0,
-  likedByCurrentUser = false,
-  likePost = () => {},
-  id,
-  comments_count = "0",
-}: {
-  user: { username: string; avatar: string | null };
-  content: string;
-  images: { id: number; url: string }[];
-  likes: number;
-  likedByCurrentUser: boolean;
-  likePost: () => void;
-  id: string;
-  comments_count: string;
-}) => {
-  const [toggleComments, setToggleComments] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const handleNextImage = () => {
-    if (currentImageIndex < images.length - 1) {
-      setCurrentImageIndex(currentImageIndex + 1);
-    }
-  };
-
-  const handlePreviousImage = () => {
-    if (currentImageIndex > 0) {
-      setCurrentImageIndex(currentImageIndex - 1);
-    }
-  };
-
-  return (
-    <View style={styles.postView}>
-      <View style={styles.topSection}>
-        {user.avatar ? (
-          <Image
-            source={{ uri: user.avatar }}
-            style={{ width: 30, height: 30, borderRadius: 15 }}
-          />
-        ) : (
-          <Ionicons
-            name="person-circle"
-            size={30}
-            color="#575A4B"
-            style={styles.iconLeft}
-          />
-        )}
-        <Text style={styles.modalText}>{user.username}</Text>
-      </View>
-
-      <Text>{content}</Text>
-
-      <View style={styles.middleSection}>
-        {images.length > 0 ? (
-          <>
-            <Image
-              source={{ uri: images[currentImageIndex].url }}
-              style={styles.image}
-            />
-            {images.length > 1 && (
-              <View style={styles.imageNavigation}>
-                <TouchableOpacity
-                  onPress={handlePreviousImage}
-                  disabled={currentImageIndex === 0}
-                >
-                  <Ionicons
-                    name="chevron-back"
-                    size={24}
-                    color={currentImageIndex === 0 ? "grey" : "white"}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleNextImage}
-                  disabled={currentImageIndex === images.length - 1}
-                >
-                  <Ionicons
-                    name="chevron-forward"
-                    size={24}
-                    color={
-                      currentImageIndex === images.length - 1 ? "grey" : "white"
-                    }
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
-        ) : (
-          <Text>No images available</Text>
-        )}
-      </View>
-
-      <View style={styles.bottomSection}>
-        <Text>{likes}</Text>
-        <TouchableOpacity onPress={likePost}>
-          <Ionicons
-            name="heart"
-            size={24}
-            color={likedByCurrentUser ? "red" : "#575A4B"}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <Text>{comments_count}</Text>
-        <TouchableOpacity>
-          <Ionicons
-            name="chatbubble"
-            size={24}
-            color="#575A4B"
-            style={styles.icon}
-            onPress={() => setToggleComments(!toggleComments)}
-          />
-        </TouchableOpacity>
-      </View>
-
-      {toggleComments && <Comments postInfo={id} />}
-    </View>
-  );
 };
 
 const useUser = () => {
@@ -175,18 +55,33 @@ const useUser = () => {
 const usePosts = () => {
   return useQuery({
     queryKey: ["posts"],
-    queryFn: () => apiCall("/posts"),
+    queryFn: async () => apiCall("/posts"),
   });
 };
 
-const useRecipes = () => {
+const useSaves = () => {
   return useQuery({
-    queryKey: ["posts"],
-    queryFn: () => apiCall("/posts"), //kasnije promijeniti u recipes
+    queryKey: ["saved_posts"],
+    queryFn: async () => apiCall("/saved_posts"),
   });
 };
 
 export default function ProfileScreen() {
+  const userQuery = useGetUser();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [bio, setBio] = useState("");
+  const [gender, setGender] = useState("");
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [selectedTab, setSelectedTab] = useState("Posts");
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errors, setErrors] = useState<any>({});
+  const [originalData, setOriginalData] = useState({});
+
+  const { data: posts, isLoading: isPostsLoading } = usePosts();
+  const { data: saved_posts, isLoading: isSavedPostsLoading } = useSaves();
   const profileSchema_first_name = z.object({
     first_name: z
       .string()
@@ -216,36 +111,6 @@ export default function ProfileScreen() {
 
   const { data: user, isLoading, error } = useUser();
   const router = useRouter();
-
-  {
-    isLoading && <Spinner />;
-  }
-
-  {
-    error && <Text>Error</Text>;
-  }
-
-  const userQuery = useGetUser();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userName, setUserName] = useState("");
-  const [bio, setBio] = useState("");
-  const [gender, setGender] = useState("");
-  const [profilePicture, setProfilePicture] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState("Posts");
-  const [editingField, setEditingField] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [errors, setErrors] = useState<any>({});
-  const [originalData, setOriginalData] = useState({});
-  const saved_posts = useQuery({
-    queryKey: ["saved_posts"],
-    queryFn: () => apiCall(`/saved_posts`, { method: "GET" }),
-    refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
-    staleTime: 0, // Podaci će biti uvijek svježi
-  });
-
-  const { data: posts, isLoading: isPostsLoading } = usePosts();
-  const { data: recipes, isLoading: isRecipesLoading } = useRecipes();
 
   const toggleEdit = (field: string) => {
     if (editingField === field) {
@@ -341,14 +206,19 @@ export default function ProfileScreen() {
         quality: 1,
       });
 
-      if (!result.canceled && result.assets.length > 0) {
+      console.log("result.assets:", result.assets); // Debugging log
+
+      // Ensure assets exist and are not null
+      if (!result.canceled && result.assets) {
         const fileUri = result.assets[0].uri;
 
-        const response = await fetch(fileUri);
-        const blob = await response.blob();
-
         const formData = new FormData();
-        formData.append("user[avatar]", blob, "avatar.jpg");
+        // @ts-ignore
+        formData.append("user[avatar]", {
+          uri: fileUri,
+          name: "avatar.jpg",
+          type: "image/jpeg",
+        });
 
         const data = await apiCall("/registrations", {
           method: "PATCH",
@@ -366,20 +236,24 @@ export default function ProfileScreen() {
     if (isPostsLoading) {
       return <Spinner />;
     }
-    if (!posts || posts.length === 0) {
+
+    if (!posts || !Array.isArray(posts)) {
       return <Text className="text-center text-jet mt-5">No posts yet</Text>;
     }
+
     const userPosts = posts.filter(
       (post: any) => post.user?.username === user?.username
     );
-    if (userPosts.length === 0) {
+
+    if (!userPosts || !Array.isArray(userPosts)) {
       return <Text className="text-center text-jet mt-5">No posts yet</Text>;
     }
+
     return (
       <SafeAreaView>
         <FlatList
-          keyExtractor={(item) => item.id}
-          data={userPosts}
+          keyExtractor={(item) => item.id.toString()}
+          data={userPosts || []}
           renderItem={({ item }) => (
             <Post
               user={item.user}
@@ -391,52 +265,13 @@ export default function ProfileScreen() {
                 apiCall(`/posts/${item.id}/likes`, {
                   method: item.liked_by_current_user ? "DELETE" : "POST",
                 }).then(() => {
-                  postsQuery.refetch(); // Refetch posts after liking/unliking
+                  postsQuery.refetch();
                 });
               }}
               id={item.id}
               comments_count={item.comments_count}
-            />
-          )}
-        />
-      </SafeAreaView>
-    );
-  };
-
-  const renderRecipes = () => {
-    if (isRecipesLoading) {
-      return <Spinner />;
-    }
-    if (!recipes || recipes.length === 0) {
-      return <Text className="text-center text-jet mt-5">No recipes yet</Text>;
-    }
-    const userRecipes = posts.filter(
-      (post: any) => post.user?.username === user?.username
-    );
-    if (userRecipes.length === 0) {
-      return <Text className="text-center text-jet mt-5">No recipes yet</Text>;
-    }
-    return (
-      <SafeAreaView className="flex-1">
-        <FlatList
-          keyExtractor={(item) => item.id}
-          data={userRecipes}
-          renderItem={({ item }) => (
-            <Post
-              user={item.user}
-              content={item.content}
-              images={item.images}
-              likes={item.likes_count}
-              likedByCurrentUser={item.liked_by_current_user}
-              likePost={() => {
-                apiCall(`/posts/${item.id}/likes`, {
-                  method: item.liked_by_current_user ? "DELETE" : "POST",
-                }).then(() => {
-                  postsQuery.refetch(); // Refetch posts after liking/unliking
-                });
-              }}
-              id={item.id}
-              comments_count={item.comments_count}
+              savedByCurrentUser={item.saved_by_current_user}
+              refetchPosts={postsQuery.refetch}
             />
           )}
         />
@@ -445,35 +280,41 @@ export default function ProfileScreen() {
   };
 
   const renderSavedPosts = () => {
-    if (saved_posts.isLoading) {
+    if (isSavedPostsLoading) {
       return <Spinner />;
     }
-    if (!saved_posts.data || saved_posts.data.length === 0) {
+
+    if (!saved_posts || saved_posts.length === 0) {
       return (
         <Text className="text-center text-jet mt-5">No saved posts yet</Text>
       );
     }
+
     return (
       <SafeAreaView>
         <FlatList
-          keyExtractor={(item) => item.id}
-          data={saved_posts.data}
+          keyExtractor={(item) => item.id.toString()}
+          data={saved_posts}
           renderItem={({ item }) => (
             <Post
-              user={item.user}
-              content={item.content}
-              images={item.images}
-              likes={item.likes_count}
-              likedByCurrentUser={item.liked_by_current_user}
+              user={item.post.user}
+              content={item.post.content}
+              images={item.post.images}
+              likes={item.post.likes_count}
+              likedByCurrentUser={item.post.liked_by_current_user}
               likePost={() => {
-                apiCall(`/posts/${item.id}/likes`, {
-                  method: item.liked_by_current_user ? "DELETE" : "POST",
+                apiCall(`/posts/${item.post.id}/likes`, {
+                  method: item.post.liked_by_current_user ? "DELETE" : "POST",
                 }).then(() => {
-                  saved_posts.refetch(); // Refetch saved posts after liking/unliking
+                  queryClient.invalidateQueries({ queryKey: ["saved_posts"] });
                 });
               }}
-              id={item.id}
-              comments_count={item.comments_count}
+              id={item.post.id}
+              comments_count={item.post.comments_count}
+              savedByCurrentUser={item.post.saved_by_current_user}
+              refetchPosts={() =>
+                queryClient.invalidateQueries({ queryKey: ["saved_posts"] })
+              }
             />
           )}
         />
@@ -483,7 +324,6 @@ export default function ProfileScreen() {
 
   const renderContent = () => {
     if (selectedTab === "Posts") return renderPosts();
-    if (selectedTab === "Recipes") return renderRecipes();
     if (selectedTab === "Saved") return renderSavedPosts();
   };
 
@@ -535,7 +375,7 @@ export default function ProfileScreen() {
                 className="rounded-full bg-[#718355]"
                 onPress={() => {
                   AsyncStorage.removeItem("token");
-                  postsQuery.refetch();
+                  router.push("/sign-in");
                 }}
               >
                 <Text style={{ color: "white" }}>Logout</Text>
@@ -656,7 +496,7 @@ export default function ProfileScreen() {
             </View>
 
             <View className="flex-row justify-center">
-              {["Posts", "Recipes", "Saved"].map((tab) => (
+              {["Posts", "Saved"].map((tab) => (
                 <Button
                   key={tab}
                   className={

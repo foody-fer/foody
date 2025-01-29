@@ -69,6 +69,8 @@ const Chat = () => {
     refetchOnWindowFocus: true,
   });
 
+  console.log(messagesQuery.data);
+
   {
     isLoading && <Spinner />;
   }
@@ -108,11 +110,13 @@ const Chat = () => {
       if (!result.canceled && result.assets.length > 0) {
         const fileUri = result.assets[0].uri;
 
-        const response = await fetch(fileUri);
-        const blob = await response.blob();
-
         const formData = new FormData();
-        formData.append("message[attachment]", blob);
+        // @ts-ignore
+        formData.append("message[attachment]", {
+          uri: fileUri,
+          type: "image/jpeg",
+          name: "image.jpg",
+        });
         console.log(formData);
 
         const data = await apiCall(`/chat_groups/${id}/messages`, {
@@ -232,26 +236,36 @@ const Chat = () => {
                   )}
                 </Avatar>
               )}
-              {chat?.is_dm === false &&
-              item.user?.username !== user?.username ? (
-                <View className="shadow-md bg-[#F8FBEF] p-3 rounded-xl">
-                  <Text className="text-sm font-quicksand text-[#718355]">
-                    {item.user?.username}
-                  </Text>
-                  <Text className="text-md font-quicksand text-[#373737]">
-                    {item.content}
-                  </Text>
-                </View>
+
+              {item.attachment_url ? (
+                <Image
+                  source={{ uri: item.attachment_url }}
+                  className="w-64 h-64"
+                />
               ) : (
-                <Text
-                  className={`text-md font-quicksand ${
-                    item.user?.username === user?.username
-                      ? "text-[#575A4B] bg-white shadow-md p-3 rounded-xl"
-                      : "text-[#373737] bg-[#F8FBEF] shadow-md"
-                  }`}
-                >
-                  {item.content}
-                </Text>
+                <>
+                  {chat?.is_dm === false &&
+                  item.user?.username !== user?.username ? (
+                    <View className="shadow-md bg-[#F8FBEF] p-3 rounded-xl">
+                      <Text className="text-sm font-quicksand text-[#718355]">
+                        {item.user?.username}
+                      </Text>
+                      <Text className="text-md font-quicksand text-[#373737]">
+                        {item.content}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text
+                      className={`text-md font-quicksand ${
+                        item.user?.username === user?.username
+                          ? "text-[#575A4B] bg-white shadow-md p-3 rounded-xl"
+                          : "text-[#373737] bg-[#F8FBEF] shadow-md"
+                      }`}
+                    >
+                      {item.content}
+                    </Text>
+                  )}
+                </>
               )}
             </View>
           )}

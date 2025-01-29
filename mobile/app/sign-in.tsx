@@ -34,7 +34,7 @@ const SignIn = () => {
 
       await AsyncStorage.setItem("token", res.token);
       queryClient.invalidateQueries({ queryKey: ["auth"] });
-      router.push("/");
+      router.dismissTo("/");
     } catch (error) {
       setErrorMessage("Invalid email or password");
     }
