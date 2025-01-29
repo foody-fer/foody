@@ -32,6 +32,6 @@ class PlannedMeal < ApplicationRecord
     update(comment: nil, macros: {}, title: "Generating...", description: "")
     image.purge
 
-    # GenerationJob.perform_later
+    GenerateMealJob.perform_later(meal: self, time_of_day: meal_time, week_plan: week_plan)
   end
 end

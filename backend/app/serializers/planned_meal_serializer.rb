@@ -28,6 +28,6 @@ class PlannedMealSerializer
   attributes :id, :title, :description, :macros, :meal_time, :comment, :date
 
   attribute :image do |planned_meal|
-    image_url_for(planned_meal.image)
+    image_url_for(planned_meal.image, size: 500)
   end
 end

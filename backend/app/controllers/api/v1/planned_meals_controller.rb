@@ -39,7 +39,7 @@ module Api::V1
     end
 
     def set_planned_meal
-      @planned_meal = @week_plan.planned_meals.find(params[:id])
+      @planned_meal = @week_plan.planned_meals.find(params[:meal_id] || params[:id])
     end
 
     def planned_meal_params

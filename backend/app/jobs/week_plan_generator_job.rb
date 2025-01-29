@@ -6,7 +6,8 @@ class WeekPlanGeneratorJob < ApplicationJob
     7.times { |day| generate_day(week_plan, day: day) }
     week_plan.update!(status: :generated)
   rescue StandardError => e
-    p e
+    puts 'ERROR_GENERATING_WEEK_PLAN'
+    puts e.backtrace
 
     week_plan.update!(status: :failed)
   end

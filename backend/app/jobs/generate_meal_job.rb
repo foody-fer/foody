@@ -27,7 +27,7 @@ class GenerateMealJob < ApplicationJob
     required: [:title, :description, :macros]
   }
 
-  def perform(time_of_day:, week_plan:)
+  def perform(meal: nil, time_of_day:, week_plan:)
     response = client.chat(
       parameters: {
         model: "gpt-4o-mini",
@@ -68,17 +68,23 @@ class GenerateMealJob < ApplicationJob
 
     img_url = image.dig("data", 0, "url")
 
-    meal = week_plan.planned_meals.create!(
-      date: week_plan.monday + 0.days,
-      title: res['title'],
-      meal_time: time_of_day,
-      description: res['description'],
-      macros: res['macros']
-    )
+    if meal.present?
+      meal.update!(
+        title: res['title'],
+        description: res['description'],
+        macros: res['macros']
+      )
+    else
+      meal = week_plan.planned_meals.create!(
+        date: week_plan.monday + 0.days,
+        title: res['title'],
+        meal_time: time_of_day,
+        description: res['description'],
+        macros: res['macros']
+      )
+    end
 
     meal.image.attach(io: URI.open(img_url), filename: "image.png", content_type: "image/png")
-
-    # sleep 5
   end
 
   private
