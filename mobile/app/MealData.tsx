@@ -1,9 +1,26 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { format } from "date-fns";
+
+interface Macros {
+  calories: number;
+  carbs: number;
+  protein: number;
+  fat: number;
+}
+
+interface Meal {
+  date: string;
+  meal_time: string;
+  title: string;
+  macros: Macros;
+  image: string;
+  description: string;
+}
 
 interface MealDataProps {
-  meal: any;
+  meal: Meal;
   remove: (status: boolean) => void;
 }
 
@@ -12,7 +29,10 @@ export default function MealData({ meal, remove }: MealDataProps) {
     <View style={styles.container}>
       {/* Naslov obroka */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>Meal Planner - Monday breakfast</Text>
+        <Text style={styles.headerText}>
+          Meal Planner - {format(new Date(meal.date.split(" ")[0]), "EEEE")}{" "}
+          {meal.meal_time}
+        </Text>
         <TouchableOpacity
           onPress={() => remove(false)}
           style={styles.iconGroup}
@@ -31,26 +51,29 @@ export default function MealData({ meal, remove }: MealDataProps) {
         </TouchableOpacity>
       </View>
       {/* Naziv hrane */}
-      <Text style={styles.mealTitle}>Burger - GRMILICA</Text>
+      <Text style={styles.mealTitle}>{meal.title}</Text>
       {/* Informacije o makronutrijentima + slika */}
       <View style={styles.infoSection}>
         <View>
           <Text>
-            <Text style={styles.boldText}>Calories:</Text> 1101 kcal
+            <Text style={styles.boldText}>Calories:</Text>{" "}
+            {meal.macros.calories} kcal
           </Text>
           <Text>
-            <Text style={styles.boldText}>Carbohydrates:</Text> 268g
+            <Text style={styles.boldText}>Carbohydrates:</Text>{" "}
+            {meal.macros.carbs}g
           </Text>
           <Text>
-            <Text style={styles.boldText}>Proteins:</Text> 43g
+            <Text style={styles.boldText}>Proteins:</Text> {meal.macros.protein}
+            g
           </Text>
           <Text>
-            <Text style={styles.boldText}>Fats:</Text> 67g
+            <Text style={styles.boldText}>Fats:</Text> {meal.macros.fat}g
           </Text>
         </View>
         <Image
           source={{
-            uri: "https://images.pexels.com/photos/1199957/pexels-photo-1199957.jpeg?auto=compress&cs=tinysrgb&w=800",
+            uri: meal.image,
           }}
           style={styles.image}
         />
@@ -58,12 +81,7 @@ export default function MealData({ meal, remove }: MealDataProps) {
       {/* Opis */}
       <View style={styles.descriptionSection}>
         <Text style={styles.boldText}>Description:</Text>
-        <Text style={styles.descriptionText}>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi
-          quia recusandae doloremque quod minus, repellat tempore, facere
-          voluptas repudiandae quis minima maxime perspiciatis. Exercitationem
-          neque, animi quia vero adipisci ratione.
-        </Text>
+        <Text style={styles.descriptionText}>{meal.description}</Text>
       </View>
     </View>
   );

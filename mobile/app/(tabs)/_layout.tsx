@@ -1,12 +1,12 @@
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, Tabs, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/api/auth";
 import { Spinner } from "@/components/ui/spinner";
-import { View } from "react-native";
+import { Touchable, TouchableOpacity, View } from "react-native";
 
 export default function Layout() {
   const user = useAuth();
-  console.log(user);
+  const router = useRouter();
 
   if (user.isLoading) {
     return (
@@ -93,6 +93,24 @@ export default function Layout() {
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
               name={focused ? "chatbox-ellipses" : "chatbox-ellipses-outline"}
+              size={25}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="meals"
+        options={{
+          title: "Meals",
+          headerRight: () => (
+            <TouchableOpacity onPress={() => router.push("/Meal-planner")}>
+              <Ionicons name="settings" size={24} color="#4a5568" />
+            </TouchableOpacity>
+          ),
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "restaurant" : "restaurant-outline"}
               size={25}
               color={color}
             />
