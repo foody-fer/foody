@@ -5,10 +5,36 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
   # Defines the root path route ("/")
-  # root "posts#index"
+  get "/", to: "root#index"
+
+  get "/auth/google" => "oauth#google"
+  get "/auth/google/callback" => "oauth#google_callback"
+  get "/auth/github" => "oauth#github"
+  get "/auth/github/callback" => "oauth#github_callback"
+
+  namespace :api do
+    namespace :v1 do
+      resource :registrations, only: [ :create, :update ]
+      resources :auth, only: [ :index, :create ]
+
+      get "saved_posts", to: "saved_posts#index"
+
+      resources :measurements, only: [ :index, :create, :destroy ]
+
+      resources :posts, only: [ :index, :create, :show, :update, :destroy ] do
+        resource :likes, controller: :posts_likes, only: [ :show, :create, :destroy ]
+        resources :comments, controller: :posts_comments, only: [ :index, :create, :update, :destroy ]
+
+        resource :saves, controller: :saved_posts, only: [ :show, :create, :destroy ]
+      end
+
+      resources :chat_groups, only: [:index, :create, :show, :update, :destroy] do 
+        resources :messages, only: [:index, :create, :destroy]
+        resources :members, only: [:index, :create, :destroy]
+      end
+
+      resources :users, only: [:index]
+    end
+  end
 end
