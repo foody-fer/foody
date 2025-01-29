@@ -18,6 +18,7 @@ export default function LogProgressPage({
   const [value, setValue] = useState("");
   const [date, setDate] = useState(new Date());
   const [error, setError] = useState<string | null>(null);
+  const [errorExists, seterrorExists] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -32,12 +33,12 @@ export default function LogProgressPage({
       measurement: {
         key: category,
         value: value,
-        recorded_at: date,
+        recorded_at: new Date(date.getTime() + 1000 * 60 * 60 * 2),
       },
     };
 
     try {
-      const response = await apiCall(`/measurements`, {
+      const [datas, status] = await apiCall(`/measurements`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -45,7 +46,12 @@ export default function LogProgressPage({
         },
       });
 
-      router.push(`/progress/${category}`);
+      if (status === 201) {
+        console.log("Successful...");
+        router.push(`/progress/${category}`);
+      } else {
+        seterrorExists(`You already have this date logged for ${category}.`);
+      }
     } catch (error) {
       console.error("Doslo je do greske:", error);
     }
@@ -115,6 +121,12 @@ export default function LogProgressPage({
           className="bg-white border border-gray-300 px-[3.5rem] sm:px-[5.5rem] py-3 rounded-full text-center read-only"
         />
       </div>
+
+      {errorExists && (
+        <p className="text-red-500 text-base mt-4 font-semibold">
+          {errorExists}
+        </p>
+      )}
 
       <div className="mt-4">
         <button

@@ -87,7 +87,7 @@ export default function GroupChat() {
     const file = e.target.files?.[0];
 
     if (file) {
-      setImageSend(file);      
+      setImageSend(file);
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
     }
@@ -188,7 +188,11 @@ export default function GroupChat() {
                   .map((word) => word[0])
                   .join("")
                   .toUpperCase();
-                return <span className="text-lg text-white">{initials}</span>;
+                return (
+                  <span className="text-lg text-white font-normal">
+                    {initials}
+                  </span>
+                );
               })()}
             </div>
           ) : (
@@ -306,7 +310,6 @@ export default function GroupChat() {
 
                     {message.attachment_url && (
                       <div className="mt-2">
-                        <p>{message.attachment_url}</p>
                         <img
                           src={message.attachment_url}
                           alt="Attachment"
@@ -316,7 +319,7 @@ export default function GroupChat() {
                     )}
 
                     <p
-                      className={`text-base ${
+                      className={`text-base mt-2 ${
                         message.user.username === myUsername
                           ? "text-right"
                           : "text-left"

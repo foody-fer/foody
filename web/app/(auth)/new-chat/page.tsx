@@ -30,6 +30,7 @@ export default function NewChatpage() {
   const [noSelectedError, setnoSelectedError] = useState<string>("");
   const [noUserError, setNoUserError] = useState<string>("");
   const [groupImageSend, setgroupImageSend] = useState<File>();
+  const [alreadyDmError, setalreadyDmError] = useState<string>("");
 
   const router = useRouter();
 
@@ -143,6 +144,8 @@ export default function NewChatpage() {
         if (status === 201) {
           console.log("Direct message chat created successfully:", data);
           router.push("/chat");
+        } else {
+          setalreadyDmError("DM with this user already exists!");
         }
       } catch (error) {
         console.error("Error creating direct message chat:", error);
@@ -309,6 +312,12 @@ export default function NewChatpage() {
             {noSelectedError && (
               <p className="text-red-500 mt-2 ml-12 font-semibold">
                 {noSelectedError}
+              </p>
+            )}
+
+            {alreadyDmError && (
+              <p className="text-red-500 mt-2 ml-12 font-semibold">
+                {alreadyDmError}
               </p>
             )}
           </>

@@ -79,7 +79,7 @@ export default function AddPost({ posts, unable }: any) {
     console.log(response);
 
     setConfirm(!confirm);
-    unable(true)
+    unable(true);
     posts.refetch();
   };
 
@@ -90,7 +90,7 @@ export default function AddPost({ posts, unable }: any) {
         <img
           src={userQuery.data.avatar}
           alt="user's profile picture"
-          className="rounded-full ml-2 w-10 h-[2.5rem]"
+          className="rounded-full ml-2 w-10 h-[2.5rem] object-cover"
         />
       ) : (
         <FaUserCircle
@@ -103,12 +103,18 @@ export default function AddPost({ posts, unable }: any) {
         <textarea
           placeholder="Share what's new..."
           className="flex-1 p-1 mr-1 rounded-md bg-gray-100 outline-none h-[3.7rem] cursor-pointer"
-          onClick={() => {setOpen(!open); unable(false)}}
+          onClick={() => {
+            setOpen(!open);
+            unable(false);
+          }}
           readOnly
         />
         <MdAddPhotoAlternate
           className="h-5 w-5 align-bottom mr-2 cursor-pointer text-gray-100"
-          onClick={() => {setOpen(!open); unable(false)}}
+          onClick={() => {
+            setOpen(!open);
+            unable(false);
+          }}
         />
       </div>
       {/* interactive addPost modal */}
@@ -126,7 +132,10 @@ export default function AddPost({ posts, unable }: any) {
             <div className="group">
               <IoCloseCircleOutline className="cursor-pointer group-hover:hidden h-6 w-6" />
               <IoCloseCircle
-                onClick={() => {setOpen(!open); unable(true)}}
+                onClick={() => {
+                  setOpen(!open);
+                  unable(true);
+                }}
                 className="cursor-pointer h-6 w-6 hidden text-red-500 group-hover:block"
               />
             </div>
@@ -138,7 +147,7 @@ export default function AddPost({ posts, unable }: any) {
                 <img
                   src={userQuery.data.avatar}
                   alt="user's profile picture"
-                  className="rounded-full ml-2 w-8 h-[2rem]"
+                  className="rounded-full ml-2 w-8 h-[2rem] object-cover"
                 />
               ) : (
                 <FaUserCircle
@@ -147,9 +156,7 @@ export default function AddPost({ posts, unable }: any) {
                   className="rounded-full ml-2 w-8 h-[2rem] text-gray-700"
                 />
               )}
-              <span className="text-white mt-1">
-                {userQuery.data.username}
-              </span>
+              <span className="text-white mt-1">{userQuery.data.username}</span>
             </div>
           </div>
           <input
