@@ -26,7 +26,7 @@ class MessageSerializer
   attributes :id, :content, :created_at, :updated_at, :chat_group_id, :user_id
 
   attribute :attachment_url do |object|
-    image_url_for(object.attachment)
+    image_url_for(object.attachment, size: 1000)
   end
 
   one :user, serializer: UserSerializer

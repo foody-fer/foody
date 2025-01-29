@@ -26,9 +26,9 @@ class ChatGroupSerializer
 
   attribute :image do |chat_group|
     if chat_group.is_dm
-      image_url_for(chat_group.other_user&.user&.avatar)
+      image_url_for(chat_group.other_user&.user&.avatar, size: 100)
     else
-      image_url_for(chat_group.image)
+      image_url_for(chat_group.image, size: 100)
     end
   end
 end
