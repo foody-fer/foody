@@ -5,7 +5,7 @@ export default function ReadMore({ message }: any) {
   const [text, setText] = useState(message);
 
   useEffect(() => {
-    if (message.length > 190) {
+    if (message?.length > 190) {
       setText(message.slice(0, 190) + " ...");
       setOpen(false);
     } else {
@@ -23,7 +23,7 @@ export default function ReadMore({ message }: any) {
   return (
     <div>
       <span className="text-textColor">{text}</span>
-      {message.length > 190 && (
+      {message?.length > 190 && (
         <button onClick={toogleActive} className="text-gray-400 text-xs ml-2">
           {isOpen ? "Show less" : "Show more"}
         </button>

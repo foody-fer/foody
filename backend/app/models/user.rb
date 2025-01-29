@@ -36,6 +36,11 @@ class User < ApplicationRecord
   has_many :likes, dependent: :destroy
   has_many :comments, dependent: :destroy
 
+  has_many :chat_group_memberships, dependent: :destroy, class_name: "Member"
+  has_many :chat_groups, through: :chat_group_memberships
+
+  has_many :measurements, -> { order(recorded_at: :desc) }, dependent: :destroy
+
   validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP, message: "is invalid" }
   validates :first_name, presence: true
@@ -47,5 +52,9 @@ class User < ApplicationRecord
 
   def jwt
     JWT.encode({ user_id: id }, Rails.application.credentials.secret_key_base, "HS256")
+  end
+
+  def name
+    "#{first_name} #{last_name}"
   end
 end

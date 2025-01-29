@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { IoIosMore } from "react-icons/io";
+import { VscSend } from "react-icons/vsc";
+import { FaCheck } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 import {
   MenuRoot,
   MenuTrigger,
@@ -8,65 +11,143 @@ import {
   MenuItem,
   Button,
 } from "@chakra-ui/react";
+import { useGetUser } from "~/queries/getUser";
+import { useQuery } from "@tanstack/react-query";
+import { apiCall } from "~/api";
 
-export default function Comments({ bool, addComm, preview }: any) {
-  const [list, setList] = useState([""]);
+export default function Comments({ bool, postInfo, preview, posts }: any) {
+  const [comments, setComments] = useState<any>([]);
+  const [triger, setTriger] = useState(false);
+  const [open, setOpen] = useState(0);
 
-  let br = list.filter((str) => str.trim() === "").length;
+  const userQuery = useGetUser();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const fetchComments = async () => {
+    if (postInfo.id === undefined) return;
+
+    const response = await apiCall(`/posts/${postInfo.id}/comments`, {
+      method: "GET",
+    });
+    setComments(response);
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, [triger]);
+
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!preview) {
-      let tmp = new FormData(e.currentTarget);
-      let tmp2 = tmp.get("comment") || "";
-      const tmp3 = list.filter((str) => str.trim() !== "");
-      if (typeof tmp2 === "string" && tmp2 != "") setList([...tmp3, tmp2]);
-      addComm();
+      const form = e.target as HTMLFormElement;
+      const formData = new FormData(e.target);
+      const response = await apiCall(`/posts/${postInfo.id}/comments`, {
+        method: "POST",
+        body: formData,
+      });
+      console.log(response);
+      setTriger(!triger);
+      form.reset();
+      posts.refetch()
     }
   };
 
-  const handleDeleteCom = () => {
-    // delete comment
+  const handleDeleteCom = async (id: any) => {
+    const response = await apiCall(`/posts/${postInfo.id}/comments/${id}`, {
+      method: "DELETE",
+    });
+    console.log(response);
+    setTriger(!triger);
+    posts.refetch()
+  };
+
+  const openEditCom = async (id: any) => {
+    setOpen(id);
+  };
+
+  const handleEditCom = async (e: any) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const response = await apiCall(`/posts/${postInfo.id}/comments/${open}`, {
+      method: "PATCH",
+      body: formData,
+    });
+    console.log(response);
+    setTriger(!triger);
+    setOpen(0);
   };
 
   return (
     <div className="flex flex-col gap-2 text-gray-700">
       {/* WRITING */}
       <div className="flex flex-row gap-2">
-        <FaUserCircle
-          width={20}
-          height={20}
-          className="rounded-full mt-[0.15rem] text-gray-700 w-5 h-5"
-        />
-        <form className="w-full" onSubmit={handleSubmit}>
+        {userQuery.data.avatar !== null ? (
+          <img
+            src={userQuery.data.avatar}
+            alt={userQuery.data.username + " profile picture"}
+            className="rounded-full w-[1.7rem] h-[1.7rem] mt-1 object-cover"
+          />
+        ) : (
+          <FaUserCircle
+            width={24}
+            height={24}
+            className="rounded-full mt-[0.15rem] text-gray-700 w-6 h-6"
+          />
+        )}
+        <form className="w-full flex gap-1" onSubmit={handleSubmit}>
           <input
             type="text"
-            name="comment"
+            name="comment[content]"
             placeholder="Write a comment ..."
             className="w-full text-xs outline-none rounded-lg px-2 py-1 mt-[0.1rem]"
             readOnly={!preview ? undefined : true}
           />
-          <button type="submit" className="hidden">
-            Submit
+          <button type="submit" className="flex justify-center items-center">
+            <VscSend className="bg-gray-200 hover:bg-gray-300 transition duration-300 p-1 rounded w-7 h-7 flex-1" />
           </button>
         </form>
       </div>
       {/* COMMENTS */}
-      {bool && br < 1 && (
+      {bool && comments[0]?.length > 0 && (
         <div className="flex flex-col gap-1 w-full text-xs">
-          {list.map((item, ind) => (
-            <div className="flex flex-row gap-3  w-full" key={ind}>
+          {comments[0].map((com: any) => (
+            <div className="flex flex-row gap-3  w-full" key={com.id}>
               <div>
-                <FaUserCircle
-                  width={16}
-                  height={16}
-                  className="rounded-full mt-[0.1rem] text-gray-700 w-4 h-4"
-                />
+                {com.user.avatar !== null ? (
+                  <img
+                    src={com.user.avatar}
+                    alt={com.user.username + " profile picture"}
+                    className="rounded-full w-[1.5rem] h-[1.2rem] mt-1 object-cover"
+                  />
+                ) : (
+                  <FaUserCircle
+                    width={16}
+                    height={16}
+                    className="rounded-full mt-[0.1rem] text-gray-700 w-5 h-5"
+                  />
+                )}
               </div>
               <div className="w-[90%]">
-                <span className="font-semibold">Anonimus</span>
-                <p className="break-all">{item}</p>
+                <span className="font-semibold">{com.user.username}</span>
+                {open === com.id ? (
+                  <form onSubmit={handleEditCom} className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder={com.content}
+                      className="p-1 rounded w-full"
+                      name="comment[content]"
+                    />
+                    <button type="submit">
+                      <FaCheck className="hover:text-green-500 transition duration-300" />
+                    </button>
+                    <button onClick={() => setOpen(0)}>
+                      <IoClose className="w-4 h-4 hover:text-red-600 transition duration-300" />
+                    </button>
+                  </form>
+                ) : (
+                  <p className="break-all">{com.content}</p>
+                )}
               </div>
               <div>
                 <MenuRoot positioning={{ placement: "bottom-start" }}>
@@ -81,11 +162,24 @@ export default function Comments({ bool, addComm, preview }: any) {
                       />
                     </Button>
                   </MenuTrigger>
-                  <MenuContent className="cursor-pointer absolute right-[3%] sm:right-[14%] md:right-[20%] lg:right-[32%] z-50 mt-[-1rem]">
-                    <MenuItem value="new-txt" onClick={handleDeleteCom} className="text-xs">
-                      Delete
-                    </MenuItem>
-                  </MenuContent>
+                  {userQuery.data.id === com.user.id && (
+                    <MenuContent className="cursor-pointer absolute right-[3%] sm:right-[14%] md:right-[20%] lg:right-[32%] z-50 mt-[-1rem]">
+                      <MenuItem
+                        value="new-txt"
+                        onClick={() => handleDeleteCom(com.id)}
+                        className="text-xs cursor-pointer"
+                      >
+                        Delete
+                      </MenuItem>
+                      <MenuItem
+                        value="new-txt"
+                        onClick={() => openEditCom(com.id)}
+                        className="text-xs cursor-pointer"
+                      >
+                        Edit comment
+                      </MenuItem>
+                    </MenuContent>
+                  )}
                 </MenuRoot>
               </div>
             </div>

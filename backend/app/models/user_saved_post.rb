@@ -25,4 +25,8 @@ class UserSavedPost < ApplicationRecord
   belongs_to :post, counter_cache: true
 
   validates :user_id, uniqueness: { scope: :post_id }
+
+  def self.with_relations(query)
+    query.includes(user: { avatar_attachment: :blob }, post: { images_attachments: :blob })
+  end
 end

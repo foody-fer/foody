@@ -38,44 +38,6 @@ function Login() {
         <ActivityIndicator size="large" color="#718355" className="my-4" />
       ) : (
         <>
-          <TouchableOpacity
-            onPress={() => handleGoogleLogin()}
-            className="flex-row items-center justify-center rounded-full py-4 px-8 my-2 opacity-100 bg-[#718355] border-[#718355] border-2"
-          >
-            <View className="flex-row items-center">
-              <Image
-                source={require("../images/google-logo.png")}
-                style={{ width: 24, height: 24 }}
-              />
-              <Text className="text-lg font-bold text-white ml-2">
-                Sign up with Google
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* GitHub Login */}
-          <TouchableOpacity
-            onPress={() => handleGithubLogin()}
-            className="flex-row items-center justify-center rounded-full py-4 px-8 my-2 opacity-100 bg-[#718355] border-[#718355] border-2"
-          >
-            <View className="flex-row items-center">
-              <Image
-                source={require("../images/github-logo.png")}
-                style={{ width: 24, height: 24 }}
-              />
-              <Text className="text-lg font-bold text-white ml-2">
-                Sign up with GitHub
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* Divider */}
-          <View className="flex-row items-center my-5">
-            <View className="flex-1 h-px bg-black" />
-            <Text className="mx-3 text-lg font-bold">or</Text>
-            <View className="flex-1 h-px bg-black" />
-          </View>
-
           {/* Create Account */}
           <TouchableOpacity
             onPress={() =>

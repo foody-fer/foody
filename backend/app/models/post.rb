@@ -41,4 +41,14 @@ class Post < ApplicationRecord
   def liked_by_current_user=(value)
     @liked_by_current_user = value
   end
+
+  def saved_by_current_user
+    return @saved_by_current_user unless @saved_by_current_user.nil?
+
+    @saved_by_current_user = user_saved_posts.where(user: Current.user).exists?
+  end
+
+  def saved_by_current_user=(value)
+    @saved_by_current_user = value
+  end
 end

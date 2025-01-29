@@ -37,7 +37,7 @@ const Comments = () => {
           onChangeText={setNewComment}
         />
         <TouchableOpacity style={styles.addButton} onPress={handleAddComment}>
-          <Ionicons name="send" size={20} color="#fff" />
+          <Ionicons name="send" size={14} color="#fff" />
         </TouchableOpacity>
       </View>
 
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 8,
+    borderRadius: 50,
     padding: 8,
     backgroundColor: "#fff",
   },

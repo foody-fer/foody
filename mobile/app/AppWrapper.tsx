@@ -8,7 +8,8 @@ const FloatingChatButton = () => {
   const pathname = usePathname(); // Get the current route
 
   const handleChatPress = () => {
-    router.push("/Chat"); // Replace with your chat screen route
+    console.log("groupssss");
+    router.push("/Groups"); // Replace with your chat screen route
   };
 
   // Don't render the button if on the Chat screen
@@ -16,7 +17,9 @@ const FloatingChatButton = () => {
     pathname === "/Chat" ||
     pathname === "/Login" ||
     pathname === "/sign-up" ||
-    pathname === "/sign-in"
+    pathname === "/sign-in" ||
+    pathname === "/Groups" ||
+    pathname === "/+not-found"
   ) {
     return null;
   }

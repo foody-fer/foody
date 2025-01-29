@@ -1,18 +1,11 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, A11y } from "swiper/modules";
 import "swiper/swiper-bundle.css";
-import { useState, useEffect } from "react";
 
-export default function Slider({ pictures }: any) {
-  const [images, setImages] = useState([]);
-
-  useEffect(() => {
-    setImages(pictures.split("$$$$").filter((str:any) => str.trim() !== ""))
-  }, [pictures])
-
+export default function Slider({ pictures, title, preview }: any) {
   return (
     <>
-      <div className="bg-gray-200 text-white">
+      <div className="bg-gray-200 text-white rounded-md">
         <Swiper
           modules={[Navigation, Pagination, A11y]}
           spaceBetween={50}
@@ -25,17 +18,27 @@ export default function Slider({ pictures }: any) {
           onSwiper={(swiper) => console.log(swiper)}
           onSlideChange={() => console.log("slide change")}
         >
-          {images.map((pic: any, ind: number) => (
-            <SwiperSlide key={ind}>
-              <img
-                src={pic}
-                alt="pexels photo"
-                className="w-full h-[315px] object-cover"
-              />
-            </SwiperSlide>
-          ))}
-          <div className="swiper-button-next" style={{color:"white"}}></div>
-          <div className="swiper-button-prev" style={{color:"white"}}></div>
+          {!preview
+            ? pictures.map((pic: any) => (
+                <SwiperSlide key={pic.id}>
+                  <img
+                    src={pic.url}
+                    alt={title}
+                    className="w-full h-[265px] object-contain"
+                  />
+                </SwiperSlide>
+              ))
+            : pictures[0].map((pic: any) => (
+                <SwiperSlide key={pic}>
+                  <img
+                    src={pic}
+                    alt={title || "post preview"}
+                    className="w-full h-[265px] object-contain"
+                  />
+                </SwiperSlide>
+              ))}
+          <div className="swiper-button-next" style={{ color: "white" }}></div>
+          <div className="swiper-button-prev" style={{ color: "white" }}></div>
         </Swiper>
       </div>
     </>
