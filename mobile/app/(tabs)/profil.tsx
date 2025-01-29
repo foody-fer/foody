@@ -26,6 +26,7 @@ import { useRouter } from "expo-router";
 import { z } from "zod";
 import Post from "../Post";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { queryClient } from "@/api";
 
 const useGetUser = () => {
   const router = useRouter();
@@ -65,6 +66,20 @@ const usePosts = () => {
   });
 };
 
+const useSaves = () => {
+  return useQuery({
+    queryKey: ["saved_posts"],
+    queryFn: async () => {
+      const [data, status] = await apiCall("/saved_posts");
+      console.log("API Response for saved_posts: ", data); // Debug
+      if (status !== 200 || !Array.isArray(data)) {
+        return [];
+      }
+      return data;
+    },
+  });
+};
+
 const useRecipes = () => {
   return useQuery({
     queryKey: ["posts"],
@@ -73,6 +88,22 @@ const useRecipes = () => {
 };
 
 export default function ProfileScreen() {
+  const userQuery = useGetUser();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [bio, setBio] = useState("");
+  const [gender, setGender] = useState("");
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [selectedTab, setSelectedTab] = useState("Posts");
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errors, setErrors] = useState<any>({});
+  const [originalData, setOriginalData] = useState({});
+
+  const { data: posts, isLoading: isPostsLoading } = usePosts();
+  const { data: recipes, isLoading: isRecipesLoading } = useRecipes();
+  const { data: saved_posts, isLoading: isSavedPostsLoading } = useSaves();
   const profileSchema_first_name = z.object({
     first_name: z
       .string()
@@ -110,28 +141,6 @@ export default function ProfileScreen() {
   {
     error && <Text>Error</Text>;
   }
-
-  const userQuery = useGetUser();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userName, setUserName] = useState("");
-  const [bio, setBio] = useState("");
-  const [gender, setGender] = useState("");
-  const [profilePicture, setProfilePicture] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState("Posts");
-  const [editingField, setEditingField] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [errors, setErrors] = useState<any>({});
-  const [originalData, setOriginalData] = useState({});
-  const saved_posts = useQuery({
-    queryKey: ["saved_posts"],
-    queryFn: () => apiCall(`/saved_posts`, { method: "GET" }),
-    refetchOnWindowFocus: true, // Ažuriranje podataka kad se ponovo fokusira prozor
-    staleTime: 0, // Podaci će biti uvijek svježi
-  });
-
-  const { data: posts, isLoading: isPostsLoading } = usePosts();
-  const { data: recipes, isLoading: isRecipesLoading } = useRecipes();
 
   const toggleEdit = (field: string) => {
     if (editingField === field) {
@@ -345,13 +354,11 @@ export default function ProfileScreen() {
   };
 
   const renderSavedPosts = () => {
-    if (saved_posts.isLoading) {
+    if (isSavedPostsLoading) {
       return <Spinner />;
     }
 
-    const savedPostsData = saved_posts.data || []; // Default to empty array
-
-    if (!savedPostsData || !Array.isArray(savedPostsData)) {
+    if (!saved_posts || saved_posts.length === 0) {
       return (
         <Text className="text-center text-jet mt-5">No saved posts yet</Text>
       );
@@ -361,7 +368,7 @@ export default function ProfileScreen() {
       <SafeAreaView>
         <FlatList
           keyExtractor={(item) => item.id.toString()}
-          data={savedPostsData || []}
+          data={saved_posts}
           renderItem={({ item }) => (
             <Post
               user={item.user}
@@ -373,13 +380,15 @@ export default function ProfileScreen() {
                 apiCall(`/posts/${item.id}/likes`, {
                   method: item.liked_by_current_user ? "DELETE" : "POST",
                 }).then(() => {
-                  saved_posts.refetch();
+                  queryClient.invalidateQueries({ queryKey: ["saved_posts"] });
                 });
               }}
               id={item.id}
               comments_count={item.comments_count}
               savedByCurrentUser={item.saved_by_current_user}
-              refetchPosts={saved_posts.refetch}
+              refetchPosts={() =>
+                queryClient.invalidateQueries({ queryKey: ["saved_posts"] })
+              }
             />
           )}
         />
