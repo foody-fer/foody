@@ -19,6 +19,8 @@ class ChatGroup < ApplicationRecord
   validate :only_two_members, if: :is_dm
   validate :only_one_dm, if: :is_dm
 
+  scope :dm, -> { where(is_dm: true) }
+
   def other_user
     return unless is_dm
 
@@ -32,10 +34,11 @@ class ChatGroup < ApplicationRecord
   end
 
   def only_one_dm
-    if ChatGroup.joins(:members)
-                .where(is_dm: true)
-                .where(members: { user_id: members.map(&:user_id) }).exists?
-      errors.add(:base, "DM already exists")
+    chat_groups = ChatGroup.dm
+    chat_groups.each do |chat_group|
+      if chat_group.members.pluck(:user_id).sort == members.map(&:user_id).sort
+        return errors.add(:base, "DM already exists")
+      end
     end
   end
 end
