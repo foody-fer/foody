@@ -220,12 +220,15 @@ export default function Index() {
             />
 
             <View style={styles.modalButtonContainer}>
-              <Button onPress={handlePost}>
+              <TouchableOpacity onPress={handlePost} style={styles.modalButton}>
                 <Text>Post</Text>
-              </Button>
-              <Button onPress={() => setModalVisible(false)}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={styles.modalButton}
+              >
                 <Text>Dismiss</Text>
-              </Button>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -246,12 +249,18 @@ export default function Index() {
               onChangeText={setIdeaContent}
             />
             <View style={styles.modalButtonContainer}>
-              <Button onPress={handleIdeaPost}>
+              <TouchableOpacity
+                onPress={handleIdeaPost}
+                style={styles.modalButton}
+              >
                 <Text>Post</Text>
-              </Button>
-              <Button onPress={() => setIdeaModalVisible(false)}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setIdeaModalVisible(false)}
+                style={styles.modalButton}
+              >
                 <Text>Dismiss</Text>
-              </Button>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -266,7 +275,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#CFE1B9",
   },
   input: {
-    backgroundColor: "#b0ca91",
+    backgroundColor: "#E1EECF",
   },
   topView: {
     backgroundColor: "#b0ca91",
@@ -306,32 +315,42 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "80%",
-    backgroundColor: "#CFE1B9",
-    borderRadius: 20,
-    padding: 20,
+    width: "85%",
+    backgroundColor: "#E1EECF",
+    borderRadius: 25,
+    padding: 25,
     alignItems: "center",
     shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 6,
   },
   modalText: {
-    fontSize: 18,
-    marginLeft: 10,
+    fontSize: 20,
+    fontWeight: "bold",
     textAlign: "center",
+    color: "#575A4B",
+    marginBottom: 10,
   },
   modalImage: {
-    width: 200,
-    height: 200,
+    width: 220,
+    height: 220,
     marginBottom: 15,
-    borderRadius: 10,
+    borderRadius: 15,
   },
   modalButtonContainer: {
-    borderRadius: 25,
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    marginTop: 15,
+  },
+  modalButton: {
+    borderRadius: 25,
+    backgroundColor: "#B0CA91",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    color: "white",
   },
 });
