@@ -206,9 +206,9 @@ function SignUpPage({
               maxLength={19}
               required
             />
-            {errors.num && (
+            {errors.phone && (
               <div className="text-red-700 text-xs md:text-sm">
-                {errors.num}
+                {errors.phone}
               </div>
             )}
 
