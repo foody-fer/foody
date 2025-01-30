@@ -1,12 +1,11 @@
-"use client";
+import "bootstrap/dist/css/bootstrap.min.css";
+import type { Metadata } from "next";
+import { Providers } from "./client";
+import "./globals.css";
 
-import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './globals.css';
-import { useEffect } from "react";
-
-const client = new QueryClient();
+export const metadata: Metadata = {
+  title: "Foody",
+};
 
 export default function RootLayout({
   children,
@@ -15,11 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <ChakraProvider value={defaultSystem}>
-        <QueryClientProvider client={client}>
-          <body>{children}</body>
-        </QueryClientProvider>
-      </ChakraProvider>
+      <Providers>
+        <body>{children}</body>
+      </Providers>
     </html>
   );
 }
