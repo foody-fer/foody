@@ -23,7 +23,7 @@ class WeekPlan < ApplicationRecord
   has_many :planned_meals, dependent: :destroy
 
   enum :status, { pending: 0, in_progress: 1, generated: 2, failed: 3 }
-  validates :monday, presence: true, uniqueness: :planner_config_id
+  validates :monday, presence: true, uniqueness: { scope: :planner_config_id }
 
   normalizes :monday, with: -> (date) { date.to_date.beginning_of_week(:monday) }
 end
