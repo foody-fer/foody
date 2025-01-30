@@ -18,6 +18,7 @@ const Post = ({
   comments_count,
   savedByCurrentUser,
   refetchPosts,
+  deletable,
 }: {
   user: { username: string; avatar: string | null };
   content: string;
@@ -29,6 +30,7 @@ const Post = ({
   comments_count: string;
   savedByCurrentUser: boolean;
   refetchPosts: () => void;
+  deletable?: boolean;
 }) => {
   const [toggleComments, setToggleComments] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -119,9 +121,11 @@ const Post = ({
           <Text style={styles.modalText}>{user.username}</Text>
         </View>
 
-        <TouchableOpacity onPress={handleDeletePost}>
-          <Ionicons name="trash" size={24} color="#575A4B"></Ionicons>
-        </TouchableOpacity>
+        {deletable && (
+          <TouchableOpacity onPress={handleDeletePost}>
+            <Ionicons name="trash" size={24} color="#575A4B"></Ionicons>
+          </TouchableOpacity>
+        )}
       </View>
 
       <Text>{content}</Text>

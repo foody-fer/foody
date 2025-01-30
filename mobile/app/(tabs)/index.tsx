@@ -21,6 +21,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "expo-router";
 import Post from "../Post";
+import { useAuth } from "@/api/auth";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ export default function Index() {
   const [ideaContent, setIdeaContent] = useState("");
   const [postContent, setPostContent] = useState("");
 
+  const user = useAuth();
   const postsQuery = useQuery({
     queryKey: ["posts"],
     queryFn: () => apiCall("/posts"),
@@ -189,6 +191,7 @@ export default function Index() {
             id={item.id}
             comments_count={item.comments_count}
             refetchPosts={postsQuery.refetch}
+            deletable={item.user.username === user.data?.username}
           />
         )}
         ListEmptyComponent={<Text>Loading posts or no posts available...</Text>}

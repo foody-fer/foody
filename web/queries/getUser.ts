@@ -10,6 +10,8 @@ export const useGetUser = () => {
     queryFn: async () => {
       const [data, status] = await apiCall(`/auth`, { method: "GET" });
       if (status !== 200) {
+        localStorage.removeItem("token");
+
         router.push("/sign-in");
         return null;
       }

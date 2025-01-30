@@ -114,7 +114,7 @@ export default function MealPlanner() {
                         name="primary_goal"
                         value="Weight loss"
                         required
-                        defaultChecked={data.goals.includes("Weight loss")}
+                        defaultChecked={data.goals?.includes("Weight loss")}
                       />
                       Weight loss
                     </label>
@@ -126,7 +126,7 @@ export default function MealPlanner() {
                         name="primary_goal"
                         value="Weight gain"
                         required
-                        defaultChecked={data.goals.includes("Weight gain")}
+                        defaultChecked={data.goals?.includes("Weight gain")}
                       />
                       Weight gain
                     </label>
@@ -138,7 +138,9 @@ export default function MealPlanner() {
                         name="primary_goal"
                         value="Have more energy"
                         required
-                        defaultChecked={data.goals.includes("Have more energy")}
+                        defaultChecked={data.goals?.includes(
+                          "Have more energy"
+                        )}
                       />
                       Have more energy
                     </label>
@@ -150,7 +152,7 @@ export default function MealPlanner() {
                         name="primary_goal"
                         value="Gain muscle"
                         required
-                        defaultChecked={data.goals.includes("Gain muscle")}
+                        defaultChecked={data.goals?.includes("Gain muscle")}
                       />
                       Gain muscle
                     </label>
@@ -162,7 +164,7 @@ export default function MealPlanner() {
                         name="primary_goal"
                         value="Be healthier"
                         required
-                        defaultChecked={data.goals.includes("Be healthier")}
+                        defaultChecked={data.goals?.includes("Be healthier")}
                       />
                       Be healthier
                     </label>
@@ -177,7 +179,7 @@ export default function MealPlanner() {
                         className="opacity-0 absolute cursor-pointer"
                         name="meals_per_day"
                         value="breakfast"
-                        defaultChecked={data.meal_time_config.breakfast}
+                        defaultChecked={data.meal_time_config?.breakfast}
                       />
                       Breakfast
                     </label>
@@ -188,7 +190,7 @@ export default function MealPlanner() {
                         className="opacity-0 absolute cursor-pointer"
                         name="meals_per_day"
                         value="morning_snack"
-                        defaultChecked={data.meal_time_config.morning_snack}
+                        defaultChecked={data.meal_time_config?.morning_snack}
                       />
                       Morning snack
                     </label>
@@ -199,7 +201,7 @@ export default function MealPlanner() {
                         className="opacity-0 absolute cursor-pointer"
                         name="meals_per_day"
                         value="lunch"
-                        defaultChecked={data.meal_time_config.lunch}
+                        defaultChecked={data.meal_time_config?.lunch}
                       />
                       Lunch
                     </label>
@@ -210,7 +212,7 @@ export default function MealPlanner() {
                         className="opacity-0 absolute cursor-pointer"
                         name="meals_per_day"
                         value="afternoon_snack"
-                        defaultChecked={data.meal_time_config.afternoon_snack}
+                        defaultChecked={data.meal_time_config?.afternoon_snack}
                       />
                       Afternoon snack
                     </label>
@@ -221,7 +223,7 @@ export default function MealPlanner() {
                         className="opacity-0 absolute cursor-pointer"
                         name="meals_per_day"
                         value="dinner"
-                        defaultChecked={data.meal_time_config.dinner}
+                        defaultChecked={data.meal_time_config?.dinner}
                       />
                       Dinner
                     </label>
